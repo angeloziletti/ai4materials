@@ -25,13 +25,18 @@ ai4materials_dir = os.path.abspath('../../ai4materials')
 sys.path.insert(0, atomic_data_dir)
 sys.path.insert(0, ai4materials_dir)
 
+sys.path.append(os.path.abspath('..'))
+import os
+print(os.getcwd())
+
 # -- Mock imports since readthedocs cannot compile C-based code --------
 
 import sys
 
-autodoc_mock_imports = ['ai4materials',
-		'ai4materials.wrappers',
-		'ai4materials.descriptors',
+autodoc_mock_imports = [
+		#'ai4materials',
+		#'ai4materials.wrappers',
+		#'ai4materials.descriptors',
 		#'ai4materials.',
 		#'ai4materials.',
 		#'ai4materials.',
