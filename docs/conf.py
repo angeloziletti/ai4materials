@@ -55,7 +55,7 @@ autodoc_mock_imports = [
         'builtins',
 		'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
                 'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras-tqdm', 'weave', 'seaborn', 'paramiko',
-                'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'numpy', 'h5py', 'cython',
+                'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'h5py', 'cython',
                 'hdbscan']
 
 # -- General configuration ------------------------------------------------
