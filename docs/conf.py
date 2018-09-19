@@ -53,10 +53,7 @@ MOCK_MODULES = ['ai4materials',
                 'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'numpy', 'h5py', 'cython',
                 'hdbscan']
 
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
-
-#sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- General configuration ------------------------------------------------
 
