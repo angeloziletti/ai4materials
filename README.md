@@ -6,7 +6,7 @@ ai4materials allows to perform complex machine learning and compressed sensing m
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
 thus easing the traceability, reproduciblity, and prototyping of new models.
 
-Extensive documentation can be found at ai4materials.readthedocs.io
+Extensive documentation can be found https://ai4materials.readthedocs.io/en/latest/
 
 Code author: Angelo Ziletti (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de)
 
