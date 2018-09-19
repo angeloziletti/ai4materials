@@ -67,3 +67,9 @@ ase/gui/po/ag.pot
 # ignore spsim output
 *.pdbout
 *.spsimconfout
+
+# ignore documentation files
+_build
+_static
+_templates
+
