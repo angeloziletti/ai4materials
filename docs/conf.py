@@ -26,7 +26,7 @@ sys.path.insert(0, atomic_data_dir)
 # -- Mock imports since readthedocs cannot compile C-based code --------
 
 import sys
-from unittest.mock import MagicMock
+from mock import Mock as MagicMock
 
 class Mock(MagicMock):
     @classmethod
