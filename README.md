@@ -7,3 +7,6 @@ provide functions to pre-process (on parallel processors), save and subsequently
 thus easing the traceability, reproduciblity, and prototyping of new models.
 
 An extensive documentation will be published soon.
+
+Code author: Angelo Ziletti (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de)
+

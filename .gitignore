@@ -67,4 +67,3 @@ ase/gui/po/ag.pot
 # ignore spsim output
 *.pdbout
 *.spsimconfout
-
