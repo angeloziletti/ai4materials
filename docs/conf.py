@@ -37,12 +37,26 @@ class Mock(MagicMock):
         return MagicMock()
 
 
-MOCK_MODULES = ['ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
+MOCK_MODULES = ['ai4materials',
+		'ai4materials.wrappers',
+		'ai4materials.descriptors',
+		#'ai4materials.',
+		#'ai4materials.',
+		#'ai4materials.',
+		#'ai4materials.',
+		#'ai4materials.',
+		#'ai4materials.',
+		#'ai4materials.',
+		#'ai4materials.',
+		'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
                 'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras-tqdm', 'weave', 'seaborn', 'paramiko',
                 'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'numpy', 'h5py', 'cython',
                 'hdbscan']
 
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
+
+#sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- General configuration ------------------------------------------------
 
