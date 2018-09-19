@@ -1,2 +1,12 @@
-ai4materials/data/* linguist-vendored
-
+ai4materials/data/viewer_files/jsmol/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/core/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/img/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/J/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/java/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/javajs/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/JM/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/JS/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/JSV/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/JU/* linguist-vendored
+ai4materials/data/viewer_files/jsmol/j2s/JV/* linguist-vendored

@@ -1,0 +1,70 @@
+# use glob syntax.
+syntax: glob
+*.ser
+*.class
+*~
+*.bak
+#*.off
+*.old
+*.pyc
+*.bk
+.DS_Store
+
+# eclipse conf file
+.settings
+.classpath
+.project
+.manager
+.scala_dependencies
+
+.ensime
+.ensime_cache
+
+# idea
+.idea
+*.iml
+
+# building
+target
+build
+null
+tmp*
+temp*
+dist
+test-output
+build.log
+#docs/build/
+/dist
+.DS_Store
+*/.DS_Store
+/nomadml.egg-info
+
+# other scm
+.svn
+.CVS
+.hg*
+
+# switch to regexp syntax.
+#  syntax: regexp
+#  ^\.pc/
+
+#editor backup files
+*.py~
+*.rst~
+
+# Ignore PyCharm settings
+.idea/
+
+# Vim swap files:
+.*.sw?
+
+# Translation template
+ase/gui/po/ag.pot
+
+# ignore jupyter notebook checkpoint files
+.ipynb_checkpoints
+
+# ignore spsim output
+*.pdbout
+*.spsimconfout
+
