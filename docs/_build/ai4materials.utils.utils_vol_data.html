@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_vol_data module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Authors" href="authors.html" />
+    <link rel="prev" title="ai4materials.utils.utils_plotting module" href="ai4materials.utils.utils_plotting.html" />
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.utils.html">Utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals">Utils crystals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#pristine-and-defective-supercell-generation">Pristine and defective supercell generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_supercell">Example: pristine supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_vacancies">Example: defective supercell creation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ai4materials.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_binaries.html">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_config.html">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_crystals.html">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.utils.html">Utils</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_vol_data module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.utils.utils_vol_data.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.utils.utils_vol_data">
+<span id="ai4materials-utils-utils-vol-data-module"></span><h1>ai4materials.utils.utils_vol_data module<a class="headerlink" href="#module-ai4materials.utils.utils_vol_data" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ai4materials.utils.utils_vol_data.get_shells_from_indices">
+<code class="descclassname">ai4materials.utils.utils_vol_data.</code><code class="descname">get_shells_from_indices</code><span class="sig-paren">(</span><em>xyz_r</em>, <em>vol_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_vol_data.html#get_shells_from_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_vol_data.get_shells_from_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain concentric shells from volumetric data.</p>
+<p>The starting point are an array containing the volumetric data and a list of indices which assign points
+of the volume to the corresponding concentric shell. Using these indices, we perform two operations:</p>
+<ol class="arabic simple">
+<li>extract the concentric shells in the volumetric space</li>
+<li>transform the concentric shells to spherical coordinates, i.e. project each sphere to a (theta, phi) plane</li>
+</ol>
+<p>Point 1) gives volumetric 3d data containing a given shell.
+Point 2) gives 2d data in the (theta, phi) plane for a given shell; this can be interpreted as a heatmap.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>xyz_r: list of list of tuples</dt>
+<dd>The length of the list corresponds to the number of concentric shells considered.
+Each element in the list - representing a concentric shell - contains a list of 3 dimensional tuples,
+with the indices of the volume elements which belong to the given concentric shell.
+This is the list returned by <a class="reference internal" href="#ai4materials.utils.utils_vol_data.get_slice_volume_indices" title="ai4materials.utils.utils_vol_data.get_slice_volume_indices"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.get_slice_volume_indices</span></code></a>.</dd>
+<dt>vol_data: numpy.ndarray</dt>
+<dd>Volumetric data as numpy.ndarray.</dd>
+</dl>
+<p>Return: vox_by_slices, theta_phi_by_slices</p>
+<dl class="docutils">
+<dt>vox_by_slices: np.ndarray, shape [n_slices, n_px, n_py, n_pz]</dt>
+<dd>4-dimensional array containing each concentric shell obtained from
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code>.
+<code class="docutils literal notranslate"><span class="pre">n_px</span></code>, <code class="docutils literal notranslate"><span class="pre">n_py</span></code>, <code class="docutils literal notranslate"><span class="pre">n_pz</span></code> are given by the interpolation and the region of the space
+considered. In our case, <code class="docutils literal notranslate"><span class="pre">n_slices=52</span></code>, <code class="docutils literal notranslate"><span class="pre">n_px=n_py=n_pz=176</span></code>.</dd>
+<dt>theta_phi_by_slices: list of tuples</dt>
+<dd>Each element in the list correspond to a concentric shell.
+In each concentric shell, there is a list of tuples (theta, phi, intensity) of the non-zero points
+in the volume considered, as return by <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.shells_to_sph</span></code>.
+The length of the tuple list of each concentric shell is different because a different number of points
+is non-zero for each shell.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_vol_data.get_slice_volume_indices">
+<code class="descclassname">ai4materials.utils.utils_vol_data.</code><code class="descname">get_slice_volume_indices</code><span class="sig-paren">(</span><em>vol_data</em>, <em>min_r</em>, <em>max_r</em>, <em>dr=1.0</em>, <em>phi_bins=100</em>, <em>theta_bins=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_vol_data.html#get_slice_volume_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_vol_data.get_slice_volume_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given 3d volume return the indices of points belonging to the specified concentric shells.</p>
+<p>The volume is should be centered according to its center of mass to have centered concentric shells.
+In our case we do not have to do that because the diffraction intensity obtained with the Fourier Transform
+is centered by definition. For use reference, we nevertheless calculate the center of mass within the function.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>vol_data:</dt>
+<dd>Numpy 3D array containing the volumetric data to be sliced. In our case, this is the three-dimensional
+diffraction intensity.</dd>
+<dt>theta_bins: int, optional (default=50)</dt>
+<dd>Bins to be used for the theta angle of the spherical coordinates.</dd>
+<dt>phi_bins: int, optional (default=100)</dt>
+<dd>Bins to be used for the phi angle of the spherical coordinates.</dd>
+<dt>Returns: list</dt>
+<dd>List of length = (max_r - min_r)/dr; the length corresponds to the number of concentric shells considered.
+Each element in the list - representing a concentric shell - contains a list of 3 dimensional tuples,
+with the indices of the volume elements which belong to the given concentric shell.
+For example, let us assume the output of the function is stored in variable <cite>xyz_r</cite>.
+<cite>xyz[0]</cite> gives a list of tuples corresponding to the points in the first concentric shell.
+If <cite>xyz[0][0] = (82, 97, 119)</cite>, this means that the element of the volumetric shape with index
+(82, 97, 119) belong to the first shell.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces">
+<code class="descclassname">ai4materials.utils.utils_vol_data.</code><code class="descname">interp_theta_phi_surfaces</code><span class="sig-paren">(</span><em>theta_phi_by_slices_coarse</em>, <em>theta_bins=256</em>, <em>phi_bins=512</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_vol_data.html#interp_theta_phi_surfaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate the spherical shells in spherical coordinate to a finer grid.</p>
+<p>For more information on the interpolation, please refer to:
+<a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/Matplotlib_Gridding_irregularly_spaced_data.html">http://scipy-cookbook.readthedocs.io/items/Matplotlib_Gridding_irregularly_spaced_data.html</a></p>
+<dl class="docutils">
+<dt>theta_phi_by_slices_coarse: list of tuples</dt>
+<dd>Each element in the list correspond to a concentric shell.
+In each concentric shell, there is a list of tuples (theta, phi, intensity) of the non-zero points
+in the volume considered, as return by <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.shells_to_sph</span></code>.
+The length of the tuple list of each concentric shell is different because a different number of points
+is non-zero for each shell.</dd>
+<dt>theta_bins: int, optional (default=256)</dt>
+<dd>Bins to be used for the interpolation of the theta angle of the spherical coordinates.</dd>
+<dt>phi_bins: int, optional (default=512)</dt>
+<dd>Bins to be used for the interpolation of the phi angle of the spherical coordinates.</dd>
+<dt>Return: np.ndarray, shape [n_slices, theta_bins_fine, phi_bins_fine]</dt>
+<dd>Three-dimensional array containing each concentric shell in spherical coordinate.
+<code class="docutils literal notranslate"><span class="pre">n_slices</span></code> is given by the region of the space considered.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="authors.html" class="btn btn-neutral float-right" title="Authors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.utils.utils_plotting.html" class="btn btn-neutral" title="ai4materials.utils.utils_plotting module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

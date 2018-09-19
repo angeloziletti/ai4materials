@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.descriptors.diffraction3d module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="up" title="Representing crystal structures: descriptors" href="ai4materials.descriptors.html"/>
+        <link rel="next" title="ai4materials.descriptors.ft_soap_descriptor module" href="ai4materials.descriptors.ft_soap_descriptor.html"/>
+        <link rel="prev" title="ai4materials.descriptors.diffraction2d module" href="ai4materials.descriptors.diffraction2d.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors.atomic_features-example">Example: atomic features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors.diffraction2d-example">Example: two-dimensional diffraction fingerprint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors.diffraction3d-example">Example: three-dimensional diffraction fingerprint</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.descriptors.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.atomic_features.html">ai4materials.descriptors.atomic_features module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.base_descriptor.html">ai4materials.descriptors.base_descriptor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.diffraction1d.html">ai4materials.descriptors.diffraction1d module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.diffraction2d.html">ai4materials.descriptors.diffraction2d module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ai4materials.descriptors.diffraction3d module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.ft_soap_descriptor.html">ai4materials.descriptors.ft_soap_descriptor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.prdf.html">ai4materials.descriptors.prdf module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.quippy_soap_descriptor.html">ai4materials.descriptors.quippy_soap_descriptor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.soap_model.html">ai4materials.descriptors.soap_model module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a> &raquo;</li>
+        
+      <li>ai4materials.descriptors.diffraction3d module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.descriptors.diffraction3d.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.descriptors.diffraction3d">
+<span id="ai4materials-descriptors-diffraction3d-module"></span><h1>ai4materials.descriptors.diffraction3d module<a class="headerlink" href="#module-ai4materials.descriptors.diffraction3d" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ai4materials.descriptors.diffraction3d.DISH">
+<em class="property">class </em><code class="descclassname">ai4materials.descriptors.diffraction3d.</code><code class="descname">DISH</code><span class="sig-paren">(</span><em>configs</em>, <em>param_source=None</em>, <em>param_detector=None</em>, <em>user_param_source=None</em>, <em>user_param_detector=None</em>, <em>atoms_scaling='quantile_nn'</em>, <em>extrinsic_scale_factor=1.0</em>, <em>atoms_scaling_cutoffs=None</em>, <em>use_mask=True</em>, <em>mask_r_min=12</em>, <em>mask_r_max=92</em>, <em>phi_bins=100</em>, <em>theta_bins=50</em>, <em>phi_bins_fine=512</em>, <em>theta_bins_fine=256</em>, <em>sph_l_cutoff=32</em>, <em>window='hanning'</em>, <em>nx_fft=128</em>, <em>ny_fft=128</em>, <em>nz_fft=128</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#DISH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.DISH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ai4materials.descriptors.base_descriptor.html#ai4materials.descriptors.base_descriptor.Descriptor" title="ai4materials.descriptors.base_descriptor.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ai4materials.descriptors.base_descriptor.Descriptor</span></code></a></p>
+<p>Calculation of the spherical harmonics expansion of diffraction intensity.</p>
+<p>This is the descriptor introduced in Ziletti et al., in preparation (2018). The default values
+of the parameters used are the one used in the reference above.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>configs: dict</dt>
+<dd>Contains configuration information such as folders for input and output
+(e.g. <cite>desc_folder</cite>, <cite>tmp_folder</cite>), logging level, and metadata location.
+See also <a class="reference internal" href="ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.set_configs" title="ai4materials.utils.utils_config.set_configs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_config.set_configs</span></code></a>.</dd>
+<dt>param_source: dict, optional (default={‘wavelength’: 5.0E-12, ‘pulse_energy’: 1E-6, ‘focus_diameter’: 1E-6})</dt>
+<dd><p class="first">Contains parameters that are passed to the underlying package used for the diffraction computation (Condor).
+This parameters are passed to Condor via:</p>
+<p><cite>src = condor.Source(**self.param_source)</cite></p>
+<p class="last">See <a class="reference external" href="http://condor.readthedocs.io/en/latest/config.html#source">http://condor.readthedocs.io/en/latest/config.html#source</a> for the parameters that can be used.</p>
+</dd>
+<dt>param_detector: dict, optional (default={‘distance’: 0.1, ‘pixel_size’: 4E-4, ‘nx’: 64, ‘ny’: 64})</dt>
+<dd><p class="first">Contains parameters that are passed to the underlying package used for the diffraction computation (Condor).
+This parameters are passed to Condor via:</p>
+<p><cite>det = condor.Detector(**self.param_detector)</cite></p>
+<p class="last">See <a class="reference external" href="http://condor.readthedocs.io/en/latest/config.html#detector">http://condor.readthedocs.io/en/latest/config.html#detector</a> for the parameters that can be used.</p>
+</dd>
+<dt>atoms_scaling: string, optional (default=’avg_nn’)</dt>
+<dd>Type of scaling used in the atom structure scaling. See <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.scale_structure" title="ai4materials.utils.utils_crystals.scale_structure"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.scale_structure</span></code></a>
+for more details.</dd>
+<dt>atoms_scaling_cutoffs: list of float, optional (default=[4.0, 5.0, 7.0, 9.0, 11.0, 12.0])</dt>
+<dd>List of cutoffs to be used in the determination of the lengthscale of the system to be used in
+<a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.scale_structure" title="ai4materials.utils.utils_crystals.scale_structure"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.scale_structure</span></code></a>.</dd>
+<dt>extrinsic_scale_factor: float, optional (default=1.0)</dt>
+<dd>Scale the structure by another factor on top of the one obtained by isotropic scaling.
+This can be used to do data augmentation on the scaling factor. A factor of 0.95 will scale the structure by
+0.95, thus enlarging it. The default is 1.0, i.e. no extrinsic scaling.</dd>
+<dt>use_mask: bool, optional (default=True)</dt>
+<dd>If <cite>True</cite>, a mask such that only (<cite>mask_r_min</cite> &lt; points &lt; <cite>mask_r_max</cite>) are kept in the calculated
+diffraction pattern. This is done because the central peak in diffraction is very intense
+but does not carry useful information regarding the atomic structure.</dd>
+<dt>mask_r_min: int, optional (default=12)</dt>
+<dd>The intensity of the points in the diffraction pattern with a radius smaller than <cite>mask_r_min</cite> are set to zero.</dd>
+<dt>mask_r_max: int, optional (default=92)</dt>
+<dd>The intensity of the points in the diffraction pattern with a radius larger than <cite>mask_r_max</cite> are set to zero.</dd>
+<dt>theta_bins: int, optional (default=50)</dt>
+<dd>Bins to be used in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.slice_3d_volume</span></code> for the theta angle of the
+spherical coordinates. This is used to extract the spherical shells from the 3d volume in cartesian
+coordinates. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.slice_3d_volume</span></code> for more details.</dd>
+<dt>phi_bins: int, optional (default=100)</dt>
+<dd>Bins to be used in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.slice_3d_volume</span></code> for the phi angle of the
+spherical coordinates. This is used to extract the spherical shells from the 3d volume in cartesian
+coordinates. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.slice_3d_volume</span></code> for more details.</dd>
+<dt>theta_bins_fine: int, optional (default=256)</dt>
+<dd>Bins to be used in the <a class="reference internal" href="ai4materials.utils.utils_vol_data.html#ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces" title="ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces</span></code></a> for the theta
+angle of the spherical coordinates. This is used to interpolate on a finer grid the spherical shells
+extracted from the 3d volumes - now in spherical coordinates. It can be much higher than <code class="docutils literal notranslate"><span class="pre">theta_bins</span></code> because
+the spherical shells are represented in spherical coordinates (2D) and not in cartesian coordinates (3D).
+See <a class="reference internal" href="ai4materials.utils.utils_vol_data.html#ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces" title="ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces</span></code></a> for more details.</dd>
+<dt>phi_bins_fine: int, optional (default=512)</dt>
+<dd>Bins to be used in the <a class="reference internal" href="ai4materials.utils.utils_vol_data.html#ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces" title="ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces</span></code></a> for the theta
+angle of the spherical coordinates. This is used to interpolate on a finer grid the spherical shells
+extracted from the 3d volumes - now in spherical coordinates. It can be much higher than <code class="docutils literal notranslate"><span class="pre">theta_bins</span></code> because
+the spherical shells are represented in spherical coordinates (2D) and not in cartesian coordinates (3D).
+See <a class="reference internal" href="ai4materials.utils.utils_vol_data.html#ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces" title="ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces</span></code></a> for more details.</dd>
+<dt>sph_l_cutoff: int, optional (default=32)</dt>
+<dd>Cut-off for the spherical harmonics expansion. Only spherical harmonics with degree l up to sph_l_cutoff
+will be kept. The reconstruction of the sperical shells for different values of the <code class="docutils literal notranslate"><span class="pre">sph_l_cutoff</span></code>
+can be visually checked (for each slice) by plotting the reconstructed images via
+ai4materials.descriptors.diffraction3d.plot_concentric_shells_spherical_coords.</dd>
+<dt>window: str, optional (default=’hanning’)</dt>
+<dd>Window to be used when performing the Fourier transform. In principle any window from
+<code class="docutils literal notranslate"><span class="pre">scipy.signal.get_window</span></code> can be used.</dd>
+<dt>nx_fft: int, optional (default=128)</dt>
+<dd>Size of the Fourier transform along the x axis.</dd>
+<dt>ny_fft: int, optional (default=128)</dt>
+<dd>Size of the Fourier transform along the y axis.</dd>
+<dt>nz_fft: int, optional (default=128)</dt>
+<dd>Size of the Fourier transform along the z axis.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>This descriptor was introduced in the following article:</p>
+<p>A. Ziletti, A. Leitherer, M. Scheffler, and L. M. Ghiringhelli, “Crystal-structure classification
+via Bayesian deep learning - towards superhuman performance”, to be submitted (2018).</p>
+<p class="last">Please cite this manuscript if you find this descriptor useful in your work.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">To calculate the three-dimensional diffraction pattern we use the open source software Condor.
+See the Condor webpage for more details: <a class="reference external" href="http://condor.readthedocs.io/en/">http://condor.readthedocs.io/en/</a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="ai4materials.descriptors.diffraction3d.DISH.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>structure</em>, <em>min_nb_atoms=20</em>, <em>plot_3d=False</em>, <em>plot_slices=False</em>, <em>plot_slices_sph_coords=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#DISH.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.DISH.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the descriptor for the given ASE structure.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structure: <cite>ase.Atoms</cite> object</dt>
+<dd>Atomic structure.</dd>
+<dt>min_nb_atoms: int, optional (default=20)</dt>
+<dd>If the structure contains less than <code class="docutils literal notranslate"><span class="pre">min_nb_atoms</span></code>, the descriptor is not calculated and an array with
+zeros is return as descriptor. This is because the descriptor is expected to be no longer meaningful for
+such a small amount of atoms present in the chosen structure.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.descriptors.diffraction3d.DISH.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>structure</em>, <em>tar=None</em>, <em>op_id=0</em>, <em>write_sh_spectra_npy=False</em>, <em>write_sh_spectra_png=True</em>, <em>write_geo=True</em>, <em>format_geometry='aims'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#DISH.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.DISH.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameters:</p>
+<dl class="docutils">
+<dt>structure: class, ASE atoms class</dt>
+<dd>Instance of the class ASE atoms class</dd>
+<dt>format_geometry: string, optional (default=’aims’)</dt>
+<dd>File output format. All ASE valid output formats are accepted.
+For a list: <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/io/io.html">https://wiki.fysik.dtu.dk/ase/ase/io/io.html</a></dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.descriptors.diffraction3d.get_design_matrix">
+<code class="descclassname">ai4materials.descriptors.diffraction3d.</code><code class="descname">get_design_matrix</code><span class="sig-paren">(</span><em>structures</em>, <em>method='flatten_images'</em>, <em>nn_model=None</em>, <em>layer_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#get_design_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.get_design_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starting from atomic structures calculate the design matrix for the three-dimensional diffraction fingerprint.</p>
+<p>The list of structures must contain the calculated <code class="xref py py-class docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code>.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structures: <code class="docutils literal notranslate"><span class="pre">ase.Atoms</span></code> object or list of <code class="docutils literal notranslate"><span class="pre">ase.Atoms</span></code> object</dt>
+<dd>Atomic structure or list of atomic structure.</dd>
+</dl>
+<p>Return:</p>
+<dl class="docutils">
+<dt>np.ndarray, shape [n_samples, n_features]</dt>
+<dd>Returns the design matrix.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.descriptors.diffraction3d.plot_3d_volume">
+<code class="descclassname">ai4materials.descriptors.diffraction3d.</code><code class="descname">plot_3d_volume</code><span class="sig-paren">(</span><em>power_spect</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#plot_3d_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.plot_3d_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a 3d plot given a numpy array with Mayavi.</p>
+<p>This function can be used to plot any three-dimensional field, passed as a np.array.
+It uses the <cite>mayavi.tools.pipeline.volume</cite> from Mayavi:
+<a class="reference external" href="http://docs.enthought.com/mayavi/mayavi/auto/mlab_pipeline_other_functions.html#volume">http://docs.enthought.com/mayavi/mayavi/auto/mlab_pipeline_other_functions.html#volume</a>
+In the plot it is assumed that the elements of the array are equally spaced.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>power_spect: np.ndarray, shape [n_px, n_py, n_pz]</dt>
+<dd>Array containing a three-dimensional quantity (i.e. field).</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.descriptors.diffraction3d.plot_concentric_shells">
+<code class="descclassname">ai4materials.descriptors.diffraction3d.</code><code class="descname">plot_concentric_shells</code><span class="sig-paren">(</span><em>vox_by_slices</em>, <em>base_folder</em>, <em>idx_slices=None</em>, <em>create_animation=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#plot_concentric_shells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.plot_concentric_shells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the concentric shells for a given three-dimensional volumetric shape.</p>
+<p>The volumetric shape is the three-dimensional diffraction intensity, as calculated by
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code>. To plot the concentric shells
+for different voxel np.ndarray shapes simply change <code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z</span> <span class="pre">=</span> <span class="pre">np.mgrid[0:176:176j,</span> <span class="pre">0:176:176j,</span> <span class="pre">0:176:176j]</span></code>
+to your desire meshgrid.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>vox_by_slices: np.ndarray, shape [n_slices, n_px, n_py, n_pz]</dt>
+<dd>4-dimensional array containing each concentric shell obtained from
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code>.
+<code class="docutils literal notranslate"><span class="pre">n_px</span></code>, <code class="docutils literal notranslate"><span class="pre">n_py</span></code>, <code class="docutils literal notranslate"><span class="pre">n_pz</span></code> are given by the interpolation and the region of the space
+considered. In our case, <code class="docutils literal notranslate"><span class="pre">n_slices=52</span></code>, <code class="docutils literal notranslate"><span class="pre">n_px=n_py=n_pz=176</span></code>.</dd>
+<dt>base_folder: str</dt>
+<dd>Folder to save the figures generated. The figures are saved in a subfolder folder <code class="docutils literal notranslate"><span class="pre">shells_png</span></code> of
+<code class="docutils literal notranslate"><span class="pre">base_folder</span></code>.</dd>
+<dt>idx_slices: list of int, optional (default=None)</dt>
+<dd>List of integers defining which concentric shells to plot.
+If <cite>None</cite>, all concentric shells are plotted.</dd>
+<dt>create_animation: bool, optional (default=True)</dt>
+<dd>If <cite>True</cite> create an animation containing all concentric shells.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.descriptors.diffraction3d.plot_concentric_shells_spherical_coords">
+<code class="descclassname">ai4materials.descriptors.diffraction3d.</code><code class="descname">plot_concentric_shells_spherical_coords</code><span class="sig-paren">(</span><em>image_by_slices</em>, <em>base_folder</em>, <em>idx_slices=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction3d.html#plot_concentric_shells_spherical_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction3d.plot_concentric_shells_spherical_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the concentric shells for a given three-dimensional volumetric shape.</p>
+<p>The volumetric shape is the three-dimensional diffraction intensity, as calculated by
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code>.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>image_by_slices: np.ndarray, shape [n_slices, theta_bins_fine, phi_bins_fine]</dt>
+<dd>Three-dimensional array containing each concentric shell obtained in spherical coordinate, as calculated by
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code>
+<code class="docutils literal notranslate"><span class="pre">n_slices</span></code>, <code class="docutils literal notranslate"><span class="pre">theta_bins_fine</span></code>, <code class="docutils literal notranslate"><span class="pre">phi_bins_fine</span></code> are given by the interpolation and the region of the space
+considered. In our case, <code class="docutils literal notranslate"><span class="pre">n_slices=52</span></code>, <code class="docutils literal notranslate"><span class="pre">theta_bins_fine=256</span></code>, <code class="docutils literal notranslate"><span class="pre">phi_bins_fine=512</span></code>, as defined in
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction3d.Diffraction3D</span></code> in <code class="docutils literal notranslate"><span class="pre">phi_bins_fine</span></code> and <code class="docutils literal notranslate"><span class="pre">theta_bins_fine</span></code>.</dd>
+<dt>base_folder: str</dt>
+<dd>Folder to save the figures generated. The figures are saved in a subfolder folder <code class="docutils literal notranslate"><span class="pre">shells_png</span></code> of
+<code class="docutils literal notranslate"><span class="pre">base_folder</span></code>.</dd>
+<dt>idx_slices: list of int, optional (default=None)</dt>
+<dd>List of integers defining which concentric shells to plot.
+If <cite>None</cite>, all concentric shells - in spherical coordinates - are plotted.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.descriptors.ft_soap_descriptor.html" class="btn btn-neutral float-right" title="ai4materials.descriptors.ft_soap_descriptor module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.descriptors.diffraction2d.html" class="btn btn-neutral" title="ai4materials.descriptors.diffraction2d module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

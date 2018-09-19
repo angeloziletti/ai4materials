@@ -1,0 +1,976 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.models.sis module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="up" title="Regression and classification models" href="ai4materials.models.html"/>
+        <link rel="next" title="ai4materials.models.strided_pattern_matching module" href="ai4materials.models.strided_pattern_matching.html"/>
+        <link rel="prev" title="ai4materials.models.l1_l0 module" href="ai4materials.models.l1_l0.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.models.html#module-ai4materials.models.l1_l0-example">Example regression: LASSO+l0 method</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.models.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.clustering.html">ai4materials.models.clustering module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.cnn_architectures.html">ai4materials.models.cnn_architectures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.cnn_nature_comm_ziletti2018.html">ai4materials.models.cnn_nature_comm_ziletti2018 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.cnn_polycrystals.html">ai4materials.models.cnn_polycrystals module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.embedding.html">ai4materials.models.embedding module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.l1_l0.html">ai4materials.models.l1_l0 module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ai4materials.models.sis module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.models.strided_pattern_matching.html">ai4materials.models.strided_pattern_matching module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.models.html#module-ai4materials.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.models.html">Regression and classification models</a> &raquo;</li>
+        
+      <li>ai4materials.models.sis module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.models.sis.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.models.sis">
+<span id="ai4materials-models-sis-module"></span><h1>ai4materials.models.sis module<a class="headerlink" href="#module-ai4materials.models.sis" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ai4materials.models.sis.SIS">
+<em class="property">class </em><code class="descclassname">ai4materials.models.sis.</code><code class="descname">SIS</code><span class="sig-paren">(</span><em>P</em>, <em>D</em>, <em>feature_list</em>, <em>feature_unit_classes=None</em>, <em>target_unit='eV'</em>, <em>control=None</em>, <em>output_log_file='/home/beaker/.beaker/v1/web/tmp/output.log'</em>, <em>rm_existing_files=False</em>, <em>if_print=True</em>, <em>check_only_control=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Python interface with the fortran SIS+(Sure Independent Screening)+L0/L1L0 code.</p>
+<p>The SIS+(Sure Independent Screening)+L0/L1L0 is a greedy algorithm. It enhances the OMP, by considering
+not only the closest feature vector to the residual in each step, but collects the closest ‘n_SIS’ features vectors.
+The final model is then built after a given number of iterations by determining the (approximately) best linear combination
+of the collected features using the L0 (L1-L0) algorithm.</p>
+<p>To execute the code, besides the SIS code parameters also folder paths are needed as well as account
+information of a remote machine to let the code be executed on it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>P</strong> : array, [n_sample]; list; [n_sample]</p>
+<blockquote>
+<div><p>P refers to the target (label). If ptype = ‘quali’ list of ints is required</p>
+</div></blockquote>
+<p><strong>D</strong> : array, [n_sample, n_features]</p>
+<blockquote>
+<div><p>D refers to the feature matrix. The SIS code calculates algebraic combinations
+of the features and then applies the SIS+L0/L1L0 algorithm.</p>
+</div></blockquote>
+<p><strong>feature_list</strong> : list of strings</p>
+<blockquote>
+<div><p>List of feature names. Needs to be in the same order as the feature vectors (columns) in D.
+Features must consist of strings which are in F_unit (See above).</p>
+</div></blockquote>
+<p><strong>feature_unit_classes</strong> : None or {list integers or the string: ‘no_unit’}</p>
+<blockquote>
+<div><p>integers correspond to the unit class of the features from feature_list. ‘no_unit’ is reserved for
+dimensionless unit.</p>
+</div></blockquote>
+<p><strong>output_log_file</strong> : string</p>
+<blockquote>
+<div><p>file path for the logger output.</p>
+</div></blockquote>
+<p><strong>rm_existing_files</strong> : bool</p>
+<blockquote>
+<div><p>If SIS_input_path on local or remote machine (remote_input_path) exists, it is removed.
+Otherwise it is renamed to SIS_input_path_$number.</p>
+</div></blockquote>
+<p><strong>control</strong> : dict of dicts (of dicts)</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>Dict tree: {</dt>
+<dd><p class="first">‘local_paths’: { ‘local_path’:str, ‘SIS_input_folder_name’:str},
+(‘local_run’,’remote_run’)  : (</p>
+<blockquote>
+<div><p>{‘SIS_code_path’:str, ‘mpi_command’:str},
+{‘SIS_code_path’:str, ‘username’:str, ‘hostname’:str, ‘remote_path’:str, ‘eos’:bool, ‘mpi_command’:str, ‘nodes’:int, (‘key_file’, ‘password’):(str,str)}</p>
+</div></blockquote>
+<p class="last">),
+‘parameters’ : {‘n_comb’:int, ‘n_sis’:int, ‘max_dim’:int, ‘OP_list’:list},
+‘advanced_parameters’ : {‘FC’:FC_dic,’DI’:DI_dic, ‘FCDI’:FCDI_dic}</p>
+</dd>
+</dl>
+<p>}
+Here the tuples (.,.) mean that one and only one of the both keys has to be set.
+To see forms of FC_dic, DI_dic, FCDI_dic check FC_tuplelist, DI_tuplelist and FCDI_tuplelist above in PARAMETERS REFERENCE.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>For remote_run the library nomad_sim.ssh_code is needed. If remote machine is eos,
+in dict control[‘remote_run’] the (key:value) ‘eos’:True has to be set. Then set
+for example in addition ‘nodes’:1 and ‘mpi_run -np 32’ can be set.</p>
+<p>Paths (say name: path) are all set in the intialization part with self.path and
+used in other functions with self.path. In general the other variables are directly
+passed as arguements to the functions. There are a few exceptions as self.ssh.</p>
+<p class="rubric">Examples</p>
+<p># &gt;&gt;&gt; import numpy as np
+# &gt;&gt;&gt; from nomad_sim.SIS import SIS
+# &gt;&gt;&gt; ### Specify where on local machine input files for the SIS fortran code shall be created
+# &gt;&gt;&gt; Local_paths = {
+# &gt;&gt;&gt; ‘local_path’ : ‘/home/beaker/’,
+# &gt;&gt;&gt; ‘SIS_input_folder_name’ : ‘SIS_input’,
+# &gt;&gt;&gt; }
+# &gt;&gt;&gt; # Information for ssh connection. Instead of password also ‘key_file’ for rsa key
+# &gt;&gt;&gt; # file path is possible.
+# &gt;&gt;&gt; Remote_run = {
+# &gt;&gt;&gt;     ‘mpi_command’:’‘,
+# &gt;&gt;&gt;     ‘remote_path’ : ‘/home/username/’,
+# &gt;&gt;&gt;     ‘SIS_code_path’ : ‘/home/username/SIS_code/’,
+# &gt;&gt;&gt;     ‘hostname’ :’hostname’,
+# &gt;&gt;&gt;     ‘username’ : ‘username’,
+# &gt;&gt;&gt;     ‘password’ : ‘XXX’
+# &gt;&gt;&gt; }
+# &gt;&gt;&gt; # Parameters for the SIS fortran code. If at each iteration a different ‘OP_list’
+# &gt;&gt;&gt; # shall be used, set a list of max_dim lists, e.g. [ [‘+’,’-‘,’*’], [‘/’,’*’] ], if
+# &gt;&gt;&gt; # n_comb = 2
+# &gt;&gt;&gt; Parameters = {
+# &gt;&gt;&gt;     ‘n_comb’ : 2,
+# &gt;&gt;&gt;     ‘OP_list’ : [‘+’,’<a href="#id1"><span class="problematic" id="id2">|-|</span></a>’,’-‘,’*’,’/’,’exp’,’^2’],
+# &gt;&gt;&gt;     ‘max_dim’ : 2,
+# &gt;&gt;&gt;     ‘n_sis’ : 10
+# &gt;&gt;&gt; }
+# &gt;&gt;&gt; # Final control dict for the SIS class. Instead of remote_run also local_run can be set
+# &gt;&gt;&gt; # (with different keys). Also advanced_parameters can be set, but should be done only
+# &gt;&gt;&gt; # if the parameters of the SIS fortran code are understood.
+# &gt;&gt;&gt; SIS_control = {‘local_paths’:Local_paths, ‘remote_run’:Remote_run, ‘parameters’:Parameters}
+# &gt;&gt;&gt; # Target (label) vector P , feature_list, feature matrix D. The values are made up.
+# &gt;&gt;&gt; P = np.array( [1,2,3,-2,-9] )
+# &gt;&gt;&gt; feature_list=[‘r_p(A)’,’r_p(B)’, ‘Z(A)’]
+# &gt;&gt;&gt; D = np.array([[7,-11,3],
+# &gt;&gt;&gt;              [-1,-2,4],
+# &gt;&gt;&gt;              [2,20,3],
+# &gt;&gt;&gt;              [8,1,8],
+# &gt;&gt;&gt;              [-3,4,1]])
+# &gt;&gt;&gt; # Use the code
+# &gt;&gt;&gt; sis = SIS(P,D,feature_list, control = SIS_control, output_log_file =’/home/ahmetcik/codes/beaker/output.log’)
+# &gt;&gt;&gt; sis.start()
+# &gt;&gt;&gt; results = sis.get_results()
+# &gt;&gt;&gt;
+# &gt;&gt;&gt; coef_1dim = results[0][‘coefficients’]
+# &gt;&gt;&gt; coef_2dim = results[1][‘coefficients’]
+# &gt;&gt;&gt; D_1dim = results[0][‘D’]
+# &gt;&gt;&gt; D_2dim = results[1][‘D’]
+# &gt;&gt;&gt; print coef_2dim
+# [-3.1514 -5.9171  3.9697]
+# &gt;&gt;&gt;
+# &gt;&gt;&gt; print D_2dim
+#    ((rp(B)/Z(A))/(rp(A)+rp(B)))  ((Z(A)/rp(B))/(rp(B)*Z(A)))  intercept
+# 0                      0.916670                     0.008264        1.0
+# 1                      0.166670                     0.250000        1.0
+# 2                      0.303030                     0.002500        1.0
+# 3                      0.013889                     1.000000        1.0
+# 4                      4.000000                     0.062500        1.0
+#
+#</p>
+<p class="rubric">Attributes</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.ask_periodically">
+<code class="descname">ask_periodically</code><span class="sig-paren">(</span><em>sc</em>, <em>seconds</em>, <em>counter</em>, <em>username</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.ask_periodically"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.ask_periodically" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive function that runs periodically (each seconds) the
+function self.check_status.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_">
+<code class="descname">check_</code><span class="sig-paren">(</span><em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_DI">
+<code class="descname">check_DI</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_DI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_DI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check DI.out, if calculation has finished.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_FC">
+<code class="descname">check_FC</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_FC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_FC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check FC.out, if calculation has finished and feature space_sizes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>calc_finished</strong> : bool</p>
+<blockquote>
+<div><p>If calculation finished there shoul be a ‘Have a nice day !’.</p>
+</div></blockquote>
+<p><strong>featurespace</strong> : integer</p>
+<blockquote>
+<div><p>Total feature space size generated, before the redundant check.</p>
+</div></blockquote>
+<p><strong>n_collected</strong> : integer</p>
+<blockquote class="last">
+<div><p>The number of features collected in the current iteration.
+Should be n_sis.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_OP_list">
+<code class="descname">check_OP_list</code><span class="sig-paren">(</span><em>control</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_OP_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_OP_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks form and items of control[‘parameters’][‘OP_list’].</p>
+<p>control[‘parameters’][‘OP_list’] must be a list of operations strings
+or list of n_comb lists of operation strings. Furthermore if operation
+strings are item of available_OPs (see above) is checked.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>control</strong> : dict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>control</strong> : with manipulated control[‘parameters’][‘OP_list’]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_OP_strings">
+<code class="descname">check_OP_strings</code><span class="sig-paren">(</span><em>OPs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_OP_strings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_OP_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all items of OPs are items of available_OPs</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_arrays">
+<code class="descname">check_arrays</code><span class="sig-paren">(</span><em>P_in</em>, <em>D</em>, <em>feature_list</em>, <em>feature_unit_classes</em>, <em>ptype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_arrays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check arrays/list P, D and feature_list</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_control">
+<code class="descname">check_control</code><span class="sig-paren">(</span><em>par_in</em>, <em>par_ref</em>, <em>par_in_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_control"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_control" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive Function to check input control dict tree.</p>
+<p>If for example check_control(control,control_ref,’control’)
+function goes through dcit tree control and compares with control_ref
+if correct keys (mandotory, not_mandotory, typos of key string) are set
+and if values are of correct type or of optional list.
+Furthermore it gives Errors with hints what is wrong, and what is needed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>par_in</strong> : any key</p>
+<blockquote>
+<div><p>if par_in is dict, then recursion.</p>
+</div></blockquote>
+<p><strong>par_ref: any key</strong></p>
+<blockquote>
+<div><p>Is compared to par_in, if of same time.
+If par_in and par_key are dict, alse keys are compared.</p>
+</div></blockquote>
+<p><strong>par_in_path: string</strong></p>
+<blockquote class="last">
+<div><p>Gives the dict tree path where, when error occurs, e.g.
+control[key_1][key_2]… For using function from outside
+start with name of input dict, e.g. ‘control’</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_feature_space_size">
+<code class="descname">check_feature_space_size</code><span class="sig-paren">(</span><em>feature_list</em>, <em>n_target=5</em>, <em>upper_bound=300000000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_feature_space_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_feature_space_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_feature_units">
+<code class="descname">check_feature_units</code><span class="sig-paren">(</span><em>feature_unit_classes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_feature_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_feature_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check feature units</p>
+<p>Checks which</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>feature_unit_classes</strong> : list integers</p>
+<blockquote>
+<div><p>list must be sorted.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>unit_strings</strong> : list of strings</p>
+<blockquote class="last">
+<div><p>In the form [‘(1:3)’,’(4:8)’,..], where the indices start from 1,</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_files">
+<code class="descname">check_files</code><span class="sig-paren">(</span><em>iter_folder_name</em>, <em>dimension</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check which file is missing and maybe why.</p>
+<p>This function, if something went wrong to find out where the problem occured.
+Returns an error string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_keys">
+<code class="descname">check_keys</code><span class="sig-paren">(</span><em>par_in</em>, <em>par_ref</em>, <em>par_in_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares the dicts par_in and par_ref.</p>
+<dl class="docutils">
+<dt>Collects which keys are missing (only if keys are not in not_mandotary) amd</dt>
+<dd>whcih keys are not expected (if for example there is a typo).</dd>
+</dl>
+<p>If there are missing or not expected ones, error message with missing/not expected ones.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>par_in</strong> : dict</p>
+<p><strong>par_ref</strong> : dict</p>
+<p><strong>par_in_path</strong> : string</p>
+<blockquote class="last">
+<div><p>Dictionary path string for error message, e.g ‘control[key_1][key_2]’.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_l0_steps">
+<code class="descname">check_l0_steps</code><span class="sig-paren">(</span><em>max_dim</em>, <em>n_sis</em>, <em>upper_limit=10000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_l0_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_l0_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if number of l0 steps is larger then a upper_limit</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_quali_dim">
+<code class="descname">check_quali_dim</code><span class="sig-paren">(</span><em>control</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_quali_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_quali_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if quali then also desc_dim=2</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_status">
+<code class="descname">check_status</code><span class="sig-paren">(</span><em>filename</em>, <em>username</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if calculation on eos is finished</p>
+<p>Parameters
+filename: str</p>
+<blockquote>
+<div>qstat will be written into this file. The file will be then read.</div></blockquote>
+<dl class="docutils">
+<dt>username: str</dt>
+<dd>search in filename for this username. If not appears calculation is finished.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>status</strong> : bool</p>
+<blockquote class="last">
+<div><p>True if calculations is still running.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.check_type">
+<code class="descname">check_type</code><span class="sig-paren">(</span><em>par_in</em>, <em>par_ref</em>, <em>par_in_path</em>, <em>if_also_none=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.check_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.check_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check type of par_in and par_ref.</p>
+<p>If par_ref is tuple, par_in must be item of par_ref:
+else: they must have same type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.convert_2_fortran">
+<code class="descname">convert_2_fortran</code><span class="sig-paren">(</span><em>parameter</em>, <em>parameter_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.convert_2_fortran"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.convert_2_fortran" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert parameters to SIS fortran code style.</p>
+<p>Converts e.g. True to string ‘.true.’ or a string ‘s’ to
+“‘s’”, and other special formats.
+Returns the converted parameter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.convert_feature_strings">
+<code class="descname">convert_feature_strings</code><span class="sig-paren">(</span><em>feature_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.convert_feature_strings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.convert_feature_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert feature strings.</p>
+<p>Puts an ‘sr’ for reals and an ‘si’ for integers at the beginning of a string.
+Returns the list with the changed strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.do_transfer">
+<code class="descname">do_transfer</code><span class="sig-paren">(</span><em>ssh=None</em>, <em>eos=None</em>, <em>username=None</em>, <em>CPUs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.do_transfer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.do_transfer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the calcualtion on remote machine</p>
+<p>First checks if already folder self.remote_input_path exists on remote machine,
+if yes it deletes or renames it.
+Then copies file system self.SIS_input_path with SIS fortran code files into the
+folder self.remote_input_path. Finally lets run the calculations on remote machine
+and copy back the file system with results.
+If eos, writes submission script, submits script and checks qstat if calculation
+finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ssh</strong> : object</p>
+<blockquote>
+<div><p>Must be from code nomad_sim.ssh_code.</p>
+</div></blockquote>
+<p><strong>eos</strong> : bool</p>
+<blockquote>
+<div><p>If remote machine is eos. To write submission script and submit …</p>
+</div></blockquote>
+<p><strong>username: string</strong></p>
+<blockquote>
+<div><p>needed to check qstat on eos</p>
+</div></blockquote>
+<p><strong>CPUs</strong> : int</p>
+<blockquote class="last">
+<div><p>To reserve the write number of CPUs in the eos submission script</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.estimate_calculation_expense">
+<code class="descname">estimate_calculation_expense</code><span class="sig-paren">(</span><em>feature_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.estimate_calculation_expense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.estimate_calculation_expense" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the expense of the SIS+l0 calculations</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.estimate_feature_space">
+<code class="descname">estimate_feature_space</code><span class="sig-paren">(</span><em>n_comb</em>, <em>n_features</em>, <em>ops</em>, <em>rate=1.0</em>, <em>n_comb_start=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.estimate_feature_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.estimate_feature_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.flatten">
+<code class="descname">flatten</code><span class="sig-paren">(</span><em>list_in</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list_in collapsed into a one dimensional list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list_in</strong> : list/tuple of lists/tuples of …</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_OPs">
+<code class="descname">get_OPs</code><span class="sig-paren">(</span><em>OP_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_OPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_OPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conver OP_list to special format for SIS fortran input.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_arrays_of_top_descriptors">
+<code class="descname">get_arrays_of_top_descriptors</code><span class="sig-paren">(</span><em>top_indices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_arrays_of_top_descriptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_arrays_of_top_descriptors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_des">
+<code class="descname">get_des</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_des"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the descriptor strings read from the output DI.out.
+Remove characters as ‘:’ ‘si’, ‘sr’. Then convert feature strings for printing</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_indices_of_top_descriptors">
+<code class="descname">get_indices_of_top_descriptors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_indices_of_top_descriptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_indices_of_top_descriptors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_next_size">
+<code class="descname">get_next_size</code><span class="sig-paren">(</span><em>n_features</em>, <em>ops</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_next_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_next_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_results">
+<code class="descname">get_results</code><span class="sig-paren">(</span><em>ith_descriptor=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attribute to get results from the file system.</p>
+<dl class="docutils">
+<dt>ith_descriptor: int</dt>
+<dd>Return the ith best descriptor.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : list [max_dim] of dicts {‘D’, ‘coefficients’, ‘P_pred’}</p>
+<p><strong>out[model_dim-1][‘D’]</strong> : pandas data frame [n_sample, model_dim+1]</p>
+<blockquote>
+<div><p>Descriptor matrix with the columns being algebraic combinations of the input feature matrix.
+Column names are thus strings of the algebraic combinations of strings of inout feature_list.
+Last column is full of ones corresponding to the intercept</p>
+</div></blockquote>
+<p><strong>out[model_dim-1][‘coefficients’]</strong> : array [model_dim+1]</p>
+<blockquote>
+<div><p>Optimizing coefficients.</p>
+</div></blockquote>
+<p><strong>out[model_dim-1][‘P_pred’]</strong> : array [m_sample]</p>
+<blockquote class="last">
+<div><p>Fit : np.dot( np.array(D) , coefficients)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_strings_of_top_descriptors">
+<code class="descname">get_strings_of_top_descriptors</code><span class="sig-paren">(</span><em>top_indices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_strings_of_top_descriptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_strings_of_top_descriptors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_type">
+<code class="descname">get_type</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.get_value_from_dic">
+<code class="descname">get_value_from_dic</code><span class="sig-paren">(</span><em>dictionary</em>, <em>key_tree_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.get_value_from_dic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.get_value_from_dic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns value of the dict tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>dictionary: dict or ‘dict tree’ as control_ref</strong></p>
+<blockquote>
+<div><p>dict_tree is when key is tuple of keys and value is tuple of
+corresponding values.</p>
+</div></blockquote>
+<p><strong>key_tree_path: list of keys</strong></p>
+<blockquote>
+<div><p>Must be in the correct order beginning from the top of the tree/dict.</p>
+</div></blockquote>
+<p><strong># Examples</strong></p>
+<p><strong># ——–</strong></p>
+<p><strong># &gt;&gt;&gt; print get_value_from_dic[control_ref, [‘local_run’,’SIS_code_path’]]</strong></p>
+<p class="last"><strong># &lt;type ‘str’&gt;</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.manipulate_descriptor_string">
+<code class="descname">manipulate_descriptor_string</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.manipulate_descriptor_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.manipulate_descriptor_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.ncr">
+<code class="descname">ncr</code><span class="sig-paren">(</span><em>n</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.ncr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.ncr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binomial coefficient</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.read_results">
+<code class="descname">read_results</code><span class="sig-paren">(</span><em>iter_folder_name</em>, <em>dimension</em>, <em>task</em>, <em>tsizer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.read_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.read_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read results from DI.out.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>iter_folder</strong> : string</p>
+<blockquote>
+<div><p>Name of the iter_folder the outputs of the corresponding iteration of SIS+l1/l1l0,
+e.g. ‘iter01’, ‘iter02’.</p>
+</div></blockquote>
+<p><strong>dimension</strong> : integer</p>
+<blockquote>
+<div><p>DI.out provides for example in iteration three 1-3 dimensionl descriptors.
+Here choose which dimension should be returned.</p>
+</div></blockquote>
+<p><strong>task</strong> : integer &lt; 100</p>
+<blockquote>
+<div><p>For multi task, must be worked on.</p>
+</div></blockquote>
+<p><strong>tsizer</strong> : integer</p>
+<blockquote>
+<div><p>Number of samples, e.g. number ofrows of D or P.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>RMSE</strong> : float</p>
+<blockquote>
+<div><p>Root means squares error of model</p>
+</div></blockquote>
+<p><strong>Des</strong> : list of strings</p>
+<blockquote>
+<div><p>List of the descriptors</p>
+</div></blockquote>
+<p><strong>coef</strong> : array [model_dim+1]</p>
+<blockquote>
+<div><p>Coefficients including the intercept</p>
+</div></blockquote>
+<p><strong>D</strong> : array [n_sample, model_dim+1]</p>
+<blockquote class="last">
+<div><p>Matrix with columns being the selected features (descriptors) for the model.
+The last column is full of ones corresponding to the intercept</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.read_results_quali">
+<code class="descname">read_results_quali</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.read_results_quali"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.read_results_quali" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read results for 2D desriptor from calculations with qualitative run.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">results: list of lists</p>
+<blockquote class="last">
+<div><p>Each sublist characterizes separate model (if multiple model have same score/cost
+all of them are returned). Sublist contains [descriptor_strings, D, n_overlap]
+where D (D.shape = (n_smaple,2)) is array with descriptor vectors.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.return_OP_error">
+<code class="descname">return_OP_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.return_OP_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.return_OP_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error message if control[‘parameters’][‘OP_list’] has wrong form</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.set_SIS_parameters">
+<code class="descname">set_SIS_parameters</code><span class="sig-paren">(</span><em>desc_dim=2, subs_sis=100, rung=1, opset=['+', '-', '/', '^2', 'exp'], ptype='quanti', advanced_parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.set_SIS_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.set_SIS_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the SIS fortran code parameters</p>
+<p>If advanced parameters is passed, they will be used, otherwise default values will be used.
+Also max_dim, n_sis, n_comb, and OP_list can be overwritten by advanced_parameters if specified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.set_local_run">
+<code class="descname">set_local_run</code><span class="sig-paren">(</span><em>SIS_code_path='~/codes/SIS_code/'</em>, <em>mpi_command=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.set_local_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.set_local_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set and check local enviroment if local_run is used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.set_logger">
+<code class="descname">set_logger</code><span class="sig-paren">(</span><em>output_log_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.set_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.set_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set logger for outputs as errors, warnings, infos.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.set_main_settings">
+<code class="descname">set_main_settings</code><span class="sig-paren">(</span><em>P</em>, <em>D</em>, <em>feature_list</em>, <em>feature_unit_classes</em>, <em>local_path='/home/beaker/'</em>, <em>SIS_input_folder_name='input_folder'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.set_main_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.set_main_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set local environment and P, D and feature_list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.set_ssh_connection">
+<code class="descname">set_ssh_connection</code><span class="sig-paren">(</span><em>hostname=None</em>, <em>username=None</em>, <em>port=22</em>, <em>key_file=None</em>, <em>password=None</em>, <em>remote_path=None</em>, <em>SIS_code_path=None</em>, <em>eos=False</em>, <em>nodes=1</em>, <em>mpi_command=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.set_ssh_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.set_ssh_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set ssh connection. Set and check remote enviroment if remote_run is used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attribute which starts the calculations after init.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.string_descriptor">
+<code class="descname">string_descriptor</code><span class="sig-paren">(</span><em>RMSE</em>, <em>features</em>, <em>coefficients</em>, <em>target_unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.string_descriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.string_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make string for output in the terminal with model and its RMSE.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.write_P_D">
+<code class="descname">write_P_D</code><span class="sig-paren">(</span><em>P</em>, <em>D</em>, <em>feature_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.write_P_D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.write_P_D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes ‘train.dat’ as SIS fortran code input with P, D and feature strings</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.write_parameters">
+<code class="descname">write_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.write_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.write_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write parameters into the SIS fortran code input files. Convert the parameters into
+the special format before.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.models.sis.SIS.write_submission_script">
+<code class="descname">write_submission_script</code><span class="sig-paren">(</span><em>CPUs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/models/sis.html#SIS.write_submission_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.models.sis.SIS.write_submission_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>writes eos job submission script.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ai4materials.models.sis.converted_2_standard">
+<code class="descclassname">ai4materials.models.sis.</code><code class="descname">converted_2_standard</code><em class="property"> = {'disA': 'd(A)', 'disAB': 'd(AB)', 'disB': 'd(B)', 'eaA': 'EA(A)', 'eaB': 'EA(B)', 'ebA': 'E_b(A)', 'ebAB': 'E_b(AB)', 'ebB': 'E_b(B)', 'hlgapA': 'HL_gap(A)', 'hlgapAB': 'HL_gap(AB)', 'hlgapB': 'HL_gap(B)', 'homoA': 'E_HOMO(A)', 'homoB': 'E_HOMO(B)', 'ipA': 'IP(A)', 'ipB': 'IP(B)', 'lumoA': 'E_LUMO(A)', 'lumoB': 'E_LUMO(B)', 'periodA': 'period(A)', 'periodB': 'period(B)', 'rdA': 'r_d(A)', 'rdB': 'r_d(B)', 'rpA': 'r_p(A)', 'rpB': 'r_p(B)', 'rpiAB': 'r_pi(AB)', 'rsA': 'r_s(A)', 'rsB': 'r_s(B)', 'rsigmaAB': 'r_sigma(AB)', 'valA': 'Z_val(A)', 'valB': 'Z_val(B)', 'zA': 'Z(A)', 'zB': 'Z(B)'}</em><a class="headerlink" href="#ai4materials.models.sis.converted_2_standard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set logger for outputs as errors, warnings, infos.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.models.strided_pattern_matching.html" class="btn btn-neutral float-right" title="ai4materials.models.strided_pattern_matching module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.models.l1_l0.html" class="btn btn-neutral" title="ai4materials.models.l1_l0 module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

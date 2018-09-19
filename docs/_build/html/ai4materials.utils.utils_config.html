@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_config module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="up" title="Utils" href="ai4materials.utils.html"/>
+        <link rel="next" title="ai4materials.utils.utils_crystals module" href="ai4materials.utils.utils_crystals.html"/>
+        <link rel="prev" title="ai4materials.utils.utils_binaries module" href="ai4materials.utils.utils_binaries.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.utils.html">Utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals">Utils crystals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#pristine-and-defective-supercell-generation">Pristine and defective supercell generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_supercell">Example: pristine supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_vacancies">Example: defective supercell creation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ai4materials.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_binaries.html">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_crystals.html">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_vol_data.html">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.utils.html">Utils</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_config module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.utils.utils_config.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.utils.utils_config">
+<span id="ai4materials-utils-utils-config-module"></span><h1>ai4materials.utils.utils_config module<a class="headerlink" href="#module-ai4materials.utils.utils_config" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ai4materials.utils.utils_config.SSH">
+<em class="property">class </em><code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">SSH</code><span class="sig-paren">(</span><em>hostname='172.17.0.3'</em>, <em>username='tutorial'</em>, <em>port=22</em>, <em>key_file='/home/beaker/docker.openmpi/ssh/id_rsa.mpi'</em>, <em>password=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>SSH class to connect to the cluster to perform a calculation.</p>
+<p><em>Code author: Emre Ahmetcik &lt;<a class="reference external" href="mailto:ahmetcik&#37;&#52;&#48;fhi-berlin&#46;mpg&#46;de">ahmetcik<span>&#64;</span>fhi-berlin<span>&#46;</span>mpg<span>&#46;</span>de</a>&gt;</em></p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.command">
+<code class="descname">command</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.command" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.exists">
+<code class="descname">exists</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>remotefile</em>, <em>localfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.get_all">
+<code class="descname">get_all</code><span class="sig-paren">(</span><em>remotepath</em>, <em>localpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.get_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.isdir">
+<code class="descname">isdir</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.isdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.isdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.mkdir">
+<code class="descname">mkdir</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.mkdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.open_file">
+<code class="descname">open_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.open_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.open_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>localfile</em>, <em>remotefile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.put" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.put_all">
+<code class="descname">put_all</code><span class="sig-paren">(</span><em>localpath</em>, <em>remotepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.put_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.put_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.rename">
+<code class="descname">rename</code><span class="sig-paren">(</span><em>remotefile_1</em>, <em>remotefile_2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.rename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.rename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.rm">
+<code class="descname">rm</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.rm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.rm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.utils.utils_config.SSH.sftp_walk">
+<code class="descname">sftp_walk</code><span class="sig-paren">(</span><em>remotepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#SSH.sftp_walk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.SSH.sftp_walk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.copy_directory">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">copy_directory</code><span class="sig-paren">(</span><em>src</em>, <em>dest</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#copy_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.copy_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.get_data_filename">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">get_data_filename</code><span class="sig-paren">(</span><em>resource</em>, <em>package='ai4materials'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#get_data_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.get_data_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewrite of pkgutil.get_data() that return the file path.</p>
+<p>Taken from: <a class="reference external" href="https://stackoverflow.com/questions/5003755/how-to-use-pkgutils-get-data-with-csv-reader-in-python">https://stackoverflow.com/questions/5003755/how-to-use-pkgutils-get-data-with-csv-reader-in-python</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.get_metadata_info">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">get_metadata_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#get_metadata_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.get_metadata_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the descriptor metadata info</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.overwrite_configs">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">overwrite_configs</code><span class="sig-paren">(</span><em>configs</em>, <em>dataset_folder=None</em>, <em>desc_folder=None</em>, <em>main_folder=None</em>, <em>tmp_folder=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#overwrite_configs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.overwrite_configs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.read_nomad_metainfo">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">read_nomad_metainfo</code><span class="sig-paren">(</span><em>origin='ai4materials'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#read_nomad_metainfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.read_nomad_metainfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the atomic nomad meta info file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.set_configs">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">set_configs</code><span class="sig-paren">(</span><em>main_folder='./'</em>, <em>config_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#set_configs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.set_configs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_config.setup_logger">
+<code class="descclassname">ai4materials.utils.utils_config.</code><code class="descname">setup_logger</code><span class="sig-paren">(</span><em>configs=None</em>, <em>level=None</em>, <em>display_configs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_config.html#setup_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_config.setup_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given specified configurations, setup a logger.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.utils.utils_crystals.html" class="btn btn-neutral float-right" title="ai4materials.utils.utils_crystals module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.utils.utils_binaries.html" class="btn btn-neutral" title="ai4materials.utils.utils_binaries module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

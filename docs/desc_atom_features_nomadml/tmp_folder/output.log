@@ -1,0 +1,7 @@
+INFO: Metadata for descriptor AtomicFeatures: [u'atomic_features_table']
+INFO: Reading atomic collection from '/home/ziletti/nomad/nomad-lab-base/analysis-tools/atomic-data/tests/ExtendedBinaries_Dimers_Atoms_new.json'
+INFO: Ordering atomic features by 'atomic_mulliken_electronegativity' of the elements
+INFO: Metadata for descriptor Diffraction2D: [u'diffraction_2d_intensity', u'diffraction_2d_intensity_image', u'diffraction_2d_real_space', u'diffraction_2d_phase', u'diffraction_2d_coordinates']
+INFO: Scale factor: 2.86378246381
+INFO: Metadata for descriptor Diffraction3D: [u'diffraction_3d_sh_spectrum', u'diffraction_3d_sh_spectrum_image', u'diffraction_3d_real_space', u'diffraction_3d_phase', u'diffraction_3d_coordinates']
+INFO: Scale factor: 2.88996355149

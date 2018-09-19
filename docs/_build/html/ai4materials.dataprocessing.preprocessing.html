@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.dataprocessing.preprocessing module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="up" title="Data preprocessing" href="ai4materials.dataprocessing.html"/>
+        <link rel="next" title="Representing crystal structures: descriptors" href="ai4materials.descriptors.html"/>
+        <link rel="prev" title="Data preprocessing" href="ai4materials.dataprocessing.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.dataprocessing.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ai4materials.dataprocessing.preprocessing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.dataprocessing.html#module-ai4materials.dataprocessing">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.dataprocessing.html">Data preprocessing</a> &raquo;</li>
+        
+      <li>ai4materials.dataprocessing.preprocessing module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.dataprocessing.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.dataprocessing.preprocessing">
+<span id="ai4materials-dataprocessing-preprocessing-module"></span><h1>ai4materials.dataprocessing.preprocessing module<a class="headerlink" href="#module-ai4materials.dataprocessing.preprocessing" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ai4materials.dataprocessing.preprocessing.DataSet">
+<em class="property">class </em><code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">DataSet</code><span class="sig-paren">(</span><em>input_dims</em>, <em>images</em>, <em>labels</em>, <em>dtype=tf.float32</em>, <em>flatten_images=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#DataSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.DataSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Construct a DataSet.</p>
+<p>Adapted from the TensorFlow tutorial at <a class="reference external" href="https://www.tensorflow.org/versions/master/tutorials/index.html">https://www.tensorflow.org/versions/master/tutorials/index.html</a>
+Should be changed in favor of the Tensorflow dataset.</p>
+<p class="rubric">Attributes</p>
+<dl class="attribute">
+<dt id="ai4materials.dataprocessing.preprocessing.DataSet.epochs_completed">
+<code class="descname">epochs_completed</code><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.DataSet.epochs_completed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ai4materials.dataprocessing.preprocessing.DataSet.images">
+<code class="descname">images</code><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.DataSet.images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ai4materials.dataprocessing.preprocessing.DataSet.labels">
+<code class="descname">labels</code><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.DataSet.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ai4materials.dataprocessing.preprocessing.DataSet.num_examples">
+<code class="descname">num_examples</code><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.DataSet.num_examples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.dense_to_one_hot">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">dense_to_one_hot</code><span class="sig-paren">(</span><em>labels_dense</em>, <em>label_encoder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#dense_to_one_hot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.dense_to_one_hot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class labels from scalars to one-hot vectors.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>labels_dense: ndarray</dt>
+<dd>Array that needs to be one-hot encoded.</dd>
+<dt>label_encoder: <cite>sklearn.preprocessing.LabelEncoder</cite></dt>
+<dd>Label encoder object.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>ndarray</dt>
+<dd>One-hot encoded array of <cite>labels_dense</cite>.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.load_data_from_pickle">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">load_data_from_pickle</code><span class="sig-paren">(</span><em>path_to_x_train</em>, <em>path_to_x_test</em>, <em>path_to_y_train</em>, <em>path_to_y_test</em>, <em>path_to_x_val=None</em>, <em>path_to_y_val=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#load_data_from_pickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.load_data_from_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load data from pickles which contains numpy.ndarray objects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.load_dataset_from_file">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">load_dataset_from_file</code><span class="sig-paren">(</span><em>path_to_x</em>, <em>path_to_y</em>, <em>path_to_summary=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#load_dataset_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.load_dataset_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the feature matrix, the labels and the summary of a dataset.</p>
+<p>It reads the dataset written to file by <cite>ai4materials.preprocessing.prepare_dataset</cite>,</p>
+<p>and return the feature matrix, the labels and the summary file of a dataset.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>path_to_x: str</dt>
+<dd><p class="first">Path to the pickle file where the feature matrix was saved,</p>
+<p class="last">as returned by <cite>ai4materials.preprocessing.prepare_dataset</cite>.</p>
+</dd>
+<dt>path_to_y: str</dt>
+<dd><p class="first">Path to the pickle file where the feature labels were saved,</p>
+<p class="last">as returned by <cite>ai4materials.preprocessing.prepare_dataset</cite>.</p>
+</dd>
+<dt>path_to_summary: str, optional (default = <cite>None</cite>)</dt>
+<dd><p class="first">Path to the human readable (JSON) dataset summary file</p>
+<p class="last">as returned by <cite>ai4materials.preprocessing.prepare_dataset</cite>.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>numpy.ndarray, numpy.ndarray, dict</dt>
+<dd><p class="first">Return the feature matrix, the labels, and the human-readable summary file</p>
+<p class="last">which were saved with <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.datapreprocessing.preprocessing.prepare_dataset</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">modules <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.datapreprocessing.preprocessing.prepare_dataset</span></code>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.make_data_sets">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">make_data_sets</code><span class="sig-paren">(</span><em>x_train_val</em>, <em>y_train_val</em>, <em>x_test</em>, <em>y_test</em>, <em>split_train_val=False</em>, <em>stratified_splits=True</em>, <em>test_size=None</em>, <em>random_state=None</em>, <em>flatten_images=False</em>, <em>dtype=tf.float32</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#make_data_sets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.make_data_sets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given training and test data, make a dataset to be use for analysis.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>x_train_val: ndarray</dt>
+<dd>Feature matrix for training or training and validation (depending on the value of <cite>split_train_val</cite>)</dd>
+<dt>y_train_val: ndarray</dt>
+<dd>Array containing the labels for training or training and validation (depending on the value of <cite>split_train_val</cite>)</dd>
+<dt>x_test: ndarray</dt>
+<dd>Feature matrix for test</dd>
+<dt>y_test: ndarray</dt>
+<dd>Array containing the test labels</dd>
+<dt>split_train_val: bool, optional (default = <cite>False</cite>)</dt>
+<dd>If <cite>True</cite>, split the <cite>x_train_val</cite> and <cite>y_train_val</cite> in training and validation set.</dd>
+<dt>stratified_splits: bool, optional (default = <cite>True</cite>)</dt>
+<dd>If <cite>True</cite>, split the <cite>x_train_val</cite> and <cite>y_train_val</cite> using stratified sampling
+(<cite>sklearn.model_selection.StratifiedShuffleSplit</cite>).</dd>
+<dt>test_size: float, int, None, optional</dt>
+<dd>test_size as specified in <cite>sklearn.model_selection.StratifiedShuffleSplit</cite></dd>
+<dt>random_state: int, RandomState instance or None, optional (default=None)</dt>
+<dd>test_size as specified in <cite>sklearn.model_selection.StratifiedShuffleSplit</cite></dd>
+<dt>flatten_images: bool, optional (default = <cite>True</cite>)</dt>
+<dd>If <cite>True</cite>, flatten the <cite>x_train_val</cite> and <cite>x_test</cite> arrays.</dd>
+<dt>dtype: tf.type (default = <cite>tf.float32</cite>)</dt>
+<dd>dtype to pass to the dataset class.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>data_preprocessing.DataSet</cite></dt>
+<dd>Return a <cite>data_preprocessing.DataSet</cite> object. This will be change to adopt the standard Tensorflow dataset.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.merge_labels_data">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">merge_labels_data</code><span class="sig-paren">(</span><em>structure_list</em>, <em>target_list</em>, <em>desc_metadata</em>, <em>stratified_splits=True</em>, <em>one_hot=True</em>, <em>dtype=tf.float32</em>, <em>flatten_images=False</em>, <em>n_bins=None</em>, <em>target_name=None</em>, <em>target_categorical=None</em>, <em>disc_type=None</em>, <em>input_dims=None</em>, <em>split_train_val=False</em>, <em>test_size=None</em>, <em>random_state=None</em>, <em>new_labels=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#merge_labels_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.merge_labels_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a list of <cite>ase.Atoms</cite> and target list, merge them in a <cite>data_preprocessing.DataSet</cite> object.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structure_list: list of <cite>ase.Atoms</cite></dt>
+<dd>List of atomic structures.</dd>
+<dt>target_list: list of dict</dt>
+<dd><p class="first">List of dictionaries as returned by <cite>nomad-ml.wrappers.load_descriptor</cite>.</p>
+<p>Each element of this list is a dictionary with only one key (data),</p>
+<p>which has as value a list of dicts.</p>
+<p>For example:</p>
+<p>{u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}.</p>
+<p class="last">More keywords are possible.</p>
+</dd>
+<dt>desc_metadata: str</dt>
+<dd>Metadata of the descriptor to be extracted from <cite>ase.Atoms.info</cite> dictionary.</dd>
+<dt>stratified_splits: bool, optional (default = <cite>True</cite>)</dt>
+<dd>If <cite>True</cite>, split the <cite>x_train_val</cite> and <cite>y_train_val</cite> using stratified sampling
+(<cite>sklearn.model_selection.StratifiedShuffleSplit</cite>).</dd>
+<dt>test_size: float, int, None, optional</dt>
+<dd>test_size as specified in <cite>sklearn.model_selection.StratifiedShuffleSplit</cite></dd>
+<dt>random_state: int, RandomState instance or None, optional (default=None)</dt>
+<dd>test_size as specified in <cite>sklearn.model_selection.StratifiedShuffleSplit</cite></dd>
+<dt>flatten_images: bool, optional (default = <cite>True</cite>)</dt>
+<dd>If <cite>True</cite>, flatten the <cite>x_train_val</cite> and <cite>x_test</cite> arrays.</dd>
+<dt>dtype: tf.type (default = <cite>tf.float32</cite>)</dt>
+<dd>dtype to pass to the dataset class.</dd>
+<dt>target_name: str</dt>
+<dd>Name of the target to be extracted from <cite>target_list</cite> and saved in the label pickle.</dd>
+<dt>target_categorical: bool, optional (default = <cite>True</cite>)</dt>
+<dd><p class="first">If <cite>True</cite>, the target to extract is assumed to be categorical, i.e. for classification.</p>
+<p>If <cite>False</cite>, the target to extract is assumed to be continuous, i.e. for regression.</p>
+<p class="last">If <cite>True</cite>, the labels are discretized according to <cite>disc_type</cite>.</p>
+</dd>
+<dt>disc_type: { ‘uniform’, ‘quantiles’}</dt>
+<dd>Type of discretization used if target is categorical. In both case, <cite>n_bins</cite> are used.
+See also <a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_labels" title="ai4materials.utils.utils_data_retrieval.extract_labels"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.extract_labels</span></code></a>.</dd>
+<dt>n_bins: int, optional (default=100)</dt>
+<dd>Number of bins used in the discretization.</dd>
+<dt>one_hot: bool, optional (default = <cite>True</cite>)</dt>
+<dd><p class="first">Dictionary containing configuration information such as folders for input and output</p>
+<p>(e.g. <cite>desc_folder</cite>, <cite>tmp_folder</cite>), logging level, and metadata location.</p>
+<p class="last">See also <cite>ai4materials.dataprocessing.preprocessing.dense_to_one_hot</cite>.</p>
+</dd>
+<dt>split_train_val: bool, optional (default = <cite>False</cite>)</dt>
+<dd>If <cite>True</cite>, split the <cite>x_train_val</cite> and <cite>y_train_val</cite> in training and validation set.</dd>
+<dt>new_labels: dict, optional (default = <cite>None</cite>)</dt>
+<dd><p class="first">It allows to substitute the label names that are in <cite>target_list</cite>.</p>
+<p>For example:</p>
+<p>new_labels = {“hcp”: [“194”], “fcc”: [“225”], “diam”: [“227”], “bcc”: [“229”]}</p>
+<p>will substitute each occurrence of “194” with “hcp” in the label list which is extracted.</p>
+<p class="last">See also <a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_labels" title="ai4materials.utils.utils_data_retrieval.extract_labels"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.extract_labels</span></code></a>.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>data_preprocessing.DataSet</cite>, int, <cite>sklearn.preprocessing.LabelEncoder</cite>, numpy.ndarray, numpy.ndarray</dt>
+<dd><p class="first">Return the dataset, number of classes, a label encoder object,</p>
+<p>labels as integers (as encoder in the label encoder,</p>
+<p class="last">and labels as text (the original labels, not encoded).</p>
+</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.prepare_dataset">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">prepare_dataset</code><span class="sig-paren">(</span><em>structure_list</em>, <em>target_list</em>, <em>desc_metadata</em>, <em>dataset_name</em>, <em>target_name</em>, <em>input_dims</em>, <em>configs</em>, <em>target_categorical=True</em>, <em>dataset_folder=None</em>, <em>desc_folder=None</em>, <em>main_folder=None</em>, <em>tmp_folder=None</em>, <em>disc_type=None</em>, <em>n_bins=100</em>, <em>notes=None</em>, <em>new_labels=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#prepare_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.prepare_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a list of <cite>ase.Atoms</cite>, a <cite>target_list</cite>, and a <cite>target_name</cite> creates a dataset and writes it to file.</p>
+<p>Information regarding the dataset are saved in a summary file (ending with “_summary.json”). This includes for
+example creation date, path to the pickles containing the feature matrix (ending with “_x.pkl”) and the labels
+(ending with “_y.pkl”), <cite>dataset_name</cite>, <cite>target_name</cite>, <cite>text_labels</cite>, and user-defined notes on the
+dataset.</p>
+<p>The dataset written to file by <cite>ai4materials.preprocessing.prepare_dataset</cite> can be later loaded by
+<cite>ai4materials.preprocessing.load_dataset_from_file</cite>.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structure_list: list of <cite>ase.Atoms</cite></dt>
+<dd>List of atomic structures.</dd>
+<dt>target_list: list of dict</dt>
+<dd><p class="first">List of dictionaries as returned by <cite>nomad-ml.wrappers.load_descriptor</cite>.</p>
+<p>Each element of this list is a dictionary with only one key (data),</p>
+<p>which has as value a list of dicts.</p>
+<p>For example:</p>
+<p>{u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}.</p>
+<p class="last">More keywords are possible.</p>
+</dd>
+<dt>desc_metadata: str</dt>
+<dd>Metadata of the descriptor to be extracted from <cite>ase.Atoms.info</cite> dictionary.</dd>
+<dt>dataset_name: str</dt>
+<dd>Name to give to the dataset.</dd>
+<dt>target_name: str</dt>
+<dd>Name of the target to be extracted from <cite>target_list</cite> and saved in the label pickle.</dd>
+<dt>target_categorical: bool, optional (default = <cite>True</cite>)</dt>
+<dd><p class="first">If <cite>True</cite>, the target to extract is assumed to be categorical, i.e. for classification.</p>
+<p>If <cite>False</cite>, the target to extract is assumed to be continuous, i.e. for regression.</p>
+<p class="last">If <cite>True</cite>, the labels are discretized according to <cite>disc_type</cite>.</p>
+</dd>
+<dt>disc_type: { ‘uniform’, ‘quantiles’}</dt>
+<dd>Type of discretization used if target is categorical. In both case, <cite>n_bins</cite> are used.
+See also <a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_labels" title="ai4materials.utils.utils_data_retrieval.extract_labels"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.extract_labels</span></code></a>.</dd>
+<dt>n_bins: int, optional (default=100)</dt>
+<dd>Number of bins used in the discretization.</dd>
+<dt>configs: dict</dt>
+<dd><p class="first">Dictionary containing configuration information such as folders for input and output</p>
+<p>(e.g. <cite>desc_folder</cite>, <cite>tmp_folder</cite>), logging level, and metadata location.</p>
+<p class="last">See also <a class="reference internal" href="ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.set_configs" title="ai4materials.utils.utils_config.set_configs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_config.set_configs</span></code></a>.</p>
+</dd>
+<dt>dataset_folder: str, optional (default = <cite>configs[‘io’][‘dataset_folder’]</cite>)</dt>
+<dd><p class="first">Path to the folder where the dataset (two pickles with feature matrix and labels,</p>
+<p class="last">plus a summary file in human-readable format) is saved.</p>
+</dd>
+<dt>desc_folder: str, optional (default = <cite>configs[‘io’][‘desc_folder’]</cite>)</dt>
+<dd>Path to the descriptor folder.</dd>
+<dt>tmp_folder: str, optional (default = <cite>configs[‘io’][‘tmp_folder’]</cite>)</dt>
+<dd>Path to the tmp folder.</dd>
+<dt>main_folder: str, optional (default = <cite>configs[‘io’][‘main_folder’]</cite>)</dt>
+<dd>Path to the main_folder.</dd>
+<dt>notes: str</dt>
+<dd>Notes/comments regarding the dataset that will be written in the dataset summary file.</dd>
+<dt>new_labels: dict, optional (default = <cite>None</cite>)</dt>
+<dd><p class="first">It allows to substitute the label names that are in <cite>target_list</cite>.</p>
+<p>For example:</p>
+<p>new_labels = {“hcp”: [“194”], “fcc”: [“225”], “diam”: [“227”], “bcc”: [“229”]}</p>
+<p>will substitute each occurrence of “194” with “hcp” in the label list which is extracted.</p>
+<p class="last">See also <a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_labels" title="ai4materials.utils.utils_data_retrieval.extract_labels"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.extract_labels</span></code></a>.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>str, str, str</dt>
+<dd><p class="first">Return the path to the feature matrix pickle (numpy.ndarray), the label pickle (numpy.ndarray),</p>
+<p>and the human-readable summary file.</p>
+<p class="last">This can be read by <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.preprocessing.load_dataset_from_file</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p>modules <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.preprocessing.load_dataset_from_file</span></code>,</p>
+<p class="last"><a class="reference internal" href="ai4materials.wrappers.html#ai4materials.wrappers.load_descriptor" title="ai4materials.wrappers.load_descriptor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.wrappers.load_descriptor</span></code></a></p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.print_size_np_array">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">print_size_np_array</code><span class="sig-paren">(</span><em>array</em>, <em>array_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#print_size_np_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.print_size_np_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print shape and total Mb consumed by the elements of the array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.dataprocessing.preprocessing.standardize_matrix">
+<code class="descclassname">ai4materials.dataprocessing.preprocessing.</code><code class="descname">standardize_matrix</code><span class="sig-paren">(</span><em>matrix</em>, <em>standardize='mean-variance'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/dataprocessing/preprocessing.html#standardize_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.dataprocessing.preprocessing.standardize_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standardize matrix.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.descriptors.html" class="btn btn-neutral float-right" title="Representing crystal structures: descriptors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.dataprocessing.html" class="btn btn-neutral" title="Data preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

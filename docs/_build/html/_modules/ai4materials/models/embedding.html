@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.models.embedding &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.models.embedding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.models.embedding</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;23/09/18&quot;</span>
+
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">csr_matrix</span>
+<span class="kn">import</span> <span class="nn">sklearn.manifold</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">decomposition</span>
+<span class="kn">from</span> <span class="nn">ai4materials.dataprocessing.preprocessing</span> <span class="k">import</span> <span class="n">standardize_matrix</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="design_matrix_to_embedding"><a class="viewcode-back" href="../../../ai4materials.models.embedding.html#ai4materials.models.embedding.design_matrix_to_embedding">[docs]</a><span class="k">def</span> <span class="nf">design_matrix_to_embedding</span><span class="p">(</span><span class="n">design_matrix</span><span class="p">,</span> <span class="n">embed_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">embed_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">embed_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="s1">&#39;mean-variance&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From a high-dimensional design matrix, reduce the dimensionality via embedding methods.</span>
+
+<span class="sd">    The user can decide to use a pre-defined selection of embedding methods (via ``embed_method``), or to pass an object</span>
+<span class="sd">    from the scikit-learn library that can perform the embedding (via ``embed_class``).</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    design_matrix: ``numpy.ndarray``</span>
+<span class="sd">        Design matrix. Each row represents an individual object, with the successive columns corresponding to</span>
+<span class="sd">        the variables and their specific values for that object.</span>
+
+<span class="sd">    embed_method: str, optional, default=`None`, { &#39;tsne&#39;, &#39;tsne_pca&#39;, &#39;tsne_approx&#39;, &#39;spect_embed&#39;, &#39;mds&#39;, &#39;isomap&#39;, &#39;hessian&#39;, &#39;pca&#39;, &#39;ipca&#39;, &#39;kpca&#39;, &#39;svd&#39;}</span>
+<span class="sd">        Method chosen for the embedding among the pre-selected ones. If `None`, then ``embed_class`` will be used.</span>
+
+<span class="sd">    embed_class: object</span>
+<span class="sd">        This is the object that contains the method to calculate the embedding. It must have a `fit_transform`.</span>
+<span class="sd">        Example of a valid object class is: ``embed_class`` = `sklearn.manifold.TSNE()`</span>
+
+<span class="sd">    embed_params: dict, optional, default=`None`</span>
+<span class="sd">        Dictionary containing user-defined parameters to be passed to the objected performing the embedding.</span>
+<span class="sd">        If the parameters are already present, they are going to be overwritten.</span>
+
+<span class="sd">    standardize: str, optional, default=&#39;mean-variance&#39;, { `None`, &#39;mean-variance&#39;, &#39;mean&#39;, &#39;variance&#39;}</span>
+<span class="sd">        Standardize the data or not. See :py:mod:`ai4materials.dataprocessing.preprocessing.standardize_matrix`.</span>
+
+<span class="sd">    Return:</span>
+
+<span class="sd">    numpy.ndarray, shape [n_samples, 2]</span>
+<span class="sd">        Returns an array with the embedding coordinates; one sample for each row, and two columns corresponding to the</span>
+<span class="sd">        coordinates.</span>
+
+<span class="sd">    object</span>
+<span class="sd">        Object which contains the actual embedding method. It could be, for example, an object from sklearn.manifold</span>
+<span class="sd">        (e.g. TSNE, SpectralEmbedding, MDS) or from sklearn.decomposition (e.g. PCA, TruncatedSVD).</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+    <span class="n">params_tsne</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="s1">&#39;init&#39;</span><span class="p">:</span> <span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">params_tsne_pca</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="s1">&#39;init&#39;</span><span class="p">:</span> <span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">params_tsne_approx</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;barnes_hut&#39;</span><span class="p">,</span> <span class="s1">&#39;init&#39;</span><span class="p">:</span> <span class="s1">&#39;pac&#39;</span><span class="p">,</span> <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+    <span class="n">params_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                       <span class="n">tsne</span><span class="o">=</span><span class="n">params_tsne</span><span class="p">,</span> <span class="n">tsne_pca</span><span class="o">=</span><span class="n">params_tsne_pca</span><span class="p">,</span> <span class="n">tsne_approx</span><span class="o">=</span><span class="n">params_tsne_approx</span><span class="p">)</span>
+
+    <span class="n">embed_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tsne</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">TSNE</span><span class="p">(),</span>
+                      <span class="n">tsne_pca</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">TSNE</span><span class="p">(),</span>
+                      <span class="n">tsne_approx</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">TSNE</span><span class="p">(),</span>
+                      <span class="n">spect_embed</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">SpectralEmbedding</span><span class="p">(),</span>
+                      <span class="n">mds</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">MDS</span><span class="p">(),</span>
+                      <span class="n">isomap</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">Isomap</span><span class="p">(),</span>
+                      <span class="n">hessian</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">manifold</span><span class="o">.</span><span class="n">LocallyLinearEmbedding</span><span class="p">(),</span>
+                      <span class="n">pca</span><span class="o">=</span><span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">(),</span>
+                      <span class="n">ipca</span><span class="o">=</span><span class="n">decomposition</span><span class="o">.</span><span class="n">IncrementalPCA</span><span class="p">(),</span>
+                      <span class="n">kpca</span><span class="o">=</span><span class="n">decomposition</span><span class="o">.</span><span class="n">KernelPCA</span><span class="p">(),</span>
+                      <span class="n">svd</span><span class="o">=</span><span class="n">decomposition</span><span class="o">.</span><span class="n">TruncatedSVD</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">embed_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">embed_method</span> <span class="ow">in</span> <span class="n">embed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">embed_method</span> <span class="ow">in</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">params_dict</span><span class="p">[</span><span class="n">embed_method</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">embed_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">embed_params</span><span class="p">)</span>
+
+            <span class="n">embedding</span> <span class="o">=</span> <span class="n">embed_dict</span><span class="p">[</span><span class="n">embed_method</span><span class="p">]</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not find the chosen embedding method in the pre-defined embedding methods&quot;</span>
+                            <span class="s2">&quot;Chosen embedding methods: </span><span class="si">{}</span><span class="s2">. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="s2">&quot;Pre-defined embedding methods: </span><span class="si">{}</span><span class="s2">. </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">embed_method</span><span class="p">,</span> <span class="n">embed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">elif</span> <span class="n">embed_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">embed_class</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please either specified a pre-selected embedding method, or pass an embedding object.&quot;</span><span class="p">)</span>
+
+    <span class="n">design_matrix</span><span class="p">,</span> <span class="n">scaler</span> <span class="o">=</span> <span class="n">standardize_matrix</span><span class="p">(</span><span class="n">design_matrix</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="n">standardize</span><span class="p">)</span>
+    <span class="c1"># float32 can fail because of rounding errors</span>
+    <span class="n">design_matrix</span> <span class="o">=</span> <span class="n">design_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Embedding method: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">embedding</span><span class="p">))</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">design_matrix</span><span class="p">)</span>
+
+    <span class="c1"># special output</span>
+    <span class="k">if</span> <span class="n">embed_method</span> <span class="o">==</span> <span class="s1">&#39;pca&#39;</span><span class="p">:</span>
+        <span class="n">tot_exp_var</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Explained variance by each component (%):</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">explained_variance_ratio_</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Total variance explained (%): </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tot_exp_var</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Eigenvectors: &#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Eigenvector 1: </span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Eigenvector 2: </span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">embedding</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Time to compute 2d-embedding: </span><span class="si">{0:.2f}</span><span class="s2"> sec&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">embedding</span></div>
+
+
+<div class="viewcode-block" id="save_sparse_csr"><a class="viewcode-back" href="../../../ai4materials.models.embedding.html#ai4materials.models.embedding.save_sparse_csr">[docs]</a><span class="k">def</span> <span class="nf">save_sparse_csr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">array</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">array</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">indptr</span><span class="o">=</span><span class="n">array</span><span class="o">.</span><span class="n">indptr</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_sparse_csr"><a class="viewcode-back" href="../../../ai4materials.models.embedding.html#ai4materials.models.embedding.load_sparse_csr">[docs]</a><span class="k">def</span> <span class="nf">load_sparse_csr</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">loader</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="n">loader</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">],</span> <span class="n">loader</span><span class="p">[</span><span class="s1">&#39;indptr&#39;</span><span class="p">]),</span> <span class="n">shape</span><span class="o">=</span><span class="n">loader</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">])</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

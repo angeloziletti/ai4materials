@@ -1,0 +1,1060 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_crystals module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ai4materials.utils.utils_data_retrieval module" href="ai4materials.utils.utils_data_retrieval.html" />
+    <link rel="prev" title="ai4materials.utils.utils_config module" href="ai4materials.utils.utils_config.html" />
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.utils.html">Utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals">Utils crystals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#pristine-and-defective-supercell-generation">Pristine and defective supercell generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_supercell">Example: pristine supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_vacancies">Example: defective supercell creation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ai4materials.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_binaries.html">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_config.html">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_vol_data.html">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.utils.html">Utils</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_crystals module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.utils.utils_crystals.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.utils.utils_crystals">
+<span id="ai4materials-utils-utils-crystals-module"></span><h1>ai4materials.utils.utils_crystals module<a class="headerlink" href="#module-ai4materials.utils.utils_crystals" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.convert_energy_substance">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">convert_energy_substance</code><span class="sig-paren">(</span><em>unit</em>, <em>value</em>, <em>energy_unit=None</em>, <em>length_unit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#convert_energy_substance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.convert_energy_substance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert energy to energy/substance and viceversa.</p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.create_supercell">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">create_supercell</code><span class="sig-paren">(</span><em>atoms</em>, <em>create_replicas_by='nb_atoms'</em>, <em>min_nb_atoms=None</em>, <em>target_nb_atoms=None</em>, <em>max_diff_nb_atoms=100</em>, <em>random_rotation_before=False</em>, <em>random_rotation=False</em>, <em>cell_type=None</em>, <em>optimal_supercell=False</em>, <em>radius=None</em>, <em>target_replicas=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#create_supercell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.create_supercell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a supercell specifying using a specified method.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>create_replicas_by: { ‘nb_atoms’, ‘radius’, ‘user-defined’}</dt>
+<dd><p class="first">Method to calculate the replicas.</p>
+<p><cite>create_replicas_by</cite> = ‘nb_atoms’ creates a supercell ‘naively’ as cubic as possible with the number of atoms
+as close as possible to <cite>target_nb_atoms</cite>.</p>
+<p><cite>create_replicas_by</cite> = ‘radius’ creates a supercell ‘naively’ as cubic as possible with the number of atoms
+with the given radius.</p>
+<p class="last"><cite>create_replicas_by</cite> = ‘user-defined’ creates a supercell using the user-defined <cite>target_replicas</cite>
+integer of tuple to replicate the cell. See <cite>target_replicas</cite> below.</p>
+</dd>
+<dt>min_nb_atoms: int</dt>
+<dd>Minimum number of atoms for the replicated structure.
+If the resulting structure has less atoms, an error will be raised.</dd>
+<dt>target_nb_atoms: int, optional</dt>
+<dd>Target number of atoms in the supercell created. The actual number of atoms might differ from it.
+See also <cite>max_diff_nb_atoms</cite> below.
+Used only if <a href="#id1"><span class="problematic" id="id2">`</span></a>create_replicas_by`=’nb_atoms’.</dd>
+<dt>max_diff_nb_atoms: int, optional</dt>
+<dd>Maximum (absolute) difference between the <cite>target_nb_atoms</cite> and the actual number of atoms present
+in the supercell. If the difference is larger, an error will be raised.
+Used only if <a href="#id3"><span class="problematic" id="id4">`</span></a>create_replicas_by`=’nb_atoms’.</dd>
+<dt>radius: float, optional</dt>
+<dd>Used only if <a href="#id5"><span class="problematic" id="id6">`</span></a>create_replicas_by`=’radius’.</dd>
+<dt>target_replicas: int or list/tuple of int, optional</dt>
+<dd><p class="first">Number of replicas of the created supercell.</p>
+<p><cite>target_replicas</cite> = 3 replicates the cell 3 times along the 3 directions</p>
+<p class="last"><cite>target_replicas</cite> = (4,2,2) replicates the cell 4 times along the 1st direction, and 2 times along the other
+two directions.
+Used only if <a href="#id7"><span class="problematic" id="id8">`</span></a>create_replicas_by`=’user-defined’.</p>
+</dd>
+<dt>random_rotation_before: bool, optional (default = <cite>False</cite>)</dt>
+<dd>Randomly rotate the structure sequentially along the x, y, and z axis by random angles BEFORE the
+supercell is created.
+Both the atomic positions and the cell are rotated so that periodic boundary conditions are respected.</dd>
+<dt>random_rotation: bool, optional (default = <cite>False</cite>)</dt>
+<dd><p class="first">Randomly rotate the structure sequentially along the x, y, and z axis AFTER the supercell is created.</p>
+<p class="last">Both the atomic positions and the cell are rotated so that periodic boundary conditions are respected.</p>
+</dd>
+<dt>cell_type: { ‘standard’, ‘standard_no_symmetries’, ‘primitive’, None}</dt>
+<dd><p class="first">Starting from the input cell, creates a standard cell according to same standards
+before the supercell generation.</p>
+<p><cite>cell_type</cite> = ‘standard’ creates a standard conventional cell.
+See <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell" title="ai4materials.utils.utils_crystals.get_conventional_std_cell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_conventional_std_cell</span></code></a>.</p>
+<p><cite>cell_type</cite> = ‘standard_no_symmetries’ creates a standard conventional cell without using symmetries.
+See <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym" title="ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym</span></code></a>.</p>
+<p><cite>cell_type</cite> = ‘primitive’ creates a standard primitive cell.
+See <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_primitive_std_cell" title="ai4materials.utils.utils_crystals.get_primitive_std_cell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_primitive_std_cell</span></code></a>.</p>
+<p class="last"><cite>cell_type</cite> = <cite>None</cite> does not creates any cell.
+It simply uses the unit cell as input for the supercell generation.</p>
+</dd>
+<dt>optimal_supercell: bool, optional (default = <cite>False</cite>)</dt>
+<dd><p class="first">Create a supercell with is ‘optimally’ as close as possible to a simple cubic supercell. It can be slow.</p>
+<p class="last">For more information, please visit:
+<a class="reference external" href="https://wiki.fysik.dtu.dk/ase/tutorials/defects/defects.html">https://wiki.fysik.dtu.dk/ase/tutorials/defects/defects.html</a>
+and the associated publication.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite></dt>
+<dd>Atomic structure of the supercell.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Details on the supercell generation can be found in:
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.nb_of_replicas" title="ai4materials.utils.utils_crystals.nb_of_replicas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.nb_of_replicas</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.create_vacancies">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">create_vacancies</code><span class="sig-paren">(</span><em>atoms</em>, <em>target_vacancy_ratio</em>, <em>max_rel_error=0.25</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#create_vacancies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.create_vacancies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a supercell and then create vacancies in the constructed supercell.</p>
+<p>It is implicitly without replacement because the atoms are deleted
+at each iteration. This is why, for example, the implementation is different w.r.t.
+substitute atoms.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>target_vacancy_ratio: float</dt>
+<dd><p class="first">Target percentage of vacancies. It must be a number between 0.0 (0.0 excluded)
+and 1.0 (all atoms removed). For example, 0.2 will lead to the removal of 20% of the atoms.</p>
+<p class="last">The actual number of vacancies might differ from it, especially for
+small supercell and/or small percentage of vacancies. See also <cite>max_rel_error</cite> below.</p>
+</dd>
+<dt>max_rel_error: float, optional (default = 0.25)</dt>
+<dd>Relative (absolute) difference between the <cite>target_vacancy_ratio</cite> and the actual percentage of atoms
+created in the supercell. If the difference is larger, a warning will be raised.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite></dt>
+<dd>Supercell with vacancies.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The supercell is generated by:
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.filter_ase_list_by_label">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">filter_ase_list_by_label</code><span class="sig-paren">(</span><em>ase_list</em>, <em>folder_name</em>, <em>cell_type='standard_no_symmetries'</em>, <em>main_folder=None</em>, <em>filter_by=None</em>, <em>accepted_labels=None</em>, <em>write_to_file=False</em>, <em>symprec=None</em>, <em>all_symprec_consistent=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#filter_ase_list_by_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.filter_ase_list_by_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the ase_list for the descriptor according to the spgroup value.</p>
+<p>Example:
+filter_by=[‘lattice_type’, ‘spacegroup_symbol’],
+filter_by=[‘spacegroup_number’],</p>
+<p>filter_by=[‘lattice_type’],
+cell_type=cell_type,
+accepted_labels=accepted_label,
+accepted_labels=[[‘cubic’], [‘Fd-3m’, ‘Fm-3m’, ‘Im-3m’, ‘Pm-3m’]],
+[‘I-43m’, ‘P2_13’, ‘Pa3’]</p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.format_e">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">format_e</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#format_e"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.format_e" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a float in a string to reduce the number of decimal places shown.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_boxes_from_xyz">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_boxes_from_xyz</code><span class="sig-paren">(</span><em>filename</em>, <em>sliding_volume</em>, <em>stride_size</em>, <em>adapt=True</em>, <em>element_agnostic=False</em>, <em>give_atom_density=False</em>, <em>plot_atom_density=False</em>, <em>padding_ratio=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_boxes_from_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_boxes_from_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine boxes for strided pattern analysis.</p>
+<p>Parameters:</p>
+<p>filename: string 
+Name of xyz input file specifying the polycrystal.</p>
+<p>sliding_volume: 1D list
+3 floats specifying sliding volume.</p>
+<p>stride_size: 1D list
+3 floats specifying stride size in x,y and z direction.</p>
+<p>adapt: bool,optional (default=True)
+If true, adapt minimum and possibly stride size such that distortions in heatmaps are reduced.</p>
+<p>element_agnostic: bool, optional (default=False)
+If true, consider all atoms to be of the same chemical species and return boxes containing only ‘Fe’ atoms.</p>
+<p>give_atom_density: bool, optional (default=False)
+If true, atom density is returned.</p>
+<p>plot_atom_density: bool, optional (default=False)
+If true, density of number of atoms is plotted as 2D heatmap for each z.</p>
+<p>Returns:</p>
+<p>Depending on the parameter give_atom_density, return will be 3D list of xyz boxes plus 3D list of atomic number
+density or only the 3D list of xyz boxes.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_conventional_std_cell">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_conventional_std_cell</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_conventional_std_cell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an ASE atoms object, return the ASE atoms object in the conventional standard cell.</p>
+<p>It uses symmetries to find the conventional standard cell.
+In particular, it gives a structure with a conventional cell according to the standard defined in
+W. Setyawan, and S. Curtarolo, Comput. Mater. Sci.49(2), 299-312 (2010).</p>
+<p>This is simply a wrapper around the pymatgen implementation:
+<a class="reference external" href="http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html">http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html</a></p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite> object</dt>
+<dd>Atomic structure.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite> object</dt>
+<dd>Return the structure in a conventional cell.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">To create a standard cell that it is independent from symmetry operations use
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym" title="ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym</span></code></a></p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_conventional_std_cell_no_sym</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_conventional_std_cell_no_sym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an ASE atoms object, return the ASE atoms object in the conventional standard cell.</p>
+<p>It does NOT use symmetries to obtain the standard cell.</p>
+<p>Gives a structure with a conventional cell according to the standard defined for TRICLINIC cells in
+W. Setyawan, and S. Curtarolo, Comput. Mater. Sci.49(2), 299-312 (2010).</p>
+<p>The triclinic convention is employed to make sure that no information on the symmetry of the lattice
+is used in the generation of the standard cell.</p>
+<p>The code is taken from the triclinic cell case in pymatgen:
+<a class="reference external" href="http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html">http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html</a></p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite> object</dt>
+<dd>Atomic structure.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite> object</dt>
+<dd>Return the structure in a conventional cell (the convention used is the one for triclinic cells)</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">To create a standard cell that exploits symmetry information use
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell" title="ai4materials.utils.utils_crystals.get_conventional_std_cell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_conventional_std_cell</span></code></a></p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_lattice_type">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_lattice_type</code><span class="sig-paren">(</span><em>structure</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_lattice_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_lattice_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get lattice_type from a list of NOMAD structure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_min_distance">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_min_distance</code><span class="sig-paren">(</span><em>atoms</em>, <em>nb_splits=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_min_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_min_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the smallest distance between atoms in a given structure.</p>
+<p>Here we use the scipy implementation. Other implementations could also be used.
+For example: sklearn.metrics.pairwise.pairwise_distances or ase atoms.get_all_distances().
+Calculating all pairwise distances scales as N^2, where N is the number of atoms in the structure.
+This is clearly memory intensive, so we need to split the atoms in batches if we run out of memory.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>nb_splits: int, optional, (default = 100)</dt>
+<dd>Number of splits in which to divide the distance matrix in order to calculate the smallest
+distance between atoms in the atomic structure.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>float or None</dt>
+<dd>Smallest distance between the atoms in the structures. It returns <cite>None</cite> if the shortest distance cannot
+be calculated, for example because there are no atoms in the structure.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#ai4materials.utils.utils_crystals.get_nn_distance" title="ai4materials.utils.utils_crystals.get_nn_distance"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_nn_distance</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_nn_distance">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_nn_distance</code><span class="sig-paren">(</span><em>atoms</em>, <em>distribution='quantile_nn'</em>, <em>cutoff=4.0</em>, <em>min_nb_nn=5</em>, <em>pbc=True</em>, <em>plot_histogram=False</em>, <em>bins=100</em>, <em>constrain_nn_distances=True</em>, <em>nn_distances_cutoff=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_nn_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_nn_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate an “averaged” (actual average or quantile-based) nearest neighbors distance.
+This is a measure of the characteristic structural lengthscale of the system.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>distribution: { ‘avg_nn’, ‘quantile_nn’}</dt>
+<dd><p class="first">Type of statistical function to be used in the lengthscale determination.</p>
+<ul class="simple">
+<li>‘avg_nn’ simply averages the nearest neighbor distances.</li>
+<li>‘quantile_nn’ used a quantile-based approach to be more robust w.r.t. outliers.</li>
+</ul>
+<p class="last">These two choices are essentially equivalent for pristine structures, while the ‘quantile_nn’
+is more robust when defects are included.</p>
+</dd>
+<dt>cutoff: float, optional, (default = 4.0)</dt>
+<dd>Cutoff (in Angstrom) for the radius within which atoms are considered neighbor.
+This neighbors will then be used to identify the nearest atom.</dd>
+<dt>min_nb_nn: int, optional, (default = 5)</dt>
+<dd>Minimum number of neighbors for a given atom to be considered.
+If an atom has less than <cite>min_nb_nn</cite> it will not be used in the determination of the system lengthscale.</dd>
+<dt>pbc: bool, optional, (default = True)</dt>
+<dd><cite>True</cite> if periodic boundary conditions are used.</dd>
+<dt>plot_histogram: bool, optional, (default = True)</dt>
+<dd>If <cite>True</cite>, plot the histogram on the neighbor distances. It can be useful for debugging, especially
+for heavily defective structures, when the distribution changes substantially (w.r.t. the
+pristine crystal structure) due to disorder.</dd>
+<dt>bins: int, optional, (default = 100)</dt>
+<dd>Number of bins used in the histograms of the nearest neighbor distance function.</dd>
+<dt>constrain_nn_distances: bool, optional, (default = True)</dt>
+<dd>If <cite>True</cite>, nearest neighbor distances below the cutoff specified by the additional argument
+nn_distances_cutoff will be ignored.</dd>
+<dt>nn_distances_cutoff: float, optional, (default = 0.9)</dt>
+<dd>Cutoff for nearest neighbor distances.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>float or None</dt>
+<dd>Characteristic lengthscale of the system based on the nearest neighbors’ distance.
+Returns <cite>None</cite> if no characteristic lengthscale could be found.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#ai4materials.utils.utils_crystals.get_min_distance" title="ai4materials.utils.utils_crystals.get_min_distance"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_min_distance</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_primitive_std_cell">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_primitive_std_cell</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_primitive_std_cell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_primitive_std_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an ASE atoms object, return the ASE atoms object in the primitive standard cell.</p>
+<p>It uses symmetries to find the primitive standard cell.
+In particular, it gives a structure with a conventional cell according to the standard defined in
+W. Setyawan, and S. Curtarolo, Comput. Mater. Sci.49(2), 299-312 (2010).</p>
+<p>This is simply a wrapper around the pymatgen implementation:
+<a class="reference external" href="http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html">http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html</a></p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite> object</dt>
+<dd>Atomic structure.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite> object</dt>
+<dd>Return the structure in the primitive cell</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_spacegroup">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_spacegroup</code><span class="sig-paren">(</span><em>atoms</em>, <em>symprec=None</em>, <em>angle_tolerance=-1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_spacegroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_spacegroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an ASE structure and a (list of) symmetry threshold, return the spacegroup number.</p>
+<p>Internally, it uses the SpacegroupAnalyzer is the object used in pymatgen to detect crystal symmetries:</p>
+<p><a class="reference external" href="http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html">http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html</a></p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <code class="docutils literal notranslate"><span class="pre">ase.Atoms</span></code> object</dt>
+<dd>Atomic structure.</dd>
+<dt>symprec: list of floats</dt>
+<dd><p class="first">Tolerance for symmetry finding. According to the pymatgen documentation:</p>
+<p class="last">A value of 1e-3 is fairly strict and works well for properly refined
+structures with atoms in the proper symmetry coordinates. For
+structures with slight deviations from their proper atomic
+positions (e.g., structures relaxed with electronic structure
+codes), a looser tolerance of 0.1 (the value used in Materials
+Project) is often needed.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>list of floats</dt>
+<dd>Spacegroup numbers obtained for the given symprec thresholds.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Internally, it uses the SpacegroupAnalyzer object of pymatgen; see
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.get_spacegroup_analyzer" title="ai4materials.utils.utils_crystals.get_spacegroup_analyzer"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_spacegroup_analyzer</span></code></a></p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_spacegroup_analyzer">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_spacegroup_analyzer</code><span class="sig-paren">(</span><em>atoms</em>, <em>symprec=None</em>, <em>angle_tolerance=-1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_spacegroup_analyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_spacegroup_analyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an ASE structure and a symprec, return the SpacegroupAnalyzer.</p>
+<p>The SpacegroupAnalyzer is the object used in pymatgen to detect crystal symmetries:</p>
+<p><a class="reference external" href="http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html">http://pymatgen.org/_modules/pymatgen/symmetry/analyzer.html</a></p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite> object</dt>
+<dd>Atomic structure.</dd>
+<dt>symprec: list of floats</dt>
+<dd><p class="first">Tolerance for symmetry finding. According to the pymatgen documentation:</p>
+<p class="last">A value of 1e-3 is fairly strict and works well for properly refined
+structures with atoms in the proper symmetry coordinates. For
+structures with slight deviations from their proper atomic
+positions (e.g., structures relaxed with electronic structure
+codes), a looser tolerance of 0.1 (the value used in Materials
+Project) is often needed.</p>
+</dd>
+<dt>angle_tolerance: float</dt>
+<dd>Tolerance of angle between lattice vectors in degrees to be tolerated in the symmetry finding.
+It is used by Spglib. By specifying a negative value, the behavior becomes the same as usual functions.
+For more info: <a class="reference external" href="https://atztogo.github.io/spglib/variable.html#variables-angle-tolerance">https://atztogo.github.io/spglib/variable.html#variables-angle-tolerance</a></dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>pymatgen.SpacegroupAnalyzer</cite> object</dt>
+<dd>Return the SpacegroupAnalyzer of pymatgen.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_spacegroup_old">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_spacegroup_old</code><span class="sig-paren">(</span><em>structure</em>, <em>materials_class=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_spacegroup_old"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_spacegroup_old" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get spacegroup from a list of NOMAD structure.</p>
+<p>OBSOLETE. TO BE REMOVED.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.get_target_diff_dic">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">get_target_diff_dic</code><span class="sig-paren">(</span><em>df</em>, <em>sample_key=None</em>, <em>energy=None</em>, <em>spacegroup=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#get_target_diff_dic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.get_target_diff_dic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dictionary of dictionaries: samples -&gt; space group tuples -&gt; energy differences.</p>
+<p>Dropping all rows which do not correspond to the minimum energy per sample AND space group,
+then making a new data frame with space groups as columns. Finally constructing the dictionary
+of dictionaries.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>df: pandas data frame</dt>
+<dd>with columns=[samples_title, energies_title, SG_title]</dd>
+<dt>sample_key: string</dt>
+<dd>Needs to be column title of samples of input df</dd>
+<dt>energy: string</dt>
+<dd>Needs to be column title of energies of input df</dd>
+<dt>spacegroup: string</dt>
+<dd>Needs to be column title of space groups of input df</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>dic_out <span class="classifier-delimiter">:</span> <span class="classifier">dictionary of dictionaries</span></dt>
+<dd>In the form:
+{
+sample_a: { (SG_1,SG_2):E_diff_a12, (SG_1,SG_3):E_diff_a13,…},
+sample_b: { (SG_1,SG_2):E_diff_b12, (SG_1,SG_3):E_diff_b13,… },
+…
+}
+E_diff_a12 = energy_SG_1 - energy_SG_2   of sample a.
+Both (SG_1,SG_2) and (SG_2,SG_1) are considered.
+If SG_1 or SG_2 is NaN, energy difference to it is ignored.</dd>
+</dl>
+<p><em>Code author: Emre Ahmetcik &lt;<a class="reference external" href="mailto:ahmetcik&#37;&#52;&#48;fhi-berlin&#46;mpg&#46;de">ahmetcik<span>&#64;</span>fhi-berlin<span>&#46;</span>mpg<span>&#46;</span>de</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.grouped">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">grouped</code><span class="sig-paren">(</span><em>iterable</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#grouped"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.grouped" title="Permalink to this definition">¶</a></dt>
+<dd><p>s -&gt; (s0,s1,s2,…sn-1), (sn,sn+1,sn+2,…s2n-1), (s2n,s2n+1,s2n+2,…s3n-1), …</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.interpolate_parameters">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">interpolate_parameters</code><span class="sig-paren">(</span><em>initial_params</em>, <em>final_params</em>, <em>nb_steps=10</em>, <em>include_final=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#interpolate_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.interpolate_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of initial and final parameters, linearly interpolated between them.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.modify_crystal">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">modify_crystal</code><span class="sig-paren">(</span><em>ase_atoms</em>, <em>function_to_apply</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#modify_crystal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.modify_crystal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a transformation to a crystal structure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.nb_atoms_to_replicas">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">nb_atoms_to_replicas</code><span class="sig-paren">(</span><em>atoms</em>, <em>min_nb_atoms</em>, <em>target_nb_atoms</em>, <em>silent=True</em>, <em>max_diff_nb_atoms=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#nb_atoms_to_replicas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.nb_atoms_to_replicas" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Calculate the replication that gives a supercell ‘naively’ as cubic as possible with the number of atoms</dt>
+<dd>as close as possible to <cite>target_nb_atoms</cite>.</dd>
+</dl>
+<p>The algorithm calculates the extension of the structure along the 3 dimensions and add a repetition
+along the direction that has the smaller extension.</p>
+<p>For information regarding the parameters, please refer to
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.nb_of_replicas" title="ai4materials.utils.utils_crystals.nb_of_replicas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.nb_of_replicas</span></code></a>.</p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.nb_of_replicas">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">nb_of_replicas</code><span class="sig-paren">(</span><em>atoms</em>, <em>create_replicas_by</em>, <em>min_nb_atoms</em>, <em>target_nb_atoms=None</em>, <em>max_diff_nb_atoms=None</em>, <em>radius=None</em>, <em>target_replicas=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#nb_of_replicas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.nb_of_replicas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of replicas of the input cell in each direction.</p>
+<p>The number of replicas that are returned will be later used by
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a>
+to actually make a supercell.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>create_replicas_by: { ‘nb_atoms’, ‘radius’, ‘user-defined’}</dt>
+<dd><p class="first">Method to calculate the replicas.</p>
+<p><cite>create_replicas_by</cite> = ‘nb_atoms’ creates supercells ‘naively’ as cubic as possible with the number of atoms
+as close as possible to <cite>target_nb_atoms</cite>.</p>
+<p class="last"><cite>create_replicas_by</cite> = ‘radius’ creates supercells ‘naively’ as cubic as possible with the number of atoms
+with the given radius.</p>
+</dd>
+<dt>min_nb_atoms: int</dt>
+<dd>Minimum number of atoms for the replicated structure.
+If the resulting structure has less atoms, an error will be raised.</dd>
+<dt>target_nb_atoms: int, optional</dt>
+<dd><p class="first">Target number of atoms in the supercell created. The actual number of atoms might differ from it.
+See also <cite>max_diff_nb_atoms</cite> below.</p>
+<p class="last">Used only if <a href="#id9"><span class="problematic" id="id10">`</span></a>create_replicas_by`=’nb_atoms’.</p>
+</dd>
+<dt>max_diff_nb_atoms: int, optional</dt>
+<dd>Maximum (absolute) difference between the <cite>target_nb_atoms</cite> and the actual number of atoms present
+in the supercell. If the difference is larger, an error will be raised.
+Used only if <a href="#id11"><span class="problematic" id="id12">`</span></a>create_replicas_by`=’nb_atoms’.</dd>
+<dt>radius: float, optional</dt>
+<dd>Used only if <a href="#id13"><span class="problematic" id="id14">`</span></a>create_replicas_by`=’radius’.</dd>
+<dt>target_replicas: int or list/tuple of int, optional</dt>
+<dd><p class="first">Number of replicas of the created supercell.</p>
+<p><cite>target_replicas</cite> = 3 replicates the cell 3 times along the 3 directions</p>
+<p><cite>target_replicas</cite> = (4,2,2) replicates the cell 4 times along the 1st direction, and 2 times along the other
+two directions.</p>
+<p class="last">Used only if <a href="#id15"><span class="problematic" id="id16">`</span></a>create_replicas_by`=’user-defined’.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>list of int</dt>
+<dd>List of three integers corresponding to the number of repetition of the input cell along
+the three dimensions.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p>Algorithms for supercell determination are found in
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.nb_atoms_to_replicas" title="ai4materials.utils.utils_crystals.nb_atoms_to_replicas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.nb_atoms_to_replicas</span></code></a> and
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.radius_to_replicas" title="ai4materials.utils.utils_crystals.radius_to_replicas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.radius_to_replicas</span></code></a>.</p>
+<p class="last">Starting from the number of replicas here, the actual supercell is made in
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a></p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.radius_to_replicas">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">radius_to_replicas</code><span class="sig-paren">(</span><em>atoms</em>, <em>min_nb_atoms</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#radius_to_replicas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.radius_to_replicas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the replication that gives a supercell ‘naively’ as cubic as possible to the required <cite>radius</cite>.</p>
+<p>It approaches <cite>radius</cite> from below.</p>
+<p>The algorithm calculates how many cells can be fit within the specified radius for each dimension.</p>
+<p>For information regarding the parameters, please refer to
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.nb_of_replicas" title="ai4materials.utils.utils_crystals.nb_of_replicas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.nb_of_replicas</span></code></a>.</p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.random_displace_atoms">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">random_displace_atoms</code><span class="sig-paren">(</span><em>atoms</em>, <em>noise_distribution</em>, <em>displacement=None</em>, <em>displacement_scaled=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#random_displace_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.random_displace_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a supercell and then randomly displace atoms in the constructed supercell.</p>
+<p>Atoms are substituted with other - randomly chosen - chemical species. The positions of the atoms in the
+lattice are not changed, only their chemical identity.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>displacement: float, optional</dt>
+<dd>The parameter used in the noise distribution to generate random displacements. In Angstrom.
+Used only if <cite>noise_distribution</cite> = gaussian or <cite>noise_distribution</cite> = uniform.</dd>
+<dt>displacement_scaled: float, optional</dt>
+<dd>The parameter used in the noise distribution to generate random displacements. Pure number.
+For example, if <cite>displacement_scaled</cite> = 0.1, atoms will be displaced according to a Gaussian
+distribution with standard deviation equal to 10% of (approximately) the bond length.
+Used only if <cite>noise_distribution</cite> = gaussian_scaled.</dd>
+<dt>noise_distribution: { ‘gaussian’, ‘uniform’, ‘gaussian_scaled’, ‘uniform_scaled’}</dt>
+<dd><p class="first">The type of noise distribution used to randomly displace atoms.</p>
+<ul class="simple">
+<li>‘gaussian’: displace atoms by values sampled from a Gaussian distribution with</li>
+</ul>
+<p>standard deviation equal to <cite>displacement</cite>.</p>
+<ul class="simple">
+<li>‘uniform’: displace atoms by values sampled from a distribution [-<cite>displacement</cite>, +`displacement`]</li>
+<li>‘gaussian_scaled’: displace atoms by a Gaussian distribution with standard deviation</li>
+</ul>
+<p>equal to <cite>displacement</cite> scaled by the nearest neighbors distance.</p>
+<ul class="simple">
+<li>‘uniform_scaled’: displace atoms by values sampled from a distribution [-<cite>displacement</cite>, +`displacement`]</li>
+</ul>
+<p class="last">scaled by the nearest neighbors distance</p>
+</dd>
+<dt>max_rel_error: float, optional (default = 0.25)</dt>
+<dd>Relative (absolute) difference between the <cite>target_sub_ratio</cite> and the actual percentage of atoms
+substituted in the supercell. If the difference is larger, a warning will be raised.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite></dt>
+<dd>Supercell with randomly displaced atoms.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p>The supercell is generated by:
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a>.</p>
+<p class="last">If <cite>noise_distribution</cite> = gaussian_scaled, a quantity related to the average nearest neighbor distance
+is calculated. It is not exactly the average nearest neighbor distance because we use quantiles to be more
+robust with respect to defect. For more details, please go to
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.get_nn_distance" title="ai4materials.utils.utils_crystals.get_nn_distance"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_nn_distance</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.rename_material">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">rename_material</code><span class="sig-paren">(</span><em>chem_f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#rename_material"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.rename_material" title="Permalink to this definition">¶</a></dt>
+<dd><p>Patch to rename certain binaries with the more electronegative element first.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.rot_mat_x">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">rot_mat_x</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#rot_mat_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.rot_mat_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the rotation matrix for a rotation around the x axis</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.rot_mat_y">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">rot_mat_y</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#rot_mat_y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.rot_mat_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the rotation matrix for a rotation around the y axis</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.rot_mat_z">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">rot_mat_z</code><span class="sig-paren">(</span><em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#rot_mat_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.rot_mat_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the rotation matrix for a rotation around the z axis</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.rotate_atoms">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">rotate_atoms</code><span class="sig-paren">(</span><em>atoms</em>, <em>phi=0.0</em>, <em>theta=0.0</em>, <em>psi=0.0</em>, <em>center='COU'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#rotate_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.rotate_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly rotate an ASE atoms structure via Euler angles in degree.</p>
+<p>This is simply a wrapper around:
+<a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/atoms.html#ase.Atoms.euler_rotate">https://wiki.fysik.dtu.dk/ase/ase/atoms.html#ase.Atoms.euler_rotate</a></p>
+<p>For more info on Euler angles and for the convention followed by ASE:
+<a class="reference external" href="http://mathworld.wolfram.com/EulerAngles.html">http://mathworld.wolfram.com/EulerAngles.html</a></p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure to be rotated</dd>
+<dt>center: sequence of length 3 or str</dt>
+<dd><p class="first">The point to rotate about. A sequence of length 3 with the
+coordinates of the point, or:
+‘COM’ to select the center of mass</p>
+<p>‘COP’ to select center of positions</p>
+<p class="last">‘COU’ to select center of cell.</p>
+</dd>
+<dt>phi: float</dt>
+<dd>The 1st rotation angle around the z axis.</dd>
+<dt>theta: float</dt>
+<dd>Rotation around the x axis.</dd>
+<dt>psi: float</dt>
+<dd>2nd rotation around the z axis.</dd>
+</dl>
+<p>Returns:
+<cite>ase.Atoms</cite> object</p>
+<blockquote>
+<div>The rotated atomic structure.</div></blockquote>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.scale_structure">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">scale_structure</code><span class="sig-paren">(</span><em>atoms</em>, <em>scaling_type</em>, <em>atoms_scaling_cutoffs</em>, <em>min_scale_factor=0.1</em>, <em>max_scale_factor=10.0</em>, <em>extrinsic_scale_factor=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#scale_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.scale_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale an atomic structure by a given scalar determined based on nearest neighbors distance.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>scaling_type: { ‘min_nn’, ‘avg_nn’, ‘quantile_nn’}</dt>
+<dd>Type of scaling used in the atom structure scaling.</dd>
+<dt>atoms_scaling_cutoffs: list of floats</dt>
+<dd>List of cutoffs to be used in the determination of the lengthscale of the system in
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.get_nn_distance" title="ai4materials.utils.utils_crystals.get_nn_distance"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_nn_distance</span></code></a>. If the lengthscale calculation is not successful,
+the next cutoff (next elements in the list <cite>atoms_scaling_cutoffs</cite> is used.</dd>
+<dt>min_scale_factor: float, optional, (default = 0.5)</dt>
+<dd>If the calculated scale factor is below this value, the scaling will not be performed. In Angstrom.
+The next element in the <cite>atoms_scaling_cutoffs</cite> list will be used.
+This is used as a safety check because the scaling factor should correspond to physically motivated
+nearest neighbor distance in materials.</dd>
+<dt>max_scale_factor: float, optional, (default = 10.)</dt>
+<dd>If the calculated scale factor is above this value, the scaling will not be performed. In Angstrom.
+The next element in the <cite>atoms_scaling_cutoffs</cite> list will be used.
+This is used as a safety check because the scaling factor should correspond to physically motivated
+nearest neighbor distance in materials.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite></dt>
+<dd>Scaled atomic structure.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#ai4materials.utils.utils_crystals.get_min_distance" title="ai4materials.utils.utils_crystals.get_min_distance"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_min_distance</span></code></a>, <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_nn_distance" title="ai4materials.utils.utils_crystals.get_nn_distance"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_nn_distance</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.select_diff_from_dic">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">select_diff_from_dic</code><span class="sig-paren">(</span><em>dic</em>, <em>spacegroup_tuples</em>, <em>sample_key='Mat'</em>, <em>drop_nan=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#select_diff_from_dic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.select_diff_from_dic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data frame of selected spacegroup_tuples from dictionary of dictionaries.</p>
+<blockquote>
+<div><p>Creating a pandas data frame with columns of samples and selected space group tuples (energy differnces).</p>
+<p>Parameters:</p>
+<p>dic: dict {samples -&gt; space group tuples -&gt; energy differences.}</p>
+<dl class="docutils">
+<dt>spacegroup_tuples: tuple, list of tuples, tuples of tuples</dt>
+<dd>Each tuple has to contain two space groups numbers,
+to be looked up in the input dic.</dd>
+<dt>sample_key: string</dt>
+<dd>Will be the column title of the samples of the created data frame</dd>
+<dt>drop_nan: string, optional {‘rows’, ‘SG_tuples’}</dt>
+<dd>Drops all rows or columns (SG_tuples) containing NaN.</dd>
+</dl>
+</div></blockquote>
+<p><em>Code author: Emre Ahmetcik &lt;<a class="reference external" href="mailto:ahmetcik&#37;&#52;&#48;fhi-berlin&#46;mpg&#46;de">ahmetcik<span>&#64;</span>fhi-berlin<span>&#46;</span>mpg<span>&#46;</span>de</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.spacegroup_a_to_spacegroup_b">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">spacegroup_a_to_spacegroup_b</code><span class="sig-paren">(</span><em>atoms</em>, <em>spgroup_a</em>, <em>spgroup_b</em>, <em>target_b_contribution</em>, <em>create_replicas_by</em>, <em>min_nb_atoms=None</em>, <em>target_nb_atoms=None</em>, <em>max_diff_nb_atoms=None</em>, <em>radius=None</em>, <em>target_replicas=None</em>, <em>max_rel_error=0.01</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#spacegroup_a_to_spacegroup_b"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.spacegroup_a_to_spacegroup_b" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove central atoms for bcc to sc</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.standardize_cell">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">standardize_cell</code><span class="sig-paren">(</span><em>atoms</em>, <em>cell_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#standardize_cell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.standardize_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standardize the cell of the atomic structure.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>cell_type: { ‘standard’, ‘standard_no_symmetries’, ‘primitive’, None}</dt>
+<dd><p class="first">Starting from the input cell, creates a standard cell according to same standards
+before the supercell generation.</p>
+<p><cite>cell_type</cite> = ‘standard’ creates a standard conventional cell.
+See <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell" title="ai4materials.utils.utils_crystals.get_conventional_std_cell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_conventional_std_cell</span></code></a>.</p>
+<p><cite>cell_type</cite> = ‘standard_no_symmetries’ creates a standard conventional cell without using symmetries.
+See <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym" title="ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_conventional_std_cell_no_sym</span></code></a>.</p>
+<p><cite>cell_type</cite> = ‘primitive’ creates a standard primitive cell.
+See <a class="reference internal" href="#ai4materials.utils.utils_crystals.get_primitive_std_cell" title="ai4materials.utils.utils_crystals.get_primitive_std_cell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.get_primitive_std_cell</span></code></a>.</p>
+<p class="last"><cite>cell_type</cite> = <cite>None</cite> does not creates any cell.
+It simply uses the unit cell as input for the supercell generation.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite></dt>
+<dd>Atomic structure in the standard cell of the selected type.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_crystals.substitute_atoms">
+<code class="descclassname">ai4materials.utils.utils_crystals.</code><code class="descname">substitute_atoms</code><span class="sig-paren">(</span><em>atoms</em>, <em>target_sub_ratio=0.0</em>, <em>max_n_sub_species=94</em>, <em>max_rel_error=0.25</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_crystals.html#substitute_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_crystals.substitute_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a supercell and then substitute in the constructed supercell.</p>
+<p>Atoms are substituted with other - randomly chosen - chemical species. The positions of the atoms in the
+lattice are not changed, only their chemical identity.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>atoms: <cite>ase.Atoms</cite></dt>
+<dd>Atomic structure.</dd>
+<dt>target_sub_ratio: float</dt>
+<dd><p class="first">Target percentage of atoms to be substituted. It must be a number between 0.0 (no vacancies created)
+and 1.0 (all atoms removed). For example, 0.2 will lead to the substitutions of 20% of the atoms.</p>
+<p class="last">The actual number of substitutions might differ from it, especially for
+small supercell and/or small percentage of substitutions. See also <cite>max_rel_error</cite> below.</p>
+</dd>
+<dt>max_n_sub_species: int, optional, (default = 94)</dt>
+<dd><p class="first">The maximum number of species that can be used in the substitution procedure.
+For example:</p>
+<ul class="simple">
+<li><cite>max_n_sub_species</cite> = 1, will created a disordered binary.</li>
+<li><cite>substitution_ratio</cite> = 0.50 and <cite>max_n_sub_species</cite> = 1, will create a disordered binary with chemical species</li>
+</ul>
+<p>having the same stoichiometry.</p>
+<ul class="last simple">
+<li><cite>max_n_sub_species</cite> = 2, a disordered ternary will be created.</li>
+</ul>
+</dd>
+<dt>max_rel_error: float, optional (default = 0.25)</dt>
+<dd>Relative (absolute) difference between the <cite>target_sub_ratio</cite> and the actual percentage of atoms
+substituted in the supercell. If the difference is larger, a warning will be raised.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><cite>ase.Atoms</cite></dt>
+<dd>Supercell with randomly substituted atoms.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">The supercell is generated by:
+<a class="reference internal" href="#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.utils.utils_data_retrieval.html" class="btn btn-neutral float-right" title="ai4materials.utils.utils_data_retrieval module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.utils.utils_config.html" class="btn btn-neutral" title="ai4materials.utils.utils_config module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

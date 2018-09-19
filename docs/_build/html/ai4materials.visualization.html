@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Visualization &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="next" title="ai4materials.visualization.viewer module" href="ai4materials.visualization.viewer.html"/>
+        <link rel="prev" title="ai4materials.interpretation.deconv_resp_maps module" href="ai4materials.interpretation.deconv_resp_maps.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.visualization.viewer.html">ai4materials.visualization.viewer module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ai4materials.visualization">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Visualization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.visualization.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="visualization">
+<h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>ai4materials Viewer</cite> combines <a class="reference external" href="https://bokeh.pydata.org/en/latest/">Bokeh</a>
+(interactive visualization of large dataset) and <a class="reference external" href="http://jmol.sourceforge.net/">jsmol</a>
+(3D visualization of chemical structures) to allow the interactive exploration of materials science datasets.
+Users can visualize crystal structures and properties of - a possibly large number of - materials in one webpage, interactively.</p>
+<p>Below we present an example of how to create an interactive Viewer using ai4materials.
+The code below allows to generate an interactive plot of the results of Ref. <a class="footnote-reference" href="#id2" id="id1">[1]</a>, in particular Fig. 2 in the article.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ai4materials.visualization.viewer</span> <span class="kn">import</span> <span class="n">Viewer</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">set_configs</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_data_retrieval</span> <span class="kn">import</span> <span class="n">read_ase_db</span>
+<span class="kn">from</span> <span class="nn">ai4materials.visualization.viewer</span> <span class="kn">import</span> <span class="n">read_control_file</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">get_data_filename</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+
+<span class="c1"># read data: crystal structures, information on the plot, name of the axis</span>
+<span class="n">ase_db_file_binaries</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;data/db_ase/binaries_lowest_energy_ghiringhelli2015.json&#39;</span><span class="p">)</span>
+<span class="n">results_binaries_lasso</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;data/viewer_files/l1_l0_dim2_for_viewer.csv&#39;</span><span class="p">)</span>
+<span class="n">control_file_binaries</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;data/viewer_files/binaries_control.json&#39;</span><span class="p">)</span>
+
+<span class="n">configs</span> <span class="o">=</span> <span class="n">set_configs</span><span class="p">()</span>
+
+<span class="n">ase_atoms_binaries</span> <span class="o">=</span> <span class="n">read_ase_db</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">ase_db_file_binaries</span><span class="p">)</span>
+
+<span class="c1"># from the table, extract the coordinates for the plot, the true and the predicted value</span>
+<span class="n">df_viewer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">results_binaries_lasso</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">df_viewer</span><span class="p">[</span><span class="s1">&#39;coord_0&#39;</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df_viewer</span><span class="p">[</span><span class="s1">&#39;coord_1&#39;</span><span class="p">]</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">df_viewer</span><span class="p">[</span><span class="s1">&#39;y_true&#39;</span><span class="p">]</span>
+<span class="n">target_pred</span> <span class="o">=</span> <span class="n">df_viewer</span><span class="p">[</span><span class="s1">&#39;y_pred&#39;</span><span class="p">]</span>
+
+<span class="c1"># define titles in the plot</span>
+<span class="n">legend_title</span> <span class="o">=</span> <span class="s1">&#39;Reference E(RS)-E(ZB)&#39;</span>
+<span class="n">target_name</span> <span class="o">=</span> <span class="s1">&#39;E(RS)-E(ZB)&#39;</span>
+<span class="n">plot_title</span> <span class="o">=</span> <span class="s1">&#39;SISSO(L0) structure map&#39;</span>
+
+<span class="c1"># create an instance if the ai4materials Viewer</span>
+<span class="n">viewer</span> <span class="o">=</span> <span class="n">Viewer</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+
+<span class="c1"># read x and y axis labels from control file</span>
+<span class="n">x_axis_label</span><span class="p">,</span> <span class="n">y_axis_label</span> <span class="o">=</span> <span class="n">read_control_file</span><span class="p">(</span><span class="n">control_file_binaries</span><span class="p">)</span>
+
+<span class="c1"># generate interactive plot</span>
+<span class="n">file_html_link</span><span class="p">,</span> <span class="n">file_html_name</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">plot_with_structures</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">target_pred</span><span class="o">=</span><span class="n">target_pred</span><span class="p">,</span>
+                                                             <span class="n">ase_atoms_list</span><span class="o">=</span><span class="n">ase_atoms_binaries</span><span class="p">,</span> <span class="n">target_unit</span><span class="o">=</span><span class="s1">&#39;eV&#39;</span><span class="p">,</span>
+                                                             <span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">legend_title</span><span class="o">=</span><span class="n">legend_title</span><span class="p">,</span>
+                                                             <span class="n">is_classification</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">x_axis_label</span><span class="o">=</span><span class="n">x_axis_label</span><span class="p">,</span>
+                                                             <span class="n">y_axis_label</span><span class="o">=</span><span class="n">y_axis_label</span><span class="p">,</span> <span class="n">plot_title</span><span class="o">=</span><span class="n">plot_title</span><span class="p">,</span>
+                                                             <span class="n">tmp_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">])</span>
+
+<span class="c1"># open the interactive plot in a web browser</span>
+<span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_html_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a screenshot of the interactive <cite>ai4materials Viewer</cite> generated with the code above:</p>
+<img alt="_images/viewer_binaries_example.png" src="_images/viewer_binaries_example.png" />
+<p>Implementation details of the <cite>ai4materials Viewer</cite> can be found at <a class="reference internal" href="ai4materials.visualization.viewer.html#module-ai4materials.visualization.viewer" title="ai4materials.visualization.viewer"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.visualization.viewer</span></code></a>.
+In some systems, <cite>Google Chrome</cite> will not correctly to load jmol, so you will be able to load the interactive plot,
+but not to explore crystal structures in 3D.
+To exploit all functionalities of the <cite>ai4materials Viewer</cite>, we recommend to use Firefox; in particular, the Viewer
+was tested on <cite>Firefox Quantum 61.0.1</cite>.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>L. M. Ghiringhelli, J. Vybiral, S. V. Levchenko, C. Draxl, and M. Scheffler, “Big Data of Materials
+Science: Critical Role of the Descriptor,” Physical Review Letters, vol. 114, no. 10, p. 105503 .
+[<a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevLett.114.105503">Link to article</a>]</td></tr>
+</tbody>
+</table>
+<p><em>Section author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.viewer.html">ai4materials.visualization.viewer module</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-ai4materials.visualization">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ai4materials.visualization" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.visualization.viewer.html" class="btn btn-neutral float-right" title="ai4materials.visualization.viewer module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.interpretation.deconv_resp_maps.html" class="btn btn-neutral" title="ai4materials.interpretation.deconv_resp_maps module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

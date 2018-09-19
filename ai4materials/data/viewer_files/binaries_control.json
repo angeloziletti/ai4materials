@@ -1,0 +1,6 @@
+
+    {
+          "model_info":[{
+  "y_axis_label": "|r_s(A)-r_p(B)|/exp(r_s(A))", 
+  "x_axis_label": "|IP(B)-EA(B)|/r_p(A)^2"
+}] }

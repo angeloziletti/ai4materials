@@ -1,0 +1,271 @@
+# NomadParser Pint units definition file
+# Based on the International System of Units
+
+# decimal prefixes
+yocto- = 1e-24 = y-
+zepto- = 1e-21 = z-
+atto- =  1e-18 = a-
+femto- = 1e-15 = f-
+pico- =  1e-12 = p-
+nano- =  1e-9  = n-
+micro- = 1e-6  = u- = µ-
+milli- = 1e-3  = m-
+centi- = 1e-2  = c-
+deci- =  1e-1  = d-
+deca- =  1e+1  = da-
+hecto- = 1e2   = h-
+kilo- =  1e3   = k-
+mega- =  1e6   = M-
+giga- =  1e9   = G-
+tera- =  1e12  = T-
+peta- =  1e15  = P-
+exa- =   1e18  = E-
+zetta- = 1e21  = Z-
+yotta- = 1e24  = Y-
+
+# binary_prefixes
+kibi- = 2**10 = Ki-
+mebi- = 2**20 = Mi-
+gibi- = 2**30 = Gi-
+tebi- = 2**40 = Ti-
+pebi- = 2**50 = Pi-
+exbi- = 2**60 = Ei-
+zebi- = 2**70 = Zi-
+yobi- = 2**80 = Yi-
+
+# SI units
+meter = [length] = m = metre
+second = [time] = s = sec
+ampere = [current] = A = amp
+candela = [luminosity] = cd = candle
+kilogram = [mass] = kg
+mole = [substance] = mol
+kelvin = [temperature]; offset: 0 = K = degK
+
+@import constants.txt
+
+# Acceleration
+[acceleration] = [length] / [time] ** 2
+
+# Angle
+radian = [] = rad
+turn = 2 * pi * radian = revolution = cycle = circle
+degree = pi / 180 * radian = deg = arcdeg = arcdegree = angularDegree
+arcminute = arcdeg / 60 = arcmin = arcMinute = angularMinute
+arcsecond = arcmin / 60 =  arcsec = arcSecond = angularSecond
+steradian = radian ** 2 = sr
+
+# Area
+[area] = [length] ** 2
+are = 100 * m**2
+barn = 1e-28 * m ** 2 = b
+cmil = 5.067075e-10 * m ** 2 = circularMils
+darcy = 9.869233e-13 * m ** 2
+acre = 4046.8564224 * m ** 2 = internationalAcre
+hectare = 100 * are = ha
+USSurveyAcre = 160 * rod ** 2
+
+# Electromagetism
+esu = 1 * erg**0.5 * centimeter**0.5 = statcoulombs = statC = franklin = Fr
+esuPerSecond = 1 * esu / second = statampere
+ampereTurn = 1 * A
+gilbert = 10 / (4 * pi ) * ampereTurn
+coulomb = ampere * second = C
+volt = joule / coulomb = V
+farad = coulomb / volt = F
+ohm = volt / ampere = Ω
+siemens = ampere / volt = S = mho
+weber = volt * second = Wb
+tesla = weber / meter ** 2 = T
+henry = weber / ampere = H
+elementaryCharge = 1.602176487e-19 * coulomb = e
+chemicalFaraday = 9.64957e4 * coulomb
+physicalFaraday = 9.65219e4 * coulomb
+faraday =  96485.3399 * coulomb
+gamma = 1e-9 * tesla
+gauss = 1e-4 * tesla
+maxwell = 1e-8 * weber = mx
+oersted = 1000 / (4 * pi) * A / m = Oe
+statfarad = 1.112650e-12 * farad = statF = stF
+stathenry = 8.987554e11 * henry = statH = stH
+statmho = 1.112650e-12 * siemens = statS = stS
+statohm = 8.987554e11 * ohm
+statvolt = 2.997925e2 * volt = statV = stV
+unitPole = 1.256637e-7 * weber
+debye = 3.33564e-30 * coulomb * meter
+
+# Energy
+[energy] = [force] * [length]
+joule = newton * meter = J
+erg = dyne * centimeter
+btu = 1.05505585262e3 * joule = Btu = BTU = britishThermalUnit
+electronVolt = 1.60217653e-19 * J = eV
+quadrillionBtu = 10**15 * btu = quad
+thm = 100000 * BTU = therm = ECTherm
+cal = 4.184 * joule = calorie = thermochemicalCalorie
+internationalSteamTableCalorie = 4.1868 * joule
+tonTNT = 4.184e9 * joule = tTNT
+USTherm = 1.054804e8 * joule
+wattHour = watt * hour = Wh = watthour
+hartree = 4.35974394e-18 * joule = Eh = hartreeEnergy
+rydberg = h * c * rydbergConstant
+inversecm = 1.9864475e-23 * joule
+
+# Force
+[force] = [mass] * [acceleration]
+forceAu = hartree / bohr
+newton = kilogram * meter / second ** 2 = N
+dyne = gram * centimeter / second ** 2 = dyn
+forceKilogram = gZero * kilogram = kgf = kilogramForce = pond
+forceGram = gZero * gram = gf = gramForce
+forceOunce = gZero * ounce = ozf = ounceForce
+forcePound = gZero * lb = lbf = poundForce
+forceTon = 2000 * forcePound = tonForce
+poundal = lb * feet / second ** 2 = pdl
+kip = 1000*lbf
+
+# Frequency
+[frequency] = 1 / [time]
+hertz = 1 / second = Hz = rps
+revolutionsPerMinute = revolution / minute = rpm
+countsPerSecond = count / second = cps
+
+# Heat
+#RSI = degK * meter ** 2 / watt
+#clo = 0.155 * RSI = clos
+#RValue = foot ** 2 * degF * hour / btu
+
+# Information
+bit = []
+byte = 8 * bit = Bo = octet
+baud = bit / second = Bd = bps
+
+# Irradiance
+peakSunHour = 1000 * wattHour / meter**2 = PSH
+langley = thermochemicalCalorie / centimeter**2 = Langley
+
+# Length
+angstrom = 1e-10 * meter = Å = ångström = Å
+inch = 2.54 * centimeter = in = internationalInch = inches = internationalInches
+foot = 12 * inch = ft = internationalFoot = feet = internationalFeet
+mile = 5280 * foot = mi = internationalMile
+yard = 3 * feet = yd = internationalYard
+mil = inch / 1000 = thou
+parsec = 3.08568025e16 * meter = pc
+lightYear = speedOfLight * julianYear = ly = lightyear
+astronomicalUnit = 149597870691 * meter = au
+nauticalMile = 1.852e3 * meter = nmi
+printersPoint = 127 * millimeter / 360 = point
+printersPica = 12 * printersPoint = pica
+USSurveyFoot = 1200 * meter / 3937
+USSurveyYard =  3 * USSurveyFoot
+USSurveyMile = 5280 * USSurveyFoot = USStatuteMile
+rod = 16.5 * USSurveyFoot = pole = perch
+furlong = 660 * USSurveyFoot
+fathom = 6 * USSurveyFoot
+chain = 66 * USSurveyFoot
+barleycorn = inch / 3
+arpentlin = 191.835 * feet
+kayser = 1 / centimeter = wavenumber
+
+# Mass
+gram = kilogram / 1000
+dram = oz / 16 = dr = avoirdupoisDram
+ounce = 28.349523125 * gram = oz = avoirdupoisOunce
+pound = 0.45359237 * kilogram = lb = avoirdupoisPound
+stone = 14 * lb = st
+carat = 200 * milligram
+grain = 64.79891 * milligram = gr
+longHundredweight = 112 * lb
+shortHundredweight = 100 * lb
+metricTon = 1000 * kilogram = t = tonne
+pennyweight = 24 * gram = dwt
+slug = 14.59390 * kilogram
+troyOunce = 480 * grain = toz = apounce = apothecaryOunce
+troyPound = 12 * toz = tlb = appound = apothecaryPound
+drachm = 60 * grain = apdram = apothecaryDram
+atomicMassUnit = 1.660538782e-27 * kilogram =  u = amu = dalton = Da
+scruple = 20 * grain
+bag = 94 * lb
+ton = 2000 * lb = shortTon
+
+# Textile
+denier =  gram / (9000 * meter)
+tex = gram/ (1000 * meter)
+dtex = decitex
+
+# Photometry
+lumen = candela * steradian = lm
+lux = lumen / meter ** 2 = lx
+
+# Power
+[power] = [energy] / [time]
+watt = joule / second = W = voltAmpere = VA
+horsepower = 33000 * ft * lbf / min = hp = UKHorsepower = BritishHorsepower
+boilerHorsepower = 33475 * btu / hour
+metricHorsepower =  75 * forceKilogram * meter / second
+electricHorsepower = 746 * watt
+hydraulicHorsepower = 550 * feet * lbf / second
+refrigerationTon = 12000 * btu / hour = tonOfRefrigeration
+
+# Pressure
+[pressure] = [force] / [area]
+Hg = gravity * 13.59510 * gram / centimeter ** 3 = mercury = conventionalMercury
+mercurySixtyF = gravity * 13.5568 * gram / centimeter ** 3
+HTwoO = gravity * 1000 * kilogram / meter ** 3 = water = conventionalWater
+waterFourC = gravity * 999.972 * kilogram / meter ** 3 = waterThirtyNineF
+waterSixtF = gravity * 999.001 * kilogram / m ** 3
+pascal = newton / meter ** 2 = Pa
+bar = 100000 * pascal
+atmosphere = 101325 * pascal = atm = standardAtmosphere
+technicalAtmosphere = kilogram * gravity / centimeter ** 2 = at
+torr = atm / 760
+psi = pound * gravity / inch ** 2 = poundForcePerSquareInch
+ksi = kip / inch ** 2 = kipPerSquareInch
+barye = 0.1 * newton / meter ** 2 = barie = barad = barrie = baryd = Ba
+mmHg = millimeter * Hg = millimeterHg = millimeterHgZeroC
+cmHg = centimeter * Hg = centimeterHg
+inHg = inch * Hg = inchHg = inchHgThirtyTwoF
+inchHgSixtyF = inch * mercurySixtyF
+inchHTwoOThirtyNineF = inch * waterThirtyNineF
+inchHTwoOSixtyF = inch * waterSixtyF
+footHTwoO = ft * water
+cmHTwoO = centimeter * water
+footHTwoO = ft * water = ftHTwoO
+standardLiterPerMinute = 1.68875 * Pa * m ** 3 / s = slpm = slm
+
+# Radiation
+Bq = Hz = becquerel
+curie = 3.7e10 * Bq = Ci
+rutherford = 1e6*Bq = rd = Rd
+Gy = joule / kilogram = gray = Sv = sievert
+rem = 1e-2 * sievert
+rads = 1e-2 * gray
+roentgen = 2.58e-4 * coulomb / kilogram
+
+# Temperature
+degC = kelvin; offset: 273.15 = celsius
+degR = 5 / 9 * kelvin; offset: 0 = rankine
+degF = 5 / 9 * kelvin; offset: 255.372222 = fahrenheit
+
+# Time
+minute = 60 * second = min
+hour = 60 * minute = hr
+day = 24 * hour
+week = 7 * day
+timeAu = hbar / hartree
+
+# Velocity
+[speed] = [length] / [time]
+
+# Viscosity
+[viscosity] = [pressure] * [time]
+poise = 1e-1 * Pa * second = P
+stokes = 1e-4 * meter ** 2 / second = St
+rhe = 10 / (Pa * s)
+
+# Volume
+[volume] = [length] ** 3
+
+# Magnetic moment
+mubohr = 9.274009994e-24 J / T

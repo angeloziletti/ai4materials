@@ -1,0 +1,910 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.dataprocessing.preprocessing &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.dataprocessing.preprocessing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.dataprocessing.preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;23/03/18&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_data_retrieval</span> <span class="k">import</span> <span class="n">extract_labels</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_data_retrieval</span> <span class="k">import</span> <span class="n">get_metadata_value</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="k">import</span> <span class="n">overwrite_configs</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyximport</span>
+<span class="kn">import</span> <span class="nn">six.moves.cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">StratifiedShuffleSplit</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">ShuffleSplit</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">preprocessing</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<span class="n">pyximport</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">reload_support</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="dense_to_one_hot"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.dense_to_one_hot">[docs]</a><span class="k">def</span> <span class="nf">dense_to_one_hot</span><span class="p">(</span><span class="n">labels_dense</span><span class="p">,</span> <span class="n">label_encoder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert class labels from scalars to one-hot vectors.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    labels_dense: ndarray</span>
+<span class="sd">        Array that needs to be one-hot encoded.</span>
+
+<span class="sd">    label_encoder: `sklearn.preprocessing.LabelEncoder`</span>
+<span class="sd">        Label encoder object.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    ndarray</span>
+<span class="sd">        One-hot encoded array of `labels_dense`.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Unique classes: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_classes</span><span class="p">))</span>
+    <span class="n">n_labels</span> <span class="o">=</span> <span class="n">labels_dense</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">index_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_labels</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_classes</span>
+    <span class="n">labels_one_hot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_labels</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">))</span>
+    <span class="n">labels_one_hot</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">index_offset</span> <span class="o">+</span> <span class="n">labels_dense</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">labels_one_hot</span></div>
+
+
+<div class="viewcode-block" id="DataSet"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.DataSet">[docs]</a><span class="k">class</span> <span class="nc">DataSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct a DataSet.</span>
+
+<span class="sd">    Adapted from the TensorFlow tutorial at https://www.tensorflow.org/versions/master/tutorials/index.html</span>
+<span class="sd">    Should be changed in favor of the Tensorflow dataset.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dims</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_dims</span> <span class="o">=</span> <span class="n">input_dims</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">as_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">base_dtype</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Invalid image dtype </span><span class="si">%r</span><span class="s1">, expected uint8 or float32&#39;</span> <span class="o">%</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="s1">&#39;images.shape: </span><span class="si">%s</span><span class="s1"> labels.shape: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_examples</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_dims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Convert shape from [num examples, rows, columns, depth]</span>
+            <span class="c1"># to [num examples, rows*columns*depth]</span>
+            <span class="k">if</span> <span class="n">flatten_images</span><span class="p">:</span>
+                <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_dims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Convert shape from [num examples, dim1, dim2, dim3, depth]</span>
+            <span class="c1"># to [num examples, dim1*dim2*dim3] (assuming depth == 1)</span>
+            <span class="k">assert</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">flatten_images</span><span class="p">:</span>
+                <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Wrong number of dimensions.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dtype not supported.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_images</span> <span class="o">=</span> <span class="n">images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epochs_completed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index_in_epoch</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># def __getstate__(self):</span>
+    <span class="c1">#     return self.train.images, self.train.labels, self.val.images, self.val.labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_examples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">epochs_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epochs_completed</span></div>
+
+
+<span class="c1">#    def next_batch(self, batch_size):</span>
+<span class="c1">#        &quot;&quot;&quot;Return the next `batch_size` examples from this data set.&quot;&quot;&quot;</span>
+<span class="c1">#        start = self._index_in_epoch</span>
+<span class="c1">#        print start</span>
+<span class="c1">#        self._index_in_epoch += batch_size</span>
+<span class="c1">#        if self._index_in_epoch &gt; self._num_examples:</span>
+<span class="c1">#            # Finished epoch</span>
+<span class="c1">#            self._epochs_completed += 1</span>
+<span class="c1">#            # Shuffle the data</span>
+<span class="c1">#            perm = np.arange(self._num_examples)</span>
+<span class="c1">#            np.random.shuffle(perm)</span>
+<span class="c1">#            self._images = self._images[perm]</span>
+<span class="c1">#            self._labels = self._labels[perm]</span>
+<span class="c1">#            # Start next epoch</span>
+<span class="c1">#            start = 0</span>
+<span class="c1">#            self._index_in_epoch = batch_size</span>
+<span class="c1">#            assert batch_size &lt;= self._num_examples</span>
+<span class="c1">#        end = self._index_in_epoch</span>
+<span class="c1">#        return self._images[start:end], self._labels[start:end]</span>
+
+<div class="viewcode-block" id="make_data_sets"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.make_data_sets">[docs]</a><span class="k">def</span> <span class="nf">make_data_sets</span><span class="p">(</span><span class="n">x_train_val</span><span class="p">,</span> <span class="n">y_train_val</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">split_train_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stratified_splits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">test_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given training and test data, make a dataset to be use for analysis.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    x_train_val: ndarray</span>
+<span class="sd">        Feature matrix for training or training and validation (depending on the value of `split_train_val`)</span>
+
+<span class="sd">    y_train_val: ndarray</span>
+<span class="sd">        Array containing the labels for training or training and validation (depending on the value of `split_train_val`)</span>
+
+<span class="sd">    x_test: ndarray</span>
+<span class="sd">        Feature matrix for test</span>
+
+<span class="sd">    y_test: ndarray</span>
+<span class="sd">        Array containing the test labels</span>
+
+<span class="sd">    split_train_val: bool, optional (default = `False`)</span>
+<span class="sd">        If `True`, split the `x_train_val` and `y_train_val` in training and validation set.</span>
+
+<span class="sd">    stratified_splits: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, split the `x_train_val` and `y_train_val` using stratified sampling</span>
+<span class="sd">        (`sklearn.model_selection.StratifiedShuffleSplit`).</span>
+
+<span class="sd">    test_size: float, int, None, optional</span>
+<span class="sd">        test_size as specified in `sklearn.model_selection.StratifiedShuffleSplit`</span>
+
+<span class="sd">    random_state: int, RandomState instance or None, optional (default=None)</span>
+<span class="sd">        test_size as specified in `sklearn.model_selection.StratifiedShuffleSplit`</span>
+
+<span class="sd">    flatten_images: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, flatten the `x_train_val` and `x_test` arrays.</span>
+
+<span class="sd">    dtype: tf.type (default = `tf.float32`)</span>
+<span class="sd">        dtype to pass to the dataset class.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    `data_preprocessing.DataSet`</span>
+<span class="sd">        Return a `data_preprocessing.DataSet` object. This will be change to adopt the standard Tensorflow dataset.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">DataSets</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="n">data_sets</span> <span class="o">=</span> <span class="n">DataSets</span><span class="p">()</span>
+
+    <span class="n">x_train</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">x_val</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_val</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">input_train_val_dims</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_train_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_train_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">input_test_dims</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">input_train_val_dims</span> <span class="o">==</span> <span class="n">input_test_dims</span><span class="p">:</span>
+        <span class="n">input_dims</span> <span class="o">=</span> <span class="n">input_train_val_dims</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Input dimension: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_dims</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Training/validation and test images have different shapes.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="s1">&#39;Training/validation images shape: </span><span class="si">{0}</span><span class="s1">. </span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="s1">&#39;Test images shape: </span><span class="si">{1}</span><span class="s1">. </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_train_val_dims</span><span class="p">,</span> <span class="n">input_test_dims</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">split_train_val</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">test_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot split in train and validation if the splitting ratio &quot;</span>
+                             <span class="s2">&quot;is not provided. Please specify a valid &#39;test_size&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">split_train_val</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Splitting in train/validation set&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stratified_splits</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using stratified sampling.&quot;</span><span class="p">)</span>
+            <span class="n">sss</span> <span class="o">=</span> <span class="n">StratifiedShuffleSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Not using stratified sampling.&quot;</span><span class="p">)</span>
+            <span class="n">sss</span> <span class="o">=</span> <span class="n">ShuffleSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">val_index</span> <span class="ow">in</span> <span class="n">sss</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x_train_val</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_train_val</span><span class="p">):</span>
+            <span class="n">x_train</span><span class="p">,</span> <span class="n">x_val</span> <span class="o">=</span> <span class="n">x_train_val</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">x_train_val</span><span class="p">[</span><span class="n">val_index</span><span class="p">]</span>
+            <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">y_train_val</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">y_train_val</span><span class="p">[</span><span class="n">val_index</span><span class="p">]</span>
+
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x_train_val</span><span class="p">,</span> <span class="n">y_train_val</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">x_test</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y_test</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">data_sets</span></div>
+
+
+<div class="viewcode-block" id="prepare_dataset"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.prepare_dataset">[docs]</a><span class="k">def</span> <span class="nf">prepare_dataset</span><span class="p">(</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span>
+                    <span class="n">input_dims</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">target_categorical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataset_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">desc_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">main_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">disc_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For a list of `ase.Atoms`, a `target_list`, and a `target_name` creates a dataset and writes it to file.</span>
+
+<span class="sd">    Information regarding the dataset are saved in a summary file (ending with &quot;_summary.json&quot;). This includes for</span>
+<span class="sd">    example creation date, path to the pickles containing the feature matrix (ending with &quot;_x.pkl&quot;) and the labels</span>
+<span class="sd">    (ending with &quot;_y.pkl&quot;), `dataset_name`, `target_name`, `text_labels`, and user-defined notes on the</span>
+<span class="sd">    dataset.</span>
+
+<span class="sd">    The dataset written to file by `ai4materials.preprocessing.prepare_dataset` can be later loaded by</span>
+<span class="sd">    `ai4materials.preprocessing.load_dataset_from_file`.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    structure_list: list of `ase.Atoms`</span>
+<span class="sd">        List of atomic structures.</span>
+
+<span class="sd">    target_list: list of dict</span>
+<span class="sd">        List of dictionaries as returned by `nomad-ml.wrappers.load_descriptor`. \n</span>
+<span class="sd">        Each element of this list is a dictionary with only one key (data), \n</span>
+<span class="sd">        which has as value a list of dicts. \n</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        {u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}. \n</span>
+<span class="sd">        More keywords are possible.</span>
+
+<span class="sd">    desc_metadata: str</span>
+<span class="sd">        Metadata of the descriptor to be extracted from `ase.Atoms.info` dictionary.</span>
+
+<span class="sd">    dataset_name: str</span>
+<span class="sd">        Name to give to the dataset.</span>
+
+<span class="sd">    target_name: str</span>
+<span class="sd">        Name of the target to be extracted from `target_list` and saved in the label pickle.</span>
+
+<span class="sd">    target_categorical: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, the target to extract is assumed to be categorical, i.e. for classification.\n</span>
+<span class="sd">        If `False`, the target to extract is assumed to be continuous, i.e. for regression.\n</span>
+<span class="sd">        If `True`, the labels are discretized according to `disc_type`.</span>
+
+<span class="sd">    disc_type: { &#39;uniform&#39;, &#39;quantiles&#39;}</span>
+<span class="sd">        Type of discretization used if target is categorical. In both case, `n_bins` are used.</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_data_retrieval.extract_labels`.</span>
+
+<span class="sd">    n_bins: int, optional (default=100)</span>
+<span class="sd">        Number of bins used in the discretization.</span>
+
+<span class="sd">    configs: dict</span>
+<span class="sd">        Dictionary containing configuration information such as folders for input and output \n</span>
+<span class="sd">        (e.g. `desc_folder`, `tmp_folder`), logging level, and metadata location.\n</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_config.set_configs`.</span>
+
+<span class="sd">    dataset_folder: str, optional (default = `configs[&#39;io&#39;][&#39;dataset_folder&#39;]`)</span>
+<span class="sd">        Path to the folder where the dataset (two pickles with feature matrix and labels, \n</span>
+<span class="sd">        plus a summary file in human-readable format) is saved.</span>
+
+<span class="sd">    desc_folder: str, optional (default = `configs[&#39;io&#39;][&#39;desc_folder&#39;]`)</span>
+<span class="sd">        Path to the descriptor folder.</span>
+
+<span class="sd">    tmp_folder: str, optional (default = `configs[&#39;io&#39;][&#39;tmp_folder&#39;]`)</span>
+<span class="sd">        Path to the tmp folder.</span>
+
+<span class="sd">    main_folder: str, optional (default = `configs[&#39;io&#39;][&#39;main_folder&#39;]`)</span>
+<span class="sd">        Path to the main_folder.</span>
+
+<span class="sd">    notes: str</span>
+<span class="sd">        Notes/comments regarding the dataset that will be written in the dataset summary file.</span>
+
+<span class="sd">    new_labels: dict, optional (default = `None`)</span>
+<span class="sd">        It allows to substitute the label names that are in `target_list`. \n</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        new_labels = {&quot;hcp&quot;: [&quot;194&quot;], &quot;fcc&quot;: [&quot;225&quot;], &quot;diam&quot;: [&quot;227&quot;], &quot;bcc&quot;: [&quot;229&quot;]} \n</span>
+<span class="sd">        will substitute each occurrence of &quot;194&quot; with &quot;hcp&quot; in the label list which is extracted. \n</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_data_retrieval.extract_labels`.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    str, str, str</span>
+<span class="sd">        Return the path to the feature matrix pickle (numpy.ndarray), the label pickle (numpy.ndarray), \n</span>
+<span class="sd">        and the human-readable summary file.\n</span>
+<span class="sd">        This can be read by :py:mod:`ai4materials.preprocessing.load_dataset_from_file`.</span>
+
+<span class="sd">    .. seealso:: modules :py:mod:`ai4materials.preprocessing.load_dataset_from_file`, \n</span>
+<span class="sd">                         :py:mod:`ai4materials.wrappers.load_descriptor`</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">configs</span> <span class="o">=</span> <span class="n">overwrite_configs</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">dataset_folder</span><span class="o">=</span><span class="n">dataset_folder</span><span class="p">,</span> <span class="n">desc_folder</span><span class="o">=</span><span class="n">desc_folder</span><span class="p">,</span>
+                                <span class="n">main_folder</span><span class="o">=</span><span class="n">main_folder</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="o">=</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">dataset_folder</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_folder&#39;</span><span class="p">]</span>
+
+    <span class="n">data_set</span><span class="p">,</span> <span class="n">nb_classes</span><span class="p">,</span> <span class="n">label_encoder</span><span class="p">,</span> <span class="n">numerical_labels</span><span class="p">,</span> <span class="n">text_labels</span> <span class="o">=</span> <span class="n">merge_labels_data</span><span class="p">(</span>
+        <span class="n">structure_list</span><span class="o">=</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">target_list</span><span class="o">=</span><span class="n">target_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="o">=</span><span class="n">desc_metadata</span><span class="p">,</span>
+        <span class="n">target_categorical</span><span class="o">=</span><span class="n">target_categorical</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="n">n_bins</span><span class="p">,</span>
+        <span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">disc_type</span><span class="o">=</span><span class="n">disc_type</span><span class="p">,</span> <span class="n">input_dims</span><span class="o">=</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">split_train_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">new_labels</span><span class="o">=</span><span class="n">new_labels</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">)</span>
+
+    <span class="n">x_name</span> <span class="o">=</span> <span class="n">dataset_name</span> <span class="o">+</span> <span class="s1">&#39;_x&#39;</span>
+    <span class="n">y_name</span> <span class="o">=</span> <span class="n">dataset_name</span> <span class="o">+</span> <span class="s1">&#39;_y&#39;</span>
+    <span class="n">summary_name</span> <span class="o">=</span> <span class="n">dataset_name</span> <span class="o">+</span> <span class="s1">&#39;_summary&#39;</span>
+
+    <span class="n">path_to_x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">,</span> <span class="n">x_name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)))</span>
+    <span class="n">path_to_y</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">,</span> <span class="n">y_name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)))</span>
+    <span class="n">path_to_summary</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">,</span> <span class="n">summary_name</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)))</span>
+
+    <span class="c1"># write X and y to file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_x</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data_set</span><span class="o">.</span><span class="n">images</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing x to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_x</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_y</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data_set</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing y to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_y</span><span class="p">))</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="n">dataset_info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;creation_date&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()),</span> <span class="s2">&quot;dataset_name&quot;</span><span class="p">:</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="s2">&quot;target_name&quot;</span><span class="p">:</span> <span class="n">target_name</span><span class="p">,</span>
+                    <span class="s2">&quot;target_categorical&quot;</span><span class="p">:</span> <span class="n">target_categorical</span><span class="p">,</span>
+                    <span class="s2">&quot;disc_type&quot;</span><span class="p">:</span> <span class="n">disc_type</span><span class="p">,</span> <span class="s2">&quot;n_bins&quot;</span><span class="p">:</span> <span class="n">n_bins</span><span class="p">,</span> <span class="s2">&quot;path_to_x&quot;</span><span class="p">:</span> <span class="n">path_to_x</span><span class="p">,</span> <span class="s2">&quot;path_to_y&quot;</span><span class="p">:</span> <span class="n">path_to_y</span><span class="p">,</span>
+                    <span class="s2">&quot;path_to_summary&quot;</span><span class="p">:</span> <span class="n">path_to_summary</span><span class="p">,</span> <span class="s2">&quot;nb_classes&quot;</span><span class="p">:</span> <span class="n">nb_classes</span><span class="p">,</span>
+                    <span class="s2">&quot;classes&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="p">),</span> <span class="s2">&quot;numerical_labels&quot;</span><span class="p">:</span> <span class="n">numerical_labels</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                    <span class="s2">&quot;text_labels&quot;</span><span class="p">:</span> <span class="n">text_labels</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">notes</span><span class="p">}</span>
+
+    <span class="c1"># write summary file with main info about the dataset</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_summary</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    {</span>
+<span class="s2">          &quot;data&quot;:[&quot;&quot;&quot;</span><span class="p">)</span>
+
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dataset_info</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    ] }&quot;&quot;&quot;</span><span class="p">)</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Summary file written in </span><span class="si">{0}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_summary</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">path_to_x</span><span class="p">,</span> <span class="n">path_to_y</span><span class="p">,</span> <span class="n">path_to_summary</span></div>
+
+
+<div class="viewcode-block" id="load_dataset_from_file"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.load_dataset_from_file">[docs]</a><span class="k">def</span> <span class="nf">load_dataset_from_file</span><span class="p">(</span><span class="n">path_to_x</span><span class="p">,</span> <span class="n">path_to_y</span><span class="p">,</span> <span class="n">path_to_summary</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read the feature matrix, the labels and the summary of a dataset.</span>
+
+<span class="sd">    It reads the dataset written to file by `ai4materials.preprocessing.prepare_dataset`, \n</span>
+<span class="sd">    and return the feature matrix, the labels and the summary file of a dataset.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    path_to_x: str</span>
+<span class="sd">        Path to the pickle file where the feature matrix was saved, \n</span>
+<span class="sd">        as returned by `ai4materials.preprocessing.prepare_dataset`.</span>
+
+<span class="sd">    path_to_y: str</span>
+<span class="sd">        Path to the pickle file where the feature labels were saved, \n</span>
+<span class="sd">        as returned by `ai4materials.preprocessing.prepare_dataset`.</span>
+
+<span class="sd">    path_to_summary: str, optional (default = `None`)</span>
+<span class="sd">        Path to the human readable (JSON) dataset summary file \n</span>
+<span class="sd">        as returned by `ai4materials.preprocessing.prepare_dataset`.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    numpy.ndarray, numpy.ndarray, dict</span>
+<span class="sd">        Return the feature matrix, the labels, and the human-readable summary file \n</span>
+<span class="sd">        which were saved with :py:mod:`ai4materials.datapreprocessing.preprocessing.prepare_dataset`.</span>
+
+<span class="sd">    .. seealso:: modules :py:mod:`ai4materials.datapreprocessing.preprocessing.prepare_dataset`.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading X from </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_x</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading y from </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_to_y</span><span class="p">))</span>
+
+    <span class="n">dataset_info</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_x</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_x</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_x</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_y</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_y</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_y</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path_to_summary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_summary</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">summary_dataset</span><span class="p">:</span>
+            <span class="n">dataset_info</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">summary_dataset</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;X-shape: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;y-shape: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dataset_info</span></div>
+
+
+<div class="viewcode-block" id="merge_labels_data"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.merge_labels_data">[docs]</a><span class="k">def</span> <span class="nf">merge_labels_data</span><span class="p">(</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">,</span> <span class="n">stratified_splits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_categorical</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">disc_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_dims</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">split_train_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">new_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From a list of `ase.Atoms` and target list, merge them in a `data_preprocessing.DataSet` object.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    structure_list: list of `ase.Atoms`</span>
+<span class="sd">        List of atomic structures.</span>
+
+<span class="sd">    target_list: list of dict</span>
+<span class="sd">        List of dictionaries as returned by `nomad-ml.wrappers.load_descriptor`. \n</span>
+<span class="sd">        Each element of this list is a dictionary with only one key (data), \n</span>
+<span class="sd">        which has as value a list of dicts. \n</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        {u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}. \n</span>
+<span class="sd">        More keywords are possible.</span>
+
+<span class="sd">    desc_metadata: str</span>
+<span class="sd">        Metadata of the descriptor to be extracted from `ase.Atoms.info` dictionary.</span>
+
+<span class="sd">    stratified_splits: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, split the `x_train_val` and `y_train_val` using stratified sampling</span>
+<span class="sd">        (`sklearn.model_selection.StratifiedShuffleSplit`).</span>
+
+<span class="sd">    test_size: float, int, None, optional</span>
+<span class="sd">        test_size as specified in `sklearn.model_selection.StratifiedShuffleSplit`</span>
+
+<span class="sd">    random_state: int, RandomState instance or None, optional (default=None)</span>
+<span class="sd">        test_size as specified in `sklearn.model_selection.StratifiedShuffleSplit`</span>
+
+<span class="sd">    flatten_images: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, flatten the `x_train_val` and `x_test` arrays.</span>
+
+<span class="sd">    dtype: tf.type (default = `tf.float32`)</span>
+<span class="sd">        dtype to pass to the dataset class.</span>
+
+<span class="sd">    target_name: str</span>
+<span class="sd">        Name of the target to be extracted from `target_list` and saved in the label pickle.</span>
+
+<span class="sd">    target_categorical: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, the target to extract is assumed to be categorical, i.e. for classification.\n</span>
+<span class="sd">        If `False`, the target to extract is assumed to be continuous, i.e. for regression.\n</span>
+<span class="sd">        If `True`, the labels are discretized according to `disc_type`.</span>
+
+<span class="sd">    disc_type: { &#39;uniform&#39;, &#39;quantiles&#39;}</span>
+<span class="sd">        Type of discretization used if target is categorical. In both case, `n_bins` are used.</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_data_retrieval.extract_labels`.</span>
+
+<span class="sd">    n_bins: int, optional (default=100)</span>
+<span class="sd">        Number of bins used in the discretization.</span>
+
+<span class="sd">    one_hot: bool, optional (default = `True`)</span>
+<span class="sd">        Dictionary containing configuration information such as folders for input and output \n</span>
+<span class="sd">        (e.g. `desc_folder`, `tmp_folder`), logging level, and metadata location.\n</span>
+<span class="sd">        See also `ai4materials.dataprocessing.preprocessing.dense_to_one_hot`.</span>
+
+<span class="sd">    split_train_val: bool, optional (default = `False`)</span>
+<span class="sd">        If `True`, split the `x_train_val` and `y_train_val` in training and validation set.</span>
+
+<span class="sd">    new_labels: dict, optional (default = `None`)</span>
+<span class="sd">        It allows to substitute the label names that are in `target_list`. \n</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        new_labels = {&quot;hcp&quot;: [&quot;194&quot;], &quot;fcc&quot;: [&quot;225&quot;], &quot;diam&quot;: [&quot;227&quot;], &quot;bcc&quot;: [&quot;229&quot;]} \n</span>
+<span class="sd">        will substitute each occurrence of &quot;194&quot; with &quot;hcp&quot; in the label list which is extracted. \n</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_data_retrieval.extract_labels`.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    `data_preprocessing.DataSet`, int, `sklearn.preprocessing.LabelEncoder`, numpy.ndarray, numpy.ndarray</span>
+<span class="sd">        Return the dataset, number of classes, a label encoder object, \n</span>
+<span class="sd">        labels as integers (as encoder in the label encoder, \n</span>
+<span class="sd">        and labels as text (the original labels, not encoded).</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">DataSets</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="n">data_sets</span> <span class="o">=</span> <span class="n">DataSets</span><span class="p">()</span>
+
+    <span class="n">x_train</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">x_val</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_val</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">x_list</span> <span class="o">=</span> <span class="n">get_metadata_value</span><span class="p">(</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x_list</span><span class="p">)</span>
+
+    <span class="c1"># extract labels from target_list</span>
+    <span class="n">label_encoder</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">text_labels</span> <span class="o">=</span> <span class="n">extract_labels</span><span class="p">(</span><span class="n">target_list</span><span class="o">=</span><span class="n">target_list</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span>
+                                                        <span class="n">target_categorical</span><span class="o">=</span><span class="n">target_categorical</span><span class="p">,</span> <span class="n">disc_type</span><span class="o">=</span><span class="n">disc_type</span><span class="p">,</span>
+                                                        <span class="n">n_bins</span><span class="o">=</span><span class="n">n_bins</span><span class="p">,</span> <span class="n">new_labels</span><span class="o">=</span><span class="n">new_labels</span><span class="p">)</span>
+
+    <span class="c1"># save labels in numerical labels because labels will change if we have one-hot encoding</span>
+    <span class="c1"># however, we want to keep track of the label number</span>
+    <span class="n">numerical_labels</span> <span class="o">=</span> <span class="n">labels</span>
+    <span class="n">nb_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+
+    <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;images&#39;</span><span class="p">)</span>
+    <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">)</span>
+
+    <span class="n">class_list</span><span class="p">,</span> <span class="n">class_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Class populations: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_pop</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">one_hot</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">dense_to_one_hot</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">label_encoder</span><span class="o">=</span><span class="n">label_encoder</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using one-hot encoding. The sample number is </span><span class="si">{0}</span><span class="s2">*(image matrix samples)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_classes</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">split_train_val</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">stratified_splits</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using stratified sampling.&quot;</span><span class="p">)</span>
+            <span class="n">sss</span> <span class="o">=</span> <span class="n">StratifiedShuffleSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Not using stratified sampling.&quot;</span><span class="p">)</span>
+            <span class="n">sss</span> <span class="o">=</span> <span class="n">ShuffleSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">val_index</span> <span class="ow">in</span> <span class="n">sss</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">labels</span><span class="p">):</span>
+            <span class="n">x_train</span><span class="p">,</span> <span class="n">x_val</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">val_index</span><span class="p">]</span>
+            <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">val_index</span><span class="p">]</span>
+
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="s1">&#39;x_train&#39;</span><span class="p">)</span>
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="s1">&#39;x_val&#39;</span><span class="p">)</span>
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="s1">&#39;train_labels&#39;</span><span class="p">)</span>
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">y_val</span><span class="p">,</span> <span class="s1">&#39;val_labels&#39;</span><span class="p">)</span>
+
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+        <span class="n">data_sets</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not splitting in train/validation set&quot;</span><span class="p">)</span>
+
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;images&#39;</span><span class="p">)</span>
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">)</span>
+
+        <span class="n">data_sets</span> <span class="o">=</span> <span class="n">DataSet</span><span class="p">(</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">flatten_images</span><span class="o">=</span><span class="n">flatten_images</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data_sets</span><span class="p">,</span> <span class="n">nb_classes</span><span class="p">,</span> <span class="n">label_encoder</span><span class="p">,</span> <span class="n">numerical_labels</span><span class="p">,</span> <span class="n">text_labels</span></div>
+
+
+<div class="viewcode-block" id="print_size_np_array"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.print_size_np_array">[docs]</a><span class="k">def</span> <span class="nf">print_size_np_array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">array_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print shape and total Mb consumed by the elements of the array.&quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Shape of </span><span class="si">{0}</span><span class="s2"> array: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">array_name</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Size of </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1:.3f}</span><span class="s2"> MB&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">array_name</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">20</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="load_data_from_pickle"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.load_data_from_pickle">[docs]</a><span class="k">def</span> <span class="nf">load_data_from_pickle</span><span class="p">(</span><span class="n">path_to_x_train</span><span class="p">,</span> <span class="n">path_to_x_test</span><span class="p">,</span> <span class="n">path_to_y_train</span><span class="p">,</span> <span class="n">path_to_y_test</span><span class="p">,</span> <span class="n">path_to_x_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">path_to_y_val</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load data from pickles which contains numpy.ndarray objects.&quot;&quot;&quot;</span>
+
+    <span class="n">x_val</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_val</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_x_train</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_input</span><span class="p">:</span>
+        <span class="n">x_train</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_input</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_y_train</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_input</span><span class="p">:</span>
+        <span class="n">y_train</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_input</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path_to_x_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_x_val</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_input</span><span class="p">:</span>
+            <span class="n">x_val</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_input</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path_to_y_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_y_val</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_input</span><span class="p">:</span>
+            <span class="n">y_val</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_input</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_x_test</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_input</span><span class="p">:</span>
+        <span class="n">x_test</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_input</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_y_test</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_input</span><span class="p">:</span>
+        <span class="n">y_test</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_input</span><span class="p">)</span>
+
+    <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="s1">&#39;x_train&#39;</span><span class="p">)</span>
+    <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="s1">&#39;y_train&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path_to_x_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="s1">&#39;x_val&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Not loading validation set.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path_to_y_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">y_val</span><span class="p">,</span> <span class="s1">&#39;y_val&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Not loading Y_validation set.&#39;</span><span class="p">)</span>
+
+    <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="s1">&#39;x_test&#39;</span><span class="p">)</span>
+    <span class="n">print_size_np_array</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="s1">&#39;y_test&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span></div>
+
+
+<div class="viewcode-block" id="standardize_matrix"><a class="viewcode-back" href="../../../ai4materials.dataprocessing.preprocessing.html#ai4materials.dataprocessing.preprocessing.standardize_matrix">[docs]</a><span class="k">def</span> <span class="nf">standardize_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="s1">&#39;mean-variance&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Standardize matrix.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">standardize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Data not standardized.&#39;</span><span class="p">)</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">StandardScaler</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_std</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">standardize</span> <span class="o">==</span> <span class="s1">&#39;mean-variance&#39;</span><span class="p">:</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">StandardScaler</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_std</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Data standardized by removing the mean and scaling to unit variance.&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">standardize</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">StandardScaler</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_std</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Data standardized by removing the mean; no scaling to unit variance.&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">standardize</span> <span class="o">==</span> <span class="s1">&#39;variance&#39;</span><span class="p">:</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">StandardScaler</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_std</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Data standardized by scaling to unit variance; mean not removed.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value for standardize.&quot;</span><span class="p">)</span>
+
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">scaler</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

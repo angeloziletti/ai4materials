@@ -1,0 +1,660 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.models.strided_pattern_matching &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.models.strided_pattern_matching</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.models.strided_pattern_matching</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;23/09/18&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="k">import</span> <span class="n">get_boxes_from_xyz</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="k">import</span> <span class="n">calc_descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="k">import</span> <span class="n">load_descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.dataprocessing.preprocessing</span> <span class="k">import</span> <span class="n">prepare_dataset</span>
+<span class="kn">from</span> <span class="nn">ai4materials.dataprocessing.preprocessing</span> <span class="k">import</span> <span class="n">load_dataset_from_file</span>
+<span class="kn">from</span> <span class="nn">ai4materials.dataprocessing.preprocessing</span> <span class="k">import</span> <span class="n">make_data_sets</span>
+<span class="kn">from</span> <span class="nn">ai4materials.models.cnn_polycrystals</span> <span class="k">import</span> <span class="n">predict</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_classification_map"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.get_classification_map">[docs]</a><span class="k">def</span> <span class="nf">get_classification_map</span><span class="p">(</span><span class="n">polycrystal_file</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">checkpoint_dir</span><span class="p">,</span> <span class="n">checkpoint_filename</span><span class="p">,</span>
+                           <span class="n">operations_on_structure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stride_size</span><span class="o">=</span><span class="p">(</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">),</span> <span class="n">box_size</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
+                           <span class="n">init_sliding_volume</span><span class="o">=</span><span class="p">(</span><span class="mf">14.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">),</span>
+                           <span class="n">desc_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">desc_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">show_plot_lengths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">calc_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mc_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                           <span class="n">desc_file_suffix_name</span><span class="o">=</span><span class="s1">&#39;_pristine&#39;</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">results_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">conf_matrix_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">train_set_name</span><span class="o">=</span><span class="s1">&#39;hcp-bcc-sc-diam-fcc-pristine&#39;</span><span class="p">,</span> <span class="n">padding_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">cmap_uncertainty</span><span class="o">=</span><span class="s1">&#39;hot&#39;</span><span class="p">,</span> <span class="n">interpolation_uncertainty</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">desc_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating system&#39;s representation.&quot;</span><span class="p">)</span>
+        <span class="n">desc_file</span> <span class="o">=</span> <span class="n">calc_polycrystal_desc</span><span class="p">(</span><span class="n">polycrystal_file</span><span class="p">,</span> <span class="n">stride_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span>
+                                          <span class="n">desc_file_suffix_name</span><span class="p">,</span> <span class="n">operations_on_structure</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="p">,</span> <span class="n">show_plot_lengths</span><span class="p">,</span>
+                                          <span class="n">padding_ratio</span><span class="o">=</span><span class="n">padding_ratio</span><span class="p">,</span> <span class="n">init_sliding_volume</span><span class="o">=</span><span class="n">init_sliding_volume</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using the precomputed user-specified descriptor file.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">desc_only</span><span class="p">:</span>
+        <span class="n">target_list</span><span class="p">,</span> <span class="n">structure_list</span> <span class="o">=</span> <span class="n">load_descriptor</span><span class="p">(</span><span class="n">desc_files</span><span class="o">=</span><span class="n">desc_file</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+
+        <span class="c1"># create dataset</span>
+        <span class="n">dataset_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_stride_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">_</span><span class="si">{3}</span><span class="s1">_box_size_</span><span class="si">{4}</span><span class="s1">_</span><span class="si">{5}</span><span class="s1">.tar.gz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">polycrystal_file</span><span class="p">,</span> <span class="n">stride_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                               <span class="n">stride_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stride_size</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">box_size</span><span class="p">,</span>
+                                                                               <span class="n">desc_file_suffix_name</span><span class="p">)</span>
+
+        <span class="n">path_to_x_test</span><span class="p">,</span> <span class="n">path_to_y_test</span><span class="p">,</span> <span class="n">path_to_summary_test</span> <span class="o">=</span> <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">structure_list</span><span class="o">=</span><span class="n">structure_list</span><span class="p">,</span>
+                                                                               <span class="n">target_list</span><span class="o">=</span><span class="n">target_list</span><span class="p">,</span>
+                                                                               <span class="n">desc_metadata</span><span class="o">=</span><span class="n">desc_metadata</span><span class="p">,</span>
+                                                                               <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+                                                                               <span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span>
+                                                                               <span class="n">target_categorical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">input_dims</span><span class="o">=</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+                                                                               <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span>
+                                                                               <span class="n">dataset_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span>
+                                                                                   <span class="s1">&#39;dataset_folder&#39;</span><span class="p">],</span>
+                                                                               <span class="n">main_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span>
+                                                                               <span class="n">desc_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">],</span>
+                                                                               <span class="n">tmp_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">])</span>
+
+        <span class="n">path_to_x_train</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_folder&#39;</span><span class="p">],</span> <span class="n">train_set_name</span> <span class="o">+</span> <span class="s1">&#39;_x.pkl&#39;</span><span class="p">)</span>
+        <span class="n">path_to_y_train</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_folder&#39;</span><span class="p">],</span> <span class="n">train_set_name</span> <span class="o">+</span> <span class="s1">&#39;_y.pkl&#39;</span><span class="p">)</span>
+        <span class="n">path_to_summary_train</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_folder&#39;</span><span class="p">],</span> <span class="n">train_set_name</span> <span class="o">+</span> <span class="s1">&#39;_summary.json&#39;</span><span class="p">)</span>
+
+        <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">dataset_info_train</span> <span class="o">=</span> <span class="n">load_dataset_from_file</span><span class="p">(</span><span class="n">path_to_x</span><span class="o">=</span><span class="n">path_to_x_train</span><span class="p">,</span> <span class="n">path_to_y</span><span class="o">=</span><span class="n">path_to_y_train</span><span class="p">,</span>
+                                                                      <span class="n">path_to_summary</span><span class="o">=</span><span class="n">path_to_summary_train</span><span class="p">)</span>
+
+        <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">dataset_info_test</span> <span class="o">=</span> <span class="n">load_dataset_from_file</span><span class="p">(</span><span class="n">path_to_x</span><span class="o">=</span><span class="n">path_to_x_test</span><span class="p">,</span> <span class="n">path_to_y</span><span class="o">=</span><span class="n">path_to_y_test</span><span class="p">,</span>
+                                                                   <span class="n">path_to_summary</span><span class="o">=</span><span class="n">path_to_summary_test</span><span class="p">)</span>
+
+        <span class="n">params_cnn</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nb_classes&quot;</span><span class="p">:</span> <span class="n">dataset_info_train</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;nb_classes&quot;</span><span class="p">],</span>
+                      <span class="s2">&quot;classes&quot;</span><span class="p">:</span> <span class="n">dataset_info_train</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;classes&quot;</span><span class="p">],</span> <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">&quot;img_channels&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+        <span class="n">text_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dataset_info_test</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;text_labels&quot;</span><span class="p">])</span>
+        <span class="n">numerical_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dataset_info_test</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;numerical_labels&quot;</span><span class="p">])</span>
+
+        <span class="n">data_set_predict</span> <span class="o">=</span> <span class="n">make_data_sets</span><span class="p">(</span><span class="n">x_train_val</span><span class="o">=</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_train_val</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span> <span class="n">split_train_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                                          <span class="n">x_test</span><span class="o">=</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="o">=</span><span class="n">y_test</span><span class="p">)</span>
+
+        <span class="n">target_pred_class</span><span class="p">,</span> <span class="n">target_pred_probs</span><span class="p">,</span> <span class="n">prob_predictions</span><span class="p">,</span> <span class="n">conf_matrix</span><span class="p">,</span> <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">data_set_predict</span><span class="p">,</span>
+            <span class="n">params_cnn</span><span class="p">[</span><span class="s2">&quot;nb_classes&quot;</span><span class="p">],</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">params_cnn</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span> <span class="n">checkpoint_dir</span><span class="o">=</span><span class="n">checkpoint_dir</span><span class="p">,</span>
+            <span class="n">checkpoint_filename</span><span class="o">=</span><span class="n">checkpoint_filename</span><span class="p">,</span> <span class="n">show_model_acc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mc_samples</span><span class="o">=</span><span class="n">mc_samples</span><span class="p">,</span>
+            <span class="n">predict_probabilities</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot_conf_matrix</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">conf_matrix_file</span><span class="o">=</span><span class="n">conf_matrix_file</span><span class="p">,</span>
+            <span class="n">numerical_labels</span><span class="o">=</span><span class="n">numerical_labels</span><span class="p">,</span> <span class="n">text_labels</span><span class="o">=</span><span class="n">text_labels</span><span class="p">,</span> <span class="n">results_file</span><span class="o">=</span><span class="n">results_file</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">predictive_mean</span> <span class="o">=</span> <span class="n">prob_predictions</span>
+
+        <span class="c1"># get the number of strides in each directions in order to reshape properly</span>
+        <span class="n">strided_pattern_positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">structure_list</span><span class="p">:</span>
+            <span class="n">strided_pattern_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;strided_pattern_positions&#39;</span><span class="p">])</span>
+
+        <span class="n">class_plot_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">strided_pattern_positions</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">class_plot_pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># make a dataframe to order the prob_predictions</span>
+        <span class="c1"># this is needed when we read from file - the structures are ordered in a different way after they are saved</span>
+        <span class="c1"># this comes into play only if more than 10 values for each directions are used</span>
+        <span class="n">df_positions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">class_plot_pos</span><span class="p">,</span>
+                                    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;strided_pattern_positions_z&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_y&#39;</span><span class="p">,</span>
+                                             <span class="s1">&#39;strided_pattern_positions_x&#39;</span><span class="p">])</span>
+
+        <span class="c1"># sort predictive mean</span>
+        <span class="n">df_predictive_mean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">predictive_mean</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_positions</span><span class="p">,</span> <span class="n">df_predictive_mean</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">join_axes</span><span class="o">=</span><span class="p">[</span><span class="n">df_positions</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
+        <span class="n">df_predictive_mean_sorted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;strided_pattern_positions_z&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_y&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_x&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">predictive_mean_sorted</span> <span class="o">=</span> <span class="n">df_predictive_mean_sorted</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;strided_pattern_positions_z&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_y&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_x&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">for</span> <span class="n">idx_class</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">predictive_mean_sorted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+
+            <span class="n">prob_prediction_class</span> <span class="o">=</span> <span class="n">predictive_mean_sorted</span><span class="p">[:,</span> <span class="n">idx_class</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+
+            <span class="n">plot_prediction_heatmaps</span><span class="p">(</span><span class="n">prob_prediction_class</span><span class="p">,</span>
+                                     <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Probability&#39;</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">idx_class</span><span class="p">),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;prob&#39;</span><span class="p">,</span>
+                                     <span class="n">main_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span>
+                                     <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation</span><span class="p">)</span>
+            <span class="c1"># mlab.close(all=True)</span>
+            <span class="c1"># plt.contour3(prob_prediction_class)</span>
+            <span class="c1">#(prob_prediction_class)</span>
+            <span class="c1"># make three-dimensional plot</span>
+
+        <span class="k">if</span> <span class="n">calc_uncertainty</span><span class="p">:</span>
+            <span class="n">df_uncertainty</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">uncertainty</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">df_uncertainty</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">uncertainty</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_positions</span><span class="p">,</span> <span class="n">df_uncertainty</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">join_axes</span><span class="o">=</span><span class="p">[</span><span class="n">df_positions</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">df_uncertainty_sorted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+                <span class="p">[</span><span class="s1">&#39;strided_pattern_positions_z&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_y&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_x&#39;</span><span class="p">],</span>
+                <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">uncertainty_sorted</span> <span class="o">=</span> <span class="n">df_uncertainty_sorted</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;strided_pattern_positions_z&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_y&#39;</span><span class="p">,</span> <span class="s1">&#39;strided_pattern_positions_x&#39;</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">uncertainty</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">uncertainty_prediction</span> <span class="o">=</span> <span class="n">uncertainty_sorted</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+
+                <span class="c1"># for idx_uncertainty in range(predictive_mean_sorted.shape[1]):</span>
+                <span class="n">plot_prediction_heatmaps</span><span class="p">(</span><span class="n">uncertainty_prediction</span><span class="p">,</span>
+                                         <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Uncertainty (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)),</span>
+                                         <span class="n">main_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span>
+                                         <span class="n">cmap</span><span class="o">=</span><span class="n">cmap_uncertainty</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span>
+                                         <span class="n">suffix</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation_uncertainty</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_structures_by_boxes"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.get_structures_by_boxes">[docs]</a><span class="k">def</span> <span class="nf">get_structures_by_boxes</span><span class="p">(</span><span class="n">xyz_filename</span><span class="p">,</span> <span class="n">stride_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">show_plot_lengths</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">padding_ratio</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">init_sliding_volume</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">xyz_filename_without_ext</span><span class="p">,</span> <span class="n">xyz_filename_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">xyz_filename</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">box_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sliding_volume</span> <span class="o">=</span> <span class="p">[</span><span class="n">box_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Determining box_size automatically.&quot;</span><span class="p">)</span>
+        <span class="n">sliding_volume</span> <span class="o">=</span> <span class="n">get_optimal_box_size</span><span class="p">(</span><span class="n">xyz_filename</span><span class="p">,</span> <span class="n">padding_ratio</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+                                              <span class="n">cutoff_percentile</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">init_sliding_volume</span><span class="o">=</span><span class="n">init_sliding_volume</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">sliding_volume</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">sliding_volume</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">sliding_volume</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">sliding_volume</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">box_size</span> <span class="o">=</span> <span class="n">sliding_volume</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">xyz_boxes</span> <span class="o">=</span> <span class="n">get_boxes_from_xyz</span><span class="p">(</span><span class="n">xyz_filename</span><span class="p">,</span> <span class="n">sliding_volume</span><span class="p">,</span> <span class="n">stride_size</span><span class="p">,</span> <span class="n">padding_ratio</span><span class="o">=</span><span class="n">padding_ratio</span><span class="p">)</span>
+    <span class="n">tot_nb_boxes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Box size: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">box_size</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stride size: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stride_size</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;Numbers of boxes in x, y, z: </span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Total numbers of boxes: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tot_nb_boxes</span><span class="p">))</span>
+
+    <span class="n">array_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)</span>
+
+    <span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">xyz_boxes</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">array_lengths</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">)</span>
+                <span class="c1"># add cell and label</span>
+                <span class="n">ase_atoms</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">box_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                <span class="n">ase_atoms</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">box_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+                <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyz_filename_without_ext</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+                <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;strided_pattern_positions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+
+                <span class="n">ase_atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plot_lengths</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx_slice</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">array_lengths</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">array_lengths_slice</span> <span class="o">=</span> <span class="n">array_lengths</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+            <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">array_lengths_slice</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">afmhot</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Number of atoms in each box for slice </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx_slice</span><span class="p">))</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">ase_atoms_list</span></div>
+
+
+<div class="viewcode-block" id="get_lengths_from_xyz_boxes"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.get_lengths_from_xyz_boxes">[docs]</a><span class="k">def</span> <span class="nf">get_lengths_from_xyz_boxes</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From a list of boxes obtained from ``get_structures_by_boxes``, get the number of atoms in each box.&quot;&quot;&quot;</span>
+    <span class="n">array_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">xyz_boxes</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">array_lengths</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">array_lengths</span></div>
+
+
+<div class="viewcode-block" id="get_optimal_box_size"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.get_optimal_box_size">[docs]</a><span class="k">def</span> <span class="nf">get_optimal_box_size</span><span class="p">(</span><span class="n">xyz_filename</span><span class="p">,</span> <span class="n">padding_ratio</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">up_tolerance</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+                         <span class="n">down_tolerance</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">init_sliding_volume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">cutoff_percentile</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># initial guess</span>
+    <span class="n">sliding_volume</span> <span class="o">=</span> <span class="n">init_sliding_volume</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Target nb_atoms: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_nb_atoms</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Iteration: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+
+        <span class="n">xyz_boxes</span> <span class="o">=</span> <span class="n">get_boxes_from_xyz</span><span class="p">(</span><span class="n">xyz_filename</span><span class="p">,</span> <span class="n">sliding_volume</span><span class="p">,</span> <span class="n">stride_size</span><span class="o">=</span><span class="p">(</span><span class="mf">6.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">),</span>
+                                       <span class="n">padding_ratio</span><span class="o">=</span><span class="n">padding_ratio</span><span class="p">)</span>
+
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">get_lengths_from_xyz_boxes</span><span class="p">(</span><span class="n">xyz_boxes</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">cutoff_nb_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">lengths</span><span class="p">,</span> <span class="n">cutoff_percentile</span><span class="p">)</span>
+
+        <span class="c1"># select all nearest neighbor distances larger than cutoff_nb_atoms</span>
+        <span class="n">threshold_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">cutoff_nb_atoms</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">threshold_indices</span><span class="p">,</span> <span class="n">lengths</span><span class="p">)</span>
+
+        <span class="n">nb_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">lengths</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Mode of the nb_atoms distribution </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_atoms</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sliding box </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sliding_volume</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Diff </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_atoms</span><span class="o">-</span><span class="n">target_nb_atoms</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">nb_atoms</span> <span class="o">-</span> <span class="n">up_tolerance</span> <span class="o">&lt;=</span> <span class="n">target_nb_atoms</span> <span class="o">&lt;=</span> <span class="n">nb_atoms</span> <span class="o">+</span> <span class="n">down_tolerance</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Mode of the nb_atoms distribution </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_atoms</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;nb_atoms - up_tolerance </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_atoms</span> <span class="o">-</span> <span class="n">up_tolerance</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;nb_atoms + down_tolerance </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_atoms</span> <span class="o">+</span> <span class="n">down_tolerance</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Chosen sliding volume: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sliding_volume</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">nb_atoms</span> <span class="o">-</span> <span class="n">target_nb_atoms</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Increasing sliding volume: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sliding_volume</span><span class="p">))</span>
+            <span class="n">sliding_volume</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">+</span> <span class="n">step</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sliding_volume</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Decreasing sliding volume: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sliding_volume</span><span class="p">))</span>
+            <span class="n">sliding_volume</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">-</span> <span class="n">step</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sliding_volume</span><span class="p">]</span>
+
+        <span class="k">del</span> <span class="n">xyz_boxes</span>
+
+    <span class="k">return</span> <span class="n">sliding_volume</span></div>
+
+
+<div class="viewcode-block" id="calc_polycrystal_desc"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.calc_polycrystal_desc">[docs]</a><span class="k">def</span> <span class="nf">calc_polycrystal_desc</span><span class="p">(</span><span class="n">polycrystal_file</span><span class="p">,</span> <span class="n">stride_size</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">desc_file_suffix_name</span><span class="p">,</span>
+                          <span class="n">operations_on_structure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">show_plot_lengths</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">init_sliding_volume</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="n">get_structures_by_boxes</span><span class="p">(</span><span class="n">polycrystal_file</span><span class="p">,</span> <span class="n">stride_size</span><span class="o">=</span><span class="n">stride_size</span><span class="p">,</span> <span class="n">box_size</span><span class="o">=</span><span class="n">box_size</span><span class="p">,</span>
+                                             <span class="n">show_plot_lengths</span><span class="o">=</span><span class="n">show_plot_lengths</span><span class="p">,</span> <span class="n">padding_ratio</span><span class="o">=</span><span class="n">padding_ratio</span><span class="p">,</span>
+                                             <span class="n">init_sliding_volume</span><span class="o">=</span><span class="n">init_sliding_volume</span><span class="p">)</span>
+
+    <span class="n">desc_file</span> <span class="o">=</span> <span class="n">calc_descriptor</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="n">ase_atoms_list</span><span class="o">=</span><span class="n">ase_atoms_list</span><span class="p">,</span>
+                                <span class="n">desc_file</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_stride_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">_</span><span class="si">{3}</span><span class="s1">_box_size_</span><span class="si">{4}</span><span class="s1">_</span><span class="si">{5}</span><span class="s1">.tar.gz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">polycrystal_file</span><span class="p">),</span> <span class="n">stride_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stride_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">stride_size</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                    <span class="n">box_size</span><span class="p">,</span> <span class="n">desc_file_suffix_name</span><span class="p">),</span> <span class="n">format_geometry</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">,</span>
+                                <span class="n">operations_on_structure</span><span class="o">=</span><span class="n">operations_on_structure</span><span class="p">,</span> <span class="n">nb_jobs</span><span class="o">=</span><span class="n">nb_jobs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">desc_file</span></div>
+
+
+<div class="viewcode-block" id="plot_prediction_heatmaps"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.plot_prediction_heatmaps">[docs]</a><span class="k">def</span> <span class="nf">plot_prediction_heatmaps</span><span class="p">(</span><span class="n">prob_prediction_class</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">main_folder</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;prob&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                             <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    For available interpolation methods see:</span>
+<span class="sd">    https://matplotlib.org/gallery/images_contours_and_fields/interpolation_methods.html</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prob_prediction_class</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating two-dimensional plot.&quot;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">prob_prediction_class</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">class_name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> for class </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">class_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+
+        <span class="c1"># plt.xlabel(u&#39;x  [\u212B]&#39;)</span>
+        <span class="c1"># plt.ylabel(u&#39;y [\u212B]&#39;)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;x stride #&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;y stride #&#39;</span><span class="p">)</span>
+
+        <span class="c1"># add colorbar, make sure to specify tick locations to match desired ticklabels</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="kn">from</span> <span class="nn">mayavi</span> <span class="k">import</span> <span class="n">mlab</span>
+
+        <span class="n">azimuth</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">elevation</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">offscreen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+        <span class="c1"># obj = mlab.contour3d(prob_prediction_class, contours=100, vmin=0.2, vmax=1., opacity=0.)</span>
+
+        <span class="n">filename_npy</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_folder</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_class</span><span class="si">{2}</span><span class="s1">.npy&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">title</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">class_name</span><span class="p">)))</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename_npy</span><span class="p">,</span> <span class="n">prob_prediction_class</span><span class="p">)</span>
+
+        <span class="c1"># obj.scene.disable_render = True</span>
+        <span class="c1"># obj.scene.anti_aliasing_frames = 0</span>
+        <span class="c1"># mlab.view(azimuth=azimuth, elevation=elevation)</span>
+        <span class="c1"># mlab.colorbar(title=&#39;Field intensity&#39;, orientation=&#39;vertical&#39;)</span>
+        <span class="c1"># mlab.show()</span>
+        <span class="c1">#</span>
+        <span class="c1"># mlab.savefig(filename=os.path.join(main_folder, &#39;{0}_class{1}.png&#39;.format(str(prefix),</span>
+        <span class="c1">#                                                                           str(class_name))))</span>
+        <span class="c1"># mlab.close(all=True)</span>
+
+        <span class="c1"># logger.info(&quot;Creating three-dimensional plot.&quot;)</span>
+        <span class="c1"># x = np.arange(prob_prediction_class.shape[0])[:, None, None]</span>
+        <span class="c1"># y = np.arange(prob_prediction_class.shape[1])[None, :, None]</span>
+        <span class="c1"># z = np.arange(prob_prediction_class.shape[2])[None, None, :]</span>
+        <span class="c1"># x, y, z = np.broadcast_arrays(x, y, z)</span>
+        <span class="c1">#</span>
+        <span class="c1"># from mpl_toolkits.mplot3d import Axes3D</span>
+        <span class="c1"># # ax = fig.add_subplot(111, projection=&#39;3d&#39;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># colmap = cm.ScalarMappable(cmap=plt.cm.Blues)</span>
+        <span class="c1"># colmap.set_array(prob_prediction_class.ravel())</span>
+        <span class="c1">#</span>
+        <span class="c1"># fig = plt.figure(figsize=(8, 6))</span>
+        <span class="c1"># ax = fig.gca(projection=&#39;3d&#39;)</span>
+        <span class="c1"># ax.scatter(x, y, z, marker=&#39;s&#39;, s=140, c=prob_prediction_class.ravel(), cmap=plt.cm.Blues, vmin=0, vmax=1,</span>
+        <span class="c1">#            alpha=0.7)  # alpha is transparancey value, 0 (transparent) and 1 (opaque)</span>
+        <span class="c1"># cb = fig.colorbar(colmap)</span>
+        <span class="c1">#</span>
+        <span class="c1"># ax.set_xlabel(&#39;x $[\mathrm{\AA}]$&#39;)</span>
+        <span class="c1"># ax.set_ylabel(&#39;y $[\mathrm{\AA}]$&#39;)</span>
+        <span class="c1"># ax.set_zlabel(&#39;z $[\mathrm{\AA}]$&#39;)</span>
+        <span class="c1"># plt.title(filename)</span>
+        <span class="c1"># plt.show()</span>
+        <span class="c1"># plt.close()  # pl.dump(fig,file(filename+&#39;.pickle&#39;,&#39;w&#39;))</span>
+
+    <span class="k">if</span> <span class="n">class_name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_folder</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_class</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">class_name</span><span class="p">))),</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span>
+                    <span class="n">dpi</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_folder</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">suffix</span><span class="p">))),</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_3d_structure"><a class="viewcode-back" href="../../../ai4materials.models.strided_pattern_matching.html#ai4materials.models.strided_pattern_matching.plot_3d_structure">[docs]</a><span class="k">def</span> <span class="nf">plot_3d_structure</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">mayavi</span> <span class="k">import</span> <span class="n">mlab</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">ndimage</span>
+
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># filenames.append(&#39;prob_class0.npy&#39;)</span>
+    <span class="c1"># filenames.append(&#39;prob_class1.npy&#39;)</span>
+    <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;prob_class2.npy&#39;</span><span class="p">)</span>
+    <span class="c1"># filenames.append(&#39;prob_class3.npy&#39;)</span>
+    <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;prob_class4.npy&#39;</span><span class="p">)</span>
+    <span class="c1"># filenames.append(&#39;uncertainty_class.npy&#39;)</span>
+
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/home/ziletti/Documents/calc_nomadml/rot_inv_3d/&#39;</span> <span class="o">+</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)))</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">prob</span> <span class="o">-</span> <span class="n">prob</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">prob</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+
+        <span class="nb">min</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="n">mlab</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">offscreen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">scalar_field</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">volume</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">min</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span><span class="p">))</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Field intensity&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+        <span class="c1"># mlab.pipeline.iso_surface(src, contours=[s.min() + 0.1 * s.ptp(), ], opacity=0.1)</span>
+        <span class="c1"># mlab.pipeline.iso_surface(src, contours=[s.max() - 0.1 * s.ptp(), ], )</span>
+        <span class="c1"># mlab.volume_slice(s, plane_orientation=&#39;x_axes&#39;, slice_index=10)</span>
+        <span class="c1"># mlab.volume_slice(s, plane_orientation=&#39;y_axes&#39;, slice_index=10)</span>
+        <span class="c1"># mlab.volume_slice(s, plane_orientation=&#39;z_axes&#39;, slice_index=10)</span>
+        <span class="c1"># obj = mlab.contour3d(s, contours=10, vmin=0.2, vmax=1., opacity=0.5)</span>
+        <span class="c1"># obj.scene.disable_render = True</span>
+        <span class="c1"># obj.scene.anti_aliasing_frames = 0</span>
+
+        <span class="n">mlab</span><span class="o">.</span><span class="n">outline</span><span class="p">()</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">mlab</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

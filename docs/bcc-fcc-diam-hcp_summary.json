@@ -1,0 +1,42 @@
+
+    {
+          "data":[{
+  "target_name": "target", 
+  "n_bins": 100, 
+  "path_to_summary": "/home/ziletti/Documents/calc_xray/2d_nature_comm/my_datasets/bcc-fcc-diam-hcp_summary.json", 
+  "creation_date": "2018-06-20T18:42:07.110239", 
+  "numerical_labels": [
+    2, 
+    2, 
+    0, 
+    0, 
+    1, 
+    1, 
+    3, 
+    3
+  ], 
+  "classes": [
+    "bcc", 
+    "diam", 
+    "fcc", 
+    "hcp"
+  ], 
+  "nb_classes": 4, 
+  "path_to_y": "/home/ziletti/Documents/calc_xray/2d_nature_comm/my_datasets/bcc-fcc-diam-hcp_y.pkl", 
+  "path_to_x": "/home/ziletti/Documents/calc_xray/2d_nature_comm/my_datasets/bcc-fcc-diam-hcp_x.pkl", 
+  "text_labels": [
+    "fcc", 
+    "fcc", 
+    "bcc", 
+    "bcc", 
+    "diam", 
+    "diam", 
+    "hcp", 
+    "hcp"
+  ], 
+  "target_categorical": true, 
+  "disc_type": null, 
+  "notes": "Dataset with bcc, fcc, diam and hcp structures, pristine and with 50% of defects.", 
+  "dataset_name": "bcc-fcc-diam-hcp"
+}
+    ] }

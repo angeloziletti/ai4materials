@@ -1,0 +1,1211 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_data_retrieval &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_data_retrieval</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.utils.utils_data_retrieval</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">future.utils</span> <span class="k">import</span> <span class="n">iteritems</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016-2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;09/08/17&quot;</span>
+
+<span class="kn">import</span> <span class="nn">ase.io</span>
+<span class="kn">from</span> <span class="nn">ase.db</span> <span class="k">import</span> <span class="n">connect</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">errno</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="k">import</span> <span class="n">get_spacegroup_analyzer</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">PIL.ImageOps</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">preprocessing</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="nn">six.moves.cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_structure_list"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.check_structure_list">[docs]</a><span class="k">def</span> <span class="nf">check_structure_list</span><span class="p">(</span><span class="n">structure_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if the descriptor name is the same for all structures in the list&quot;&quot;&quot;</span>
+    <span class="n">desc_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;descriptor_name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">structure_list</span><span class="p">]</span>
+
+    <span class="c1"># this would short-circuit (i.e. return false as soon as the predicate fails for an item instead of going on)</span>
+    <span class="c1"># from https://stackoverflow.com/questions/4752294/all-list-values-same</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">desc_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">desc_name</span> <span class="k">for</span> <span class="n">desc_name</span> <span class="ow">in</span> <span class="n">desc_names</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;Descriptor names in the list of structures are different. </span><span class="se">\n</span><span class="s1">&#39;</span>
+                             <span class="s1">&#39;List of descriptor names: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_names</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="get_metadata_value"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.get_metadata_value">[docs]</a><span class="k">def</span> <span class="nf">get_metadata_value</span><span class="p">(</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve a given metadata from a list of structures from the descriptor key&quot;&quot;&quot;</span>
+    <span class="n">desc_metadata_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">structure_list</span><span class="p">:</span>
+        <span class="n">desc_metadata_value</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">desc_metadata</span><span class="p">)]</span>
+        <span class="n">desc_metadata_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc_metadata_value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">desc_metadata_list</span></div>
+
+
+<div class="viewcode-block" id="generate_facets_input"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.generate_facets_input">[docs]</a><span class="k">def</span> <span class="nf">generate_facets_input</span><span class="p">(</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span>
+                          <span class="n">sprite_atlas_filename</span><span class="o">=</span><span class="s1">&#39;desc_atlas&#39;</span><span class="p">,</span> <span class="n">df_filename</span><span class="o">=</span><span class="s1">&#39;df_facets&#39;</span><span class="p">,</span>
+                          <span class="n">make_sprite_atlas</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate facets input.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    structure_list: list of ``ase.Atoms`` objects</span>
+<span class="sd">        List of atomic structures.</span>
+
+<span class="sd">    desc_metadata: string</span>
+<span class="sd">        Name of the descriptor metadata to be retrieved from the .</span>
+<span class="sd">        A list of metadata for each descriptor can be found in `descriptors.nomadmetainfo.json`</span>
+
+<span class="sd">    target_list: list of dict</span>
+<span class="sd">        List of dictionaries as returned by `nomad-ml.wrappers.load_descriptor`. \n</span>
+<span class="sd">        Each element of this list is a dictionary with only one key (data), \n</span>
+<span class="sd">        which has as value a list of dicts. \n</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        {u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}. \n</span>
+<span class="sd">        More keywords are possible.</span>
+
+<span class="sd">    configs: dict</span>
+<span class="sd">        Dictionary containing configuration information such as folders for input and output \n</span>
+<span class="sd">        (e.g. `desc_folder`, `tmp_folder`), logging level, and metadata location.\n</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_config.set_configs`.</span>
+
+<span class="sd">    sprite_atlas_filename: string, optional (default = `desc_atlas`)</span>
+<span class="sd">        Name (without extension) for the generated texture atlas containing the descriptor images.</span>
+<span class="sd">        The .png extension will be automatically appended to the filename.</span>
+
+<span class="sd">    df_filename: string, optional (default = `df_facets`)</span>
+<span class="sd">        Name (without extension) for the generated Pandas dataframe containing information</span>
+<span class="sd">        on the list of structures.</span>
+<span class="sd">        The .csv extension will be automatically appended to the filename.</span>
+
+<span class="sd">    make_sprite_atlas: bool, optional (default = `True`)</span>
+<span class="sd">        If `True`, a texture atlas containing the descriptor images is generated.</span>
+<span class="sd">        If `False`, only the `df_filename.csv` containing the Pandas dataframe is generated.</span>
+
+<span class="sd">    normalize: bool, optional (default = `False`)</span>
+<span class="sd">        If `True`, each descriptor image is normalized (separately), i.e. all descriptor images</span>
+<span class="sd">        will have a maximum of 1 and a minimum of 0.</span>
+
+<span class="sd">    Return:</span>
+
+<span class="sd">    string, string</span>
+<span class="sd">        Absolute path to the Pandas dataframe file and the texture atlas file (if created, otherwise returns `None`).</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">check_structure_list</span><span class="p">(</span><span class="n">structure_list</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Descriptor: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">structure_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;descriptor_name&#39;</span><span class="p">]))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Available descriptor metadata: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">structure_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading descriptor metadata: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_metadata</span><span class="p">))</span>
+
+    <span class="n">images_list</span> <span class="o">=</span> <span class="n">get_metadata_value</span><span class="p">(</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">images_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Images (</span><span class="si">{0}</span><span class="s1">) matrix shape: </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_metadata</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]))</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]))</span>
+
+    <span class="k">if</span> <span class="n">make_sprite_atlas</span><span class="p">:</span>
+        <span class="n">sprite_atlas_filename_path</span> <span class="o">=</span> <span class="n">create_sprite_atlas</span><span class="p">(</span><span class="n">images</span><span class="o">=</span><span class="n">images</span><span class="p">,</span> <span class="n">main_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span>
+                                                         <span class="n">sprite_atlas_filename</span><span class="o">=</span><span class="n">sprite_atlas_filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Not creating sprite atlas.&quot;</span><span class="p">)</span>
+        <span class="n">sprite_atlas_filename_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">target_list_dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">target_list</span><span class="p">]</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">target_list_dict</span><span class="p">)</span>
+
+    <span class="c1"># check which columns are dictionaries</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">expand_dict_labels</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="c1"># add lists inside dictionary to DataFrame as new columns</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">df_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="n">df_filename</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)))</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">df_filepath</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_filepath</span><span class="p">,</span> <span class="n">sprite_atlas_filename_path</span></div>
+
+
+<div class="viewcode-block" id="analize_dataset"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.analize_dataset">[docs]</a><span class="k">def</span> <span class="nf">analize_dataset</span><span class="p">(</span><span class="n">df_filepath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Analize the csv generated.&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Reading file: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df_filepath</span><span class="p">))</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">df_filepath</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+    <span class="n">ground_truth</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;spacegroup_number_0.001_1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;spacegroup_number_0.01_1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;spacegroup_number_0.1_5.0&quot;</span><span class="p">]</span>
+
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;spacegroup_number_actual_0.001_1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;spacegroup_number_actual_0.01_1.0&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;spacegroup_number_actual_0.1_5.0&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+        <span class="n">y_true</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">ground_truth</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">predictions</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ground truth: &#39;</span><span class="si">{0}</span><span class="s2">&#39; predictions: &#39;</span><span class="si">{1}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">predictions</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Accuracy score: </span><span class="si">{0}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">))</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">ground_truth</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">predictions</span><span class="p">[</span><span class="n">idx</span><span class="p">]])</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+
+        <span class="c1"># to print long strings (default=50)</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">max_colwidth</span> <span class="o">=</span> <span class="mi">200</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Files from which the parental structure was correctly identified.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">ground_truth</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="n">predictions</span><span class="p">[</span><span class="n">idx</span><span class="p">]]][</span><span class="s1">&#39;main_json_file_name&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df_filepath</span></div>
+
+
+<div class="viewcode-block" id="expand_dict_labels"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.expand_dict_labels">[docs]</a><span class="k">def</span> <span class="nf">expand_dict_labels</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a Pandas Dataframe, it expands the columns that are dictionaries. &quot;&quot;&quot;</span>
+
+    <span class="c1"># check which columns are dictionaries</span>
+    <span class="n">features_type</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="c1"># expand the features that are dictionaries on multiple columns, one for every key</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">features_type</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">features_type</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="c1"># replace parenthesis and spaces because they cause trouble to Facets</span>
+            <span class="n">new_cols_from_dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+            <span class="n">new_cols_from_dict</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span>
+                                  <span class="n">new_cols_from_dict</span><span class="p">]</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">new_cols_from_dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="extract_labels"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_labels">[docs]</a><span class="k">def</span> <span class="nf">extract_labels</span><span class="p">(</span><span class="n">target_list</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">target_categorical</span><span class="p">,</span> <span class="n">disc_type</span><span class="o">=</span><span class="s1">&#39;uniform&#39;</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">new_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From a target_list obtained from `nomad-ml.wrappers.load_descriptor`, extract the labels.</span>
+
+<span class="sd">    Assumes that all the classes are contained in the training set.</span>
+<span class="sd">    The test set can have less classes.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    target_list: list of dict</span>
+<span class="sd">        List of dictionaries as returned by the `nomad-ml.wrappers.load_descriptor`.</span>
+<span class="sd">        Each element of this list is a dictionary with only one key (`data`), which has as value a list of dicts.</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        {u&#39;data&#39;: [{u&#39;spacegroup_symbol_symprec_0.001&#39;: 194, u&#39;chemical_formula&#39;: u&#39;Ac258&#39;}]}.\n</span>
+<span class="sd">        More keywords are possible.</span>
+
+<span class="sd">    target_name: str</span>
+<span class="sd">        Name of the target to extract from the target list. `target_name` needs to be a key in the dict contained in</span>
+<span class="sd">        `target_list`. For the example above, valid target names are &#39;spacegroup_symbol_symprec_0.001&#39; and</span>
+<span class="sd">        &#39;chemical_formula&#39;.</span>
+
+<span class="sd">    target_categorical: bool</span>
+<span class="sd">        If `True`, the target to extract is assumed to be categorical, i.e. for classification.</span>
+<span class="sd">        If `False`, the target to extract is assumed to be continuous, i.e. for regression.</span>
+<span class="sd">        If `True`, the labels are discretized according to `disc_type`.</span>
+
+<span class="sd">    disc_type: { &#39;uniform&#39;, &#39;quantiles&#39;}</span>
+<span class="sd">        Type of discretization used if target is categorical. In both case, `n_bins` are used.</span>
+
+<span class="sd">    n_bins: int, optional (default=100)</span>
+<span class="sd">        Number of bins used in the discretization.</span>
+
+<span class="sd">    new_labels: dict, optional (default = `None`)</span>
+<span class="sd">        It allows to substitute the label names that are in `target_list`.</span>
+<span class="sd">        For example: \n</span>
+<span class="sd">        new_labels = {&quot;hcp&quot;: [&quot;194&quot;], &quot;fcc&quot;: [&quot;225&quot;], &quot;diam&quot;: [&quot;227&quot;], &quot;bcc&quot;: [&quot;229&quot;]} \n</span>
+<span class="sd">        will substitute each occurrence of &quot;194&quot; with &quot;hcp&quot; in the label list which is extracted.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    ``sklearn.preprocessing.LabelEncoder``, ndarray, ndarray</span>
+<span class="sd">        Returns ``sklearn.preprocessing.LabelEncoder`` object, ndarray with the numerical labels, ndarray with the</span>
+<span class="sd">        text labels.</span>
+<span class="sd">        The ndarray with the numerical labels is obtained via: \n</span>
+<span class="sd">            label_encoder = preprocessing.LabelEncoder() \n</span>
+<span class="sd">            label_encoder.fit(text_labels) \n</span>
+<span class="sd">            numerical_labels = label_encoder.transform(text_labels)</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">target_list_dict</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target_list</span><span class="p">):</span>
+        <span class="c1"># the 0 refers to the first frame</span>
+        <span class="n">target_list_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">target_list_dict</span><span class="p">)</span>
+
+    <span class="c1"># expand only the columns that are dictionaries.</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">expand_dict_labels</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">target_name</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">target_name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Target name not present. Possible values are </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">target_categorical</span><span class="p">:</span>
+        <span class="n">text_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Converting numerical target to categorical.&#39;</span><span class="p">)</span>
+        <span class="n">max_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">min_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Target range: [</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Number of bins: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_bins</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Discretization type: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">disc_type</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">disc_type</span> <span class="o">==</span> <span class="s1">&#39;uniform&#39;</span><span class="p">:</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">n_bins</span><span class="p">)</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">min_value</span> <span class="o">-</span> <span class="n">max_value</span><span class="p">))</span> <span class="o">/</span> <span class="n">n_bins</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Discretization bin size: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dx</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">disc_type</span> <span class="o">==</span> <span class="s1">&#39;quantiles&#39;</span><span class="p">:</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">n_bins</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">retbins</span><span class="o">=</span><span class="kc">True</span><span class="p">))[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># Reproduce `histogram` binning by manually shifting the</span>
+            <span class="c1"># rightmost bin edge by an epsilon value:</span>
+            <span class="c1"># https://github.com/numpy/numpy/issues/4217</span>
+            <span class="c1"># not needed for uniform because there the bins are 10, not 11 like here</span>
+            <span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">10E-8</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please specify a valid discretization type (disc_type).&quot;</span>
+                             <span class="s2">&quot;Possible values are &#39;uniform&#39; or &#39;quantiles&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">text_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># calculate just to show (note: bins are re-defined here)</span>
+        <span class="n">freq</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Class distribution:&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&lt;= x&lt;</span><span class="si">{1}</span><span class="s2">  count:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">bins</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+
+    <span class="c1"># redefine labels</span>
+    <span class="k">if</span> <span class="n">new_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text_labels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">text_labels</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_labels</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">text_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">new_labels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">else</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">text_labels</span><span class="p">]</span>
+        <span class="n">text_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">text_labels</span><span class="p">)</span>
+
+    <span class="c1"># from class_labels to class number</span>
+    <span class="n">label_encoder</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelEncoder</span><span class="p">()</span>
+    <span class="n">label_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">text_labels</span><span class="p">)</span>
+    <span class="n">numerical_labels</span> <span class="o">=</span> <span class="n">label_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">text_labels</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Number of unique classes in the dataset: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Actual class labels: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">classes_</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">label_encoder</span><span class="p">,</span> <span class="n">numerical_labels</span><span class="p">,</span> <span class="n">text_labels</span></div>
+
+
+<div class="viewcode-block" id="extract_img_list"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_img_list">[docs]</a><span class="k">def</span> <span class="nf">extract_img_list</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">desc_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return the list of images from .&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Loading file </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="n">files_by_category</span> <span class="o">=</span> <span class="n">read_archive_desc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">summary_filename</span><span class="o">=</span><span class="s2">&quot;summary.json&quot;</span><span class="p">)</span>
+    <span class="n">desc_folder</span> <span class="o">=</span> <span class="n">desc_folder</span> <span class="o">+</span> <span class="n">tmp_folder</span>
+
+    <span class="n">img_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">files_by_category</span><span class="p">[</span><span class="s1">&#39;2d_diffraction_images_ks&#39;</span><span class="p">]:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">file_</span><span class="p">)))</span>
+        <span class="n">img_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img_list</span></div>
+
+
+<div class="viewcode-block" id="extract_ase_db_files"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_ase_db_files">[docs]</a><span class="k">def</span> <span class="nf">extract_ase_db_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clean_tmp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read target files from descriptor folder.</span>
+<span class="sd">    Change to put the extractall inside.&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Loading file </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">clean_tmp</span><span class="p">:</span>
+        <span class="n">clean_folder</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">archive</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">archive</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">files_by_category</span> <span class="o">=</span> <span class="n">read_archive_desc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">summary_filename</span><span class="o">=</span><span class="s2">&quot;summary.json&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">files_by_category</span><span class="p">[</span><span class="s1">&#39;ase_db_files&#39;</span><span class="p">]:</span>
+        <span class="n">in_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">item</span><span class="p">)))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not read content from JSON file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">in_file</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">json_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">archive</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">data_list</span></div>
+
+
+<div class="viewcode-block" id="extract_files"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.extract_files">[docs]</a><span class="k">def</span> <span class="nf">extract_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;target_files&#39;</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clean_tmp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read files from descriptor folder.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Loading file </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">clean_tmp</span><span class="p">:</span>
+        <span class="n">clean_folder</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">archive</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">archive</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">files_by_category</span> <span class="o">=</span> <span class="n">read_archive_desc</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;target_files&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">files_by_category</span><span class="p">[</span><span class="s1">&#39;target_files&#39;</span><span class="p">]:</span>
+            <span class="n">in_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">item</span><span class="p">)))</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">target</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                    <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not read content from JSON file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">in_file</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">json_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;ase_db_files&#39;</span><span class="p">:</span>
+        <span class="c1"># load the ASE structure, then the associated info dictionary</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">files_by_category</span><span class="p">[</span><span class="s1">&#39;ase_db_files&#39;</span><span class="p">]):</span>
+            <span class="n">ase_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">item</span><span class="p">)))</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ase_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
+            <span class="n">info_filename</span> <span class="o">=</span> <span class="n">files_by_category</span><span class="p">[</span><span class="s1">&#39;ase_info_files&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">structure_info_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">info_filename</span><span class="p">)))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">structure_info_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">info_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+                    <span class="n">structure</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info_dict</span>
+                    <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not read content cPickle from file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">input_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;File_type </span><span class="si">{}</span><span class="s2"> not recognized.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_type</span><span class="p">))</span>
+    <span class="n">archive</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">data_list</span></div>
+
+
+<div class="viewcode-block" id="create_sprite_atlas"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.create_sprite_atlas">[docs]</a><span class="k">def</span> <span class="nf">create_sprite_atlas</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">main_folder</span><span class="p">,</span> <span class="n">sprite_atlas_filename</span><span class="o">=</span><span class="s1">&#39;sprite_atlas&#39;</span><span class="p">,</span> <span class="n">max_imgs_row</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a sprite atlas for numpy array of images(nb_images, px, py, nb_channels)</span>
+<span class="sd">    Based on: https://minzkraut.com/2016/11/23/making-a-simple-spritesheet-generator-in-python/</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sprite_atlas_filename_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_folder</span><span class="p">,</span> <span class="n">sprite_atlas_filename</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">max_imgs_row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_imgs_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="n">img_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">img_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+    <span class="n">nb_imgs</span><span class="p">,</span> <span class="n">tile_height</span><span class="p">,</span> <span class="n">tile_width</span><span class="p">,</span> <span class="n">nb_channels</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">nb_imgs</span> <span class="o">&gt;</span> <span class="n">max_imgs_row</span><span class="p">:</span>
+        <span class="n">spritesheet_width</span> <span class="o">=</span> <span class="n">tile_width</span> <span class="o">*</span> <span class="n">max_imgs_row</span>
+        <span class="n">required_rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nb_imgs</span> <span class="o">/</span> <span class="n">max_imgs_row</span><span class="p">)</span>
+        <span class="n">imgs_last_row</span> <span class="o">=</span> <span class="n">nb_imgs</span> <span class="o">%</span> <span class="n">max_imgs_row</span>
+        <span class="k">if</span> <span class="n">imgs_last_row</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">required_rows</span> <span class="o">=</span> <span class="n">required_rows</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">spritesheet_height</span> <span class="o">=</span> <span class="n">tile_height</span> <span class="o">*</span> <span class="n">required_rows</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">spritesheet_width</span> <span class="o">=</span> <span class="n">tile_width</span> <span class="o">*</span> <span class="n">nb_imgs</span>
+        <span class="n">spritesheet_height</span> <span class="o">=</span> <span class="n">tile_height</span>
+
+    <span class="k">if</span> <span class="n">nb_channels</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;L&#39;</span>
+    <span class="k">elif</span> <span class="n">nb_channels</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;RGBA&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unexpected number of channels (</span><span class="si">{}</span><span class="s1">).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_channels</span><span class="p">))</span>
+
+    <span class="n">spritesheet</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">spritesheet_width</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">spritesheet_height</span><span class="p">)])</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">current_img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">img_list</span><span class="p">):</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">tile_height</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">idx</span> <span class="o">/</span> <span class="n">max_imgs_row</span><span class="p">)</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">tile_width</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">%</span> <span class="n">max_imgs_row</span><span class="p">)</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="n">tile_height</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="n">tile_width</span>
+
+        <span class="n">box</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">)</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">box</span><span class="p">]</span>
+
+        <span class="n">rgb_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">tile_height</span><span class="p">,</span> <span class="n">tile_width</span><span class="p">,</span> <span class="n">nb_channels</span><span class="p">),</span> <span class="s1">&#39;uint8&#39;</span><span class="p">)</span>
+
+        <span class="n">current_img</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">current_img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">current_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">current_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="k">for</span> <span class="n">ix_ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current_img</span><span class="p">)):</span>
+            <span class="n">rgb_array</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ix_ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_img</span><span class="p">[</span><span class="n">ix_ch</span><span class="p">]</span> <span class="o">*</span> <span class="mi">255</span>
+
+        <span class="n">current_frame_img</span> <span class="o">=</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">rgb_array</span><span class="p">)</span>
+        <span class="n">spritesheet</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">current_frame_img</span><span class="p">,</span> <span class="n">box</span><span class="p">)</span>
+
+    <span class="n">sprite_atlas_filename_path</span> <span class="o">=</span> <span class="n">sprite_atlas_filename_path</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+    <span class="n">spritesheet</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">sprite_atlas_filename_path</span><span class="p">,</span> <span class="s2">&quot;PNG&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Image creation completed.&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving at </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sprite_atlas_filename_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">sprite_atlas_filename_path</span></div>
+
+
+<div class="viewcode-block" id="clean_folder"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.clean_folder">[docs]</a><span class="k">def</span> <span class="nf">clean_folder</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">endings_to_delete</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="s2">&quot;_target.json&quot;</span><span class="p">,</span>
+                                                <span class="s2">&quot;_aims.in&quot;</span><span class="p">,</span> <span class="s2">&quot;_ase_atoms_info.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;_ase_atoms.json&quot;</span><span class="p">,</span>
+                                                <span class="s2">&quot;_coord.in&quot;</span><span class="p">,</span>
+                                                <span class="s2">&quot;summary.json&quot;</span><span class="p">,</span> <span class="s2">&quot;_atomic_features.csv&quot;</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot; Clean tmp folder from files that do not end in allowed_endings.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    tmp_folder: string</span>
+<span class="sd">        Absolute path to the folder from which we want to erase the files that ends</span>
+<span class="sd">        with the endings in `endings_to_delete`</span>
+
+<span class="sd">    endings_to_delete: tuple of strings, optional (default=(&quot;.png&quot;, &quot;.npy&quot;, &quot;_target.json&quot;, &quot;_aims.in&quot;))</span>
+<span class="sd">        Delete from `tmp_folder` all the files that which filenames end with the mentioned endings.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">list_of_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">flt_files</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">endings_to_delete</span><span class="p">)),</span> <span class="n">list_of_files</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cleaning </span><span class="si">{0}</span><span class="s2"> folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">flt_file</span> <span class="ow">in</span> <span class="n">flt_files</span><span class="p">:</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">flt_file</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_archive_desc"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.read_archive_desc">[docs]</a><span class="k">def</span> <span class="nf">read_archive_desc</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">summary_filename</span><span class="o">=</span><span class="s2">&quot;summary.json&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read descriptor file archive and return a dictionary.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    filename: string</span>
+<span class="sd">        Absolute path the the descriptor file to be read.</span>
+
+<span class="sd">    summary_filename: string, optional (default=`summary.json`)</span>
+<span class="sd">        Name of the summary file that contains a recap of the content of the</span>
+<span class="sd">        descriptor archive to be read.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    dict or None</span>
+<span class="sd">        A dictionary with (key=filetype, value=list_of_files_for_that_type) if the files can be</span>
+<span class="sd">        successfully loaded, ``None`` otherwise. See :py:mod:`ai4materials.utils.utils_data_retrieval.write_summary_file`</span>
+<span class="sd">        for the possible file types and corresponding allowed endings.</span>
+
+<span class="sd">    .. seealso:: For possible file types see</span>
+<span class="sd">        :py:mod:`ai4materials.utils.utils_data_retrieval.write_summary_file`.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Loading file </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+    <span class="n">archive</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+    <span class="n">files_by_category</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># extract the Archive in tmp folder</span>
+    <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">getmembers</span><span class="p">()[:]:</span>
+        <span class="n">member</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="n">summary_filename</span><span class="p">:</span>
+            <span class="n">files_by_category</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">extractfile</span><span class="p">(</span><span class="n">member</span><span class="p">))[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">files_by_category</span></div>
+
+
+<div class="viewcode-block" id="write_summary_file"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.write_summary_file">[docs]</a><span class="k">def</span> <span class="nf">write_summary_file</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">desc_file_list</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="p">,</span> <span class="n">allowed_endings_user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">desc_file_master</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">summary_filename</span><span class="o">=</span><span class="s2">&quot;summary.json&quot;</span><span class="p">,</span> <span class="n">clean_tmp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a summary of the files present in the descriptor archive list.</span>
+
+<span class="sd">    If more than one descriptor archive is passed, the files present will be merged</span>
+<span class="sd">    and a summary files containing all files present in all descriptor archives</span>
+<span class="sd">    will be written. A typical example is when descriptor archives created by different</span>
+<span class="sd">    processes in a parallel computation are merged by the master in a single</span>
+<span class="sd">    file containing all the results.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    descriptor: `ai4materials.descriptors.base_descriptor.Descriptor` object</span>
+<span class="sd">        Descriptor obejct for which the summary file is written.</span>
+
+<span class="sd">    desc_file_list: string or list of strings</span>
+<span class="sd">        Desc archive or list of descriptor archives for which the summary file is written.</span>
+
+<span class="sd">    tmp_folder: string</span>
+<span class="sd">        Path to the tmp folder.</span>
+
+<span class="sd">    allowed_endings_user: dict</span>
+<span class="sd">        A dictionary containing as key the filetype and as value the allowed endings.</span>
+<span class="sd">        For example: {&#39;target_files&#39;: &#39;_target.json&#39;}</span>
+<span class="sd">        These allowed endings will be added to the possible filetypes specified in the</span>
+<span class="sd">        descriptor metadatas and in this function.</span>
+
+<span class="sd">    desc_file_master: string</span>
+<span class="sd">        Full path to the archive where the summary file will be written.</span>
+
+<span class="sd">    summary_filename: string, optional (default=`summary.json`)</span>
+<span class="sd">        Name of the summary file that contains a recap of the content of the</span>
+<span class="sd">        descriptor file to be read.</span>
+
+<span class="sd">    clean_tmp: bool, optional (default=`False`)</span>
+<span class="sd">        If `True`, clear the `tmp_folder` calling :py:mod:`ai4materials.utils.utils_data_retrieval.clean_folder`</span>
+<span class="sd">        with argument `tmp_folder`.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    string</span>
+<span class="sd">        Return the absolute path to the descriptor archive (`desc_file_master`) where the summary file is written.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">allowed_endings</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;target_files&#39;</span><span class="p">:</span> <span class="s1">&#39;_target.json&#39;</span><span class="p">,</span> <span class="s1">&#39;ase_db_files&#39;</span><span class="p">:</span> <span class="s1">&#39;_ase_atoms.json&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;ase_info_files&#39;</span><span class="p">:</span> <span class="s1">&#39;_ase_atoms_info.pkl&#39;</span><span class="p">}</span>
+    <span class="n">allowed_endings_desc</span> <span class="o">=</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">desc_metadata</span><span class="p">[</span><span class="s1">&#39;file_ending&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">allowed_endings</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">allowed_endings_desc</span><span class="p">)</span>
+
+    <span class="c1"># allowed_endings_user overwrite the defaults and the desc metadata</span>
+    <span class="k">if</span> <span class="n">allowed_endings_user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">allowed_endings</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">allowed_endings_user</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">desc_file_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">desc_file_master</span> <span class="o">=</span> <span class="n">desc_file_list</span>
+        <span class="n">desc_file_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">desc_file_list</span><span class="p">]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Descriptor file_list: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_file_list</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Descriptor file master: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_file_master</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">clean_tmp</span><span class="p">:</span>
+        <span class="n">clean_folder</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
+
+    <span class="n">archive_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">desc_file</span> <span class="ow">in</span> <span class="n">desc_file_list</span><span class="p">:</span>
+        <span class="n">archive</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">desc_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">archive_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">archive</span><span class="p">)</span>
+
+    <span class="n">members</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">archive</span> <span class="ow">in</span> <span class="n">archive_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">getmembers</span><span class="p">()[:]:</span>
+            <span class="n">member</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">archive</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="p">)</span>
+            <span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">filelist_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">archive</span> <span class="ow">in</span> <span class="n">archive_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">archive</span><span class="o">.</span><span class="n">getmembers</span><span class="p">()[:]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">member</span><span class="o">.</span><span class="n">isfile</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="c1"># make a dictionary {&quot;filename&quot;, &quot;filetype&quot;}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">allowed_endings</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                    <span class="n">filelist_dict</span><span class="p">[</span><span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+
+        <span class="n">archive</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">files_by_cat</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">iteritems</span><span class="p">(</span><span class="n">filelist_dict</span><span class="p">)):</span>
+        <span class="n">files_by_cat</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># re-open the Archive to add the summary.json file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Loading file </span><span class="si">{0}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_file_master</span><span class="p">))</span>
+    <span class="n">new_archive</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">desc_file_master</span><span class="p">,</span> <span class="s1">&#39;w:gz&#39;</span><span class="p">)</span>
+
+    <span class="n">member_filename_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+        <span class="n">member_filename_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">member</span><span class="p">)))</span>
+        <span class="n">member_filename_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_filename_path</span><span class="p">)</span>
+
+    <span class="n">summary_filename_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">summary_filename</span><span class="p">)))</span>
+    <span class="n">member_filename_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summary_filename_path</span><span class="p">)</span>
+
+    <span class="c1"># get unique list on member_filename_paths to avoid to add multiple times</span>
+    <span class="c1"># the same file (e.g. summary.json will not be added twice if already present)</span>
+    <span class="n">member_filename_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">member_filename_paths</span><span class="p">)))</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">summary_filename_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    {</span>
+<span class="s2">          &quot;data&quot;:[&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">files_by_cat</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    ] }&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="c1"># add arcname to avoid to include the whole folder path in the member.name</span>
+    <span class="k">for</span> <span class="n">member_filename_path</span> <span class="ow">in</span> <span class="n">member_filename_paths</span><span class="p">:</span>
+        <span class="n">new_archive</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">member_filename_path</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">member_filename_path</span><span class="p">))</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Summary file written in </span><span class="si">{0}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_file_master</span><span class="p">))</span>
+
+    <span class="n">new_archive</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">desc_file_master</span></div>
+
+
+<div class="viewcode-block" id="write_ase_db"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.write_ase_db">[docs]</a><span class="k">def</span> <span class="nf">write_ase_db</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">,</span> <span class="n">main_folder</span><span class="p">,</span> <span class="n">db_name</span><span class="o">=</span><span class="s1">&#39;my_ase_db&#39;</span><span class="p">,</span> <span class="n">db_type</span><span class="o">=</span><span class="s1">&#39;db&#39;</span><span class="p">,</span>
+                 <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">folder_name</span><span class="o">=</span><span class="s1">&#39;db_ase&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From a list of ASE atom objects, write an ASE database to file.</span>
+
+<span class="sd">    It uses ASE database functionality to write to file a database given the structures in ase_atoms_list.</span>
+<span class="sd">    For more information regarding ASE databases: https://wiki.fysik.dtu.dk/ase/ase/db/db.html#module-ase.db.core</span>
+
+<span class="sd">    db_type: str, optional (default=‘db’)</span>
+<span class="sd">        One of ‘json’, ‘db’, ‘postgresql’, (JSON, SQLite, PostgreSQL).</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ase_db_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">main_folder</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ase_db_folder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">ase_db_folder</span><span class="p">)</span>
+
+    <span class="n">ase_db_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ase_db_folder</span><span class="p">,</span>
+                                                                    <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">.</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">db_type</span><span class="p">)))))</span>
+
+    <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="n">silent_remove</span><span class="p">(</span><span class="n">ase_db_filename</span><span class="p">)</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">ase_db_filename</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">db_type</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing: file </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> &quot;</span>
+                        <span class="s2">&quot;to ASE database in &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">)))</span>
+        <span class="c1"># write structure to ASE database</span>
+        <span class="c1"># other info https://wiki.fysik.dtu.dk/ase/ase/db/db.html?highlight=db#ase-db</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ASE database written in file: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ase_db_filename</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ase_db_filename</span></div>
+
+
+<div class="viewcode-block" id="read_ase_db"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.read_ase_db">[docs]</a><span class="k">def</span> <span class="nf">read_ase_db</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From the path to an ASE database file, return a list of ASE atom object contained in it.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Database length: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="p">)))</span>
+
+    <span class="n">ase_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx_db</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="p">)):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">selection</span><span class="o">=</span><span class="n">idx_db</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">add_additional_information</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># put info from atoms.info[&#39;data&#39;] back at their original place (atoms.info)</span>
+        <span class="c1"># this is because when an ASE atoms object is saved into the SQLite database,</span>
+        <span class="c1"># ASE does not save automatically atoms.info but instead to</span>
+        <span class="c1"># atoms.info are saved in atoms.info[&#39;data&#39;]</span>
+        <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+
+        <span class="n">ase_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ase_list</span></div>
+
+
+<div class="viewcode-block" id="write_ase_db_file"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.write_ase_db_file">[docs]</a><span class="k">def</span> <span class="nf">write_ase_db_file</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">tar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename_suffix</span><span class="o">=</span><span class="s1">&#39;_ase_atoms.json&#39;</span><span class="p">,</span>
+                      <span class="n">filename_suffix_info</span><span class="o">=</span><span class="s1">&#39;_ase_atoms_info.pkl&#39;</span><span class="p">,</span> <span class="n">op_nb</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">desc_folder</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span>
+
+    <span class="n">ase_db_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;op&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">op_nb</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename_suffix</span><span class="p">)))</span>
+
+    <span class="n">ase_info_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;op&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">op_nb</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename_suffix_info</span><span class="p">)))</span>
+
+    <span class="n">structure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ase_db_filename</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ase_info_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_out</span><span class="p">:</span>
+        <span class="n">f_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">))</span>
+
+    <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;ase_db_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ase_db_filename</span>
+    <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;ase_info_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ase_info_filename</span>
+
+    <span class="k">if</span> <span class="n">tar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;ase_db_filename&#39;</span><span class="p">])</span>
+        <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;ase_info_filename&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="group_filter_files"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.group_filter_files">[docs]</a><span class="k">def</span> <span class="nf">group_filter_files</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">ending</span><span class="p">,</span> <span class="n">get_key</span><span class="p">):</span>
+    <span class="n">desc_folder</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span>
+
+    <span class="n">filters_keys</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">topdown</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file_</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ending</span><span class="p">):</span>
+                <span class="n">filters_key</span> <span class="o">=</span> <span class="n">get_key</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">filters_key</span> <span class="ow">in</span> <span class="n">filters_keys</span><span class="p">:</span>
+                    <span class="c1"># append the new filename to existing array at this slot</span>
+                    <span class="n">filters_keys</span><span class="p">[</span><span class="n">filters_key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file_</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># create a new array in this slot</span>
+                    <span class="n">filters_keys</span><span class="p">[</span><span class="n">filters_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file_</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">filters_keys</span></div>
+
+
+<div class="viewcode-block" id="get_paths_from_filter_dict"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.get_paths_from_filter_dict">[docs]</a><span class="k">def</span> <span class="nf">get_paths_from_filter_dict</span><span class="p">(</span><span class="n">filter_dict</span><span class="p">,</span> <span class="n">accepted_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">accepted_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">accepted_keys</span> <span class="o">=</span> <span class="n">filter_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="n">filters_jsons</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">accepted_keys</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">filter_file</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filter_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filters_jsons</span><span class="p">:</span>
+                    <span class="c1"># append the new filename to existing array at this slot</span>
+                    <span class="n">filters_jsons</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;filtered_json_list&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># create a new array in this slot</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;filtered_json_list&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">filters_jsons</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;filtered_json_list&#39;</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">filters_jsons</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;filtered_json_list&#39;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">filters_jsons</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Key: </span><span class="si">{}</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> List length: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">filters_jsons</span></div>
+
+
+<div class="viewcode-block" id="write_target_values"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.write_target_values">[docs]</a><span class="k">def</span> <span class="nf">write_target_values</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">op_nb</span><span class="p">,</span> <span class="n">tar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename_suffix</span><span class="o">=</span><span class="s1">&#39;_target.json&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">calc_spgroup</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-03</span><span class="p">,</span> <span class="mf">1e-06</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Write target values. One file for each frame.</span>
+<span class="sd">    The target works only if one frame is considered. Please check.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    filename_suffix: string, default &#39;_target.json&#39;</span>
+<span class="sd">        Suffix added after filename</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desc_folder</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symprec</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">symprec</span> <span class="o">=</span> <span class="p">[</span><span class="n">symprec</span><span class="p">]</span>
+
+    <span class="n">target_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;op&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">op_nb</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename_suffix</span><span class="p">)))</span>
+
+    <span class="c1"># calculate the actual spacegroup of the structure</span>
+    <span class="c1"># after the transformations were applied</span>
+    <span class="n">spacegroup_analyzer_actual</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">calc_spgroup</span><span class="p">:</span>
+        <span class="n">spacegroup_analyzer_actual</span> <span class="o">=</span> <span class="n">get_spacegroup_analyzer</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">)</span>
+
+    <span class="n">out_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">target_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="n">out_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">{</span>
+<span class="s2">      &quot;data&quot;:[&quot;&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;checksum&quot;</span><span class="p">:</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span> <span class="s2">&quot;ase_db_file&quot;</span><span class="p">:</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;ase_db_filename&#39;</span><span class="p">],</span>
+              <span class="s2">&quot;chemical_formula&quot;</span><span class="p">:</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_chemical_formula</span><span class="p">(),</span> <span class="s2">&quot;cell&quot;</span><span class="p">:</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_cell</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+              <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">target_filename</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">}</span>
+
+    <span class="c1"># write the spacegroup number obtained before applying the</span>
+    <span class="c1"># specified transformations</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;spacegroup_nb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">spacegroup_symbol_key</span> <span class="o">=</span> <span class="s1">&#39;spacegroup_symbol_&#39;</span> <span class="o">+</span> <span class="s1">&#39;symprec_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">spacegroup_nb_key</span> <span class="o">=</span> <span class="s1">&#39;spacegroup_nb_&#39;</span> <span class="o">+</span> <span class="s1">&#39;symprec_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">spacegroup_symbol_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">spacegroup_nb_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">spacegroup_analyzer_actual</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">spacegroup_symbol_key</span> <span class="o">=</span> <span class="s1">&#39;spacegroup_symbol_actual_&#39;</span> <span class="o">+</span> <span class="s1">&#39;symprec_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">spacegroup_nb_key</span> <span class="o">=</span> <span class="s1">&#39;spacegroup_nb_actual_&#39;</span> <span class="o">+</span> <span class="s1">&#39;symprec_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">spacegroup_symbol_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_space_group_symbol</span><span class="p">()</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">spacegroup_nb_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_space_group_number</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">out_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">] }&quot;&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">out_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;target_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_filename</span>
+    <span class="k">if</span> <span class="n">tar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;target_filename&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="silent_remove"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.silent_remove">[docs]</a><span class="k">def</span> <span class="nf">silent_remove</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove a file that might not exist.</span>
+
+<span class="sd">    Taken from https://stackoverflow.com/questions/10840533/most-pythonic-way-to-delete-a-file-which-may-not-exist.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># errno.ENOENT = no such file or directory</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">:</span>
+            <span class="c1"># re-raise exception if a different error occurred</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="get_json_list"><a class="viewcode-back" href="../../../ai4materials.utils.utils_data_retrieval.html#ai4materials.utils.utils_data_retrieval.get_json_list">[docs]</a><span class="k">def</span> <span class="nf">get_json_list</span><span class="p">(</span><span class="n">data_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_preview</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the json file list.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    method: string, {&#39;folder&#39;, &#39;file&#39;}</span>
+<span class="sd">        Specify how to obtain the json files where the structures are included. \n</span>
+<span class="sd">        &#39;folder&#39;: read from the specified folder all the NOMAD (json) files. \n</span>
+<span class="sd">        &#39;file&#39;: read summary file containing: JSON file, frame number, clustering x_coord, clustering y_coord</span>
+
+
+<span class="sd">        In addition to the file, also the path to the folder where the json files</span>
+<span class="sd">        (`data_folder`) are stored needs to be given (for now)</span>
+
+
+<span class="sd">    data_folder : string</span>
+<span class="sd">        Folder where the json files are. .</span>
+
+
+<span class="sd">    Returns:</span>
+
+
+<span class="sd">    list</span>
+<span class="sd">        List with the absolute paths to the json files.</span>
+
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">data_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">json_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">data_folder</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_folder</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">data_folder</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">topdown</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file_</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+                        <span class="n">json_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file_</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">show_preview</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">json_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+            <span class="c1"># this ensures that even if an exception is raised,</span>
+            <span class="c1"># the json_file will still be closed properly.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">json_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please specify a valid path to the folder where the data are stored.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">json_list</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_config &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.utils.utils_config</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;20/08/18&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">nomadcore.local_meta_info</span> <span class="k">import</span> <span class="n">loadJsonFile</span><span class="p">,</span> <span class="n">InfoKindEl</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">from</span> <span class="nn">stat</span> <span class="k">import</span> <span class="n">S_ISDIR</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="set_configs"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.set_configs">[docs]</a><span class="k">def</span> <span class="nf">set_configs</span><span class="p">(</span><span class="n">main_folder</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">config_file</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">config_data_file</span><span class="p">:</span>
+            <span class="c1"># use safe_load for security reasons</span>
+            <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">config_data_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">atomic_metainfo</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;descriptors/atomic_data.nomadmetainfo.json&#39;</span><span class="p">)</span>
+    <span class="n">ureg_file</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;utils/units.txt&#39;</span><span class="p">)</span>
+    <span class="n">css_file_viewer</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;visualization/nomad_viewer.css&#39;</span><span class="p">)</span>
+    <span class="n">jsmol_folder</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="s1">&#39;data/viewer_files/jsmol&#39;</span><span class="p">)</span>
+
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nomad_meta_info</span><span class="o">=</span><span class="n">atomic_metainfo</span><span class="p">)</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;others&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ureg_file</span><span class="o">=</span><span class="n">ureg_file</span><span class="p">)</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">css_file_viewer</span><span class="o">=</span><span class="n">css_file_viewer</span><span class="p">,</span> <span class="n">jsmol_folder</span><span class="o">=</span><span class="n">jsmol_folder</span><span class="p">)</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;runtime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">isBeaker</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_level_general</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;io&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s1">&#39;main_folder&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">main_folder</span><span class="p">))</span>
+
+    <span class="c1"># create main folder if it does not exist</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">]):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">])</span>
+
+    <span class="n">desc_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;desc_folder&#39;</span><span class="p">)))</span>
+    <span class="n">results_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;results_folder&#39;</span><span class="p">)))</span>
+    <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;tmp_folder&#39;</span><span class="p">)))</span>
+    <span class="n">control_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;control.json&#39;</span><span class="p">)))</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;control_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">control_file</span>
+
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc_folder</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;results_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results_folder</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_folder</span>
+
+    <span class="c1"># derived paths</span>
+    <span class="n">desc_info_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">],</span>
+                                                                   <span class="s1">&#39;desc_info.json.info&#39;</span><span class="p">)))</span>
+    <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;output.log&#39;</span><span class="p">)))</span>
+    <span class="n">results_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;results_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;results.csv&#39;</span><span class="p">)))</span>
+    <span class="n">conf_matrix_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;results_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;confusion_matrix.png&#39;</span><span class="p">)))</span>
+
+    <span class="c1"># output_logfile = tempfile.NamedTemporaryFile(prefix=&#39;log_&#39;, delete=False)</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_info_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc_info_file</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;log_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_file</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;results_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results_file</span>
+    <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;conf_matrix_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conf_matrix_file</span>
+
+    <span class="c1"># create folder</span>
+    <span class="n">path_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">],</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;results_folder&#39;</span><span class="p">],</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">path_dir</span> <span class="ow">in</span> <span class="n">path_dirs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path_dir</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">configs</span></div>
+
+
+<div class="viewcode-block" id="copy_directory"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.copy_directory">[docs]</a><span class="k">def</span> <span class="nf">copy_directory</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+    <span class="c1"># Directories are the same</span>
+    <span class="k">except</span> <span class="n">shutil</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Directory not copied. Error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+    <span class="c1"># Any error saying that the directory doesn&#39;t exist</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Directory not copied. Error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="overwrite_configs"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.overwrite_configs">[docs]</a><span class="k">def</span> <span class="nf">overwrite_configs</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">dataset_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">desc_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">main_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="s1">&#39;io&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">main_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Overwriting the main_folder specified in the config file.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Main folder: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">main_folder</span><span class="p">))</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">main_folder</span>
+
+    <span class="k">if</span> <span class="n">dataset_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Overwriting the dataset_folder specified in the config file.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dataset folder: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">))</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;dataset_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_folder</span>
+
+    <span class="k">if</span> <span class="n">desc_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Overwriting the desc_folder specified in the config file.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Desc folder: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">))</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc_folder</span>
+
+    <span class="k">if</span> <span class="n">tmp_folder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Overwriting the tmp_folder specified in the config file.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Temp folder: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">))</span>
+        <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_folder</span>
+
+    <span class="k">return</span> <span class="n">configs</span></div>
+
+
+<div class="viewcode-block" id="setup_logger"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.setup_logger">[docs]</a><span class="k">def</span> <span class="nf">setup_logger</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">display_configs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given specified configurations, setup a logger.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">configs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># load default configs</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="n">set_configs</span><span class="p">()</span>
+
+    <span class="c1"># if level is passed, overwrite the config file values if config is present</span>
+    <span class="k">if</span> <span class="n">level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">configs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;runtime&#39;</span><span class="p">][</span><span class="s1">&#39;log_level_general&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">level</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;runtime&#39;</span><span class="p">][</span><span class="s1">&#39;log_level_general&#39;</span><span class="p">]</span>
+
+    <span class="n">hdl_file</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;log_file&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+&#39;</span><span class="p">)</span>
+
+    <span class="n">nomadml_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+    <span class="n">nomadml_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">logger_format</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2">: </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">logger_format</span><span class="p">)</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+    <span class="n">hdl_file</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+    <span class="n">nomadml_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+    <span class="n">nomadml_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">hdl_file</span><span class="p">)</span>
+    <span class="n">nomadml_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">nomadml_logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">display_configs</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Configs: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)))</span>
+
+    <span class="c1"># disable DeprecationWarning for scikit-learn</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="c1"># disable warnings from pint</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pint&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+    <span class="c1"># set condor (package to calculate x-ray diffraction) to INFO level even if ai4materials is at DEBUG level</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;condor&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nomadml_logger</span></div>
+
+
+<div class="viewcode-block" id="SSH"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH">[docs]</a><span class="k">class</span> <span class="nc">SSH</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;SSH class to connect to the cluster to perform a calculation.</span>
+
+<span class="sd">        .. codeauthor:: Emre Ahmetcik &lt;ahmetcik@fhi-berlin.mpg.de&gt;&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;172.17.0.3&#39;</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;tutorial&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span>
+                 <span class="n">key_file</span><span class="o">=</span><span class="s2">&quot;/home/beaker/docker.openmpi/ssh/id_rsa.mpi&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">password</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pkey_path</span> <span class="o">=</span> <span class="n">key_file</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">RSAKey</span><span class="o">.</span><span class="n">from_private_key_file</span><span class="p">(</span><span class="n">pkey_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">pkey</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">open_sftp</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SSH.close"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SSH.command"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SSH.mkdir"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.mkdir">[docs]</a>    <span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SSH.remove"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SSH.rm"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.rm">[docs]</a>    <span class="k">def</span> <span class="nf">rm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SSH.exists"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="SSH.isdir"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.isdir">[docs]</a>    <span class="k">def</span> <span class="nf">isdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">S_ISDIR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="SSH.open_file"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.open_file">[docs]</a>    <span class="k">def</span> <span class="nf">open_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SSH.rename"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotefile_1</span><span class="p">,</span> <span class="n">remotefile_2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">remotefile_1</span><span class="p">,</span> <span class="n">remotefile_2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SSH.put"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localfile</span><span class="p">,</span> <span class="n">remotefile</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">localfile</span><span class="p">,</span> <span class="n">remotefile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SSH.put_all"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.put_all">[docs]</a>    <span class="k">def</span> <span class="nf">put_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">):</span>
+        <span class="c1">#  recursively upload a full directory</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">localpath</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">localpath</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">walker</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remotepath</span><span class="p">,</span> <span class="n">walker</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">walker</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walker</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remotepath</span><span class="p">,</span> <span class="n">walker</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SSH.get"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotefile</span><span class="p">,</span> <span class="n">localfile</span><span class="p">):</span>
+        <span class="c1">#  Copy remotefile to localfile, overwriting or creating as needed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remotefile</span><span class="p">,</span> <span class="n">localfile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SSH.sftp_walk"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.sftp_walk">[docs]</a>    <span class="k">def</span> <span class="nf">sftp_walk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">):</span>
+        <span class="c1"># Kindof a stripped down  version of os.walk, implemented for</span>
+        <span class="c1"># sftp.  Tried running it flat without the yields, but it really</span>
+        <span class="c1"># chokes on big directories.</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">remotepath</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">folders</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">(</span><span class="n">remotepath</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">S_ISDIR</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">st_mode</span><span class="p">):</span>
+                <span class="n">folders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">path</span><span class="p">,</span> <span class="n">folders</span><span class="p">,</span> <span class="n">files</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remotepath</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp_walk</span><span class="p">(</span><span class="n">new_path</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="SSH.get_all"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.SSH.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">):</span>
+        <span class="c1">#  recursively download a full directory</span>
+        <span class="c1">#  Harder than it sounded at first, since paramiko won&#39;t walk</span>
+        <span class="c1">#</span>
+        <span class="c1"># For the record, something like this would gennerally be faster:</span>
+        <span class="c1"># ssh user@host &#39;tar -cz /source/folder&#39; | tar -xz</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sftp</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">remotepath</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">remotepath</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">localpath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">for</span> <span class="n">walker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sftp_walk</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">walker</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">walker</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">walker</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">file</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">walker</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">file</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="get_data_filename"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.get_data_filename">[docs]</a><span class="k">def</span> <span class="nf">get_data_filename</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rewrite of pkgutil.get_data() that return the file path.</span>
+
+<span class="sd">    Taken from: https://stackoverflow.com/questions/5003755/how-to-use-pkgutils-get-data-with-csv-reader-in-python</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_loader</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="s1">&#39;get_data&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">package</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mod</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Modify the resource name to be compatible with the loader.get_data</span>
+    <span class="c1"># signature - an os.path format &quot;filename&quot; starting with the dirname of</span>
+    <span class="c1"># the package&#39;s __file__</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">resource_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">resource_name</span></div>
+
+
+<div class="viewcode-block" id="get_metadata_info"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.get_metadata_info">[docs]</a><span class="k">def</span> <span class="nf">get_metadata_info</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Get the descriptor metadata info&quot;&quot;&quot;</span>
+    <span class="n">resource_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s1">&#39;descriptors&#39;</span><span class="p">,</span> <span class="s1">&#39;descriptors.nomadmetainfo.json&#39;</span><span class="p">))</span>
+    <span class="n">desc_metainfo</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_string</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">,</span> <span class="n">resource_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">desc_metainfo</span></div>
+
+
+<div class="viewcode-block" id="read_nomad_metainfo"><a class="viewcode-back" href="../../../ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.read_nomad_metainfo">[docs]</a><span class="k">def</span> <span class="nf">read_nomad_metainfo</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read the atomic nomad meta info file&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="o">==</span> <span class="s1">&#39;ai4materials&#39;</span><span class="p">:</span>
+        <span class="n">metadata_path</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s1">&#39;descriptors/atomic_data.nomadmetainfo.json&#39;</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only origin=&#39;ai4materials&#39; is currently supported for reading atomic nomad-meta-info.&quot;</span><span class="p">)</span>
+
+    <span class="n">metadata_info</span><span class="p">,</span> <span class="n">warns</span> <span class="o">=</span> <span class="n">loadJsonFile</span><span class="p">(</span><span class="n">filePath</span><span class="o">=</span><span class="n">metadata_path</span><span class="p">,</span> <span class="n">dependencyLoader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                        <span class="n">extraArgsHandling</span><span class="o">=</span><span class="n">InfoKindEl</span><span class="o">.</span><span class="n">ADD_EXTRA_ARGS</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">metadata_info</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

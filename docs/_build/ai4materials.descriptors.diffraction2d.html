@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.descriptors.diffraction2d module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="up" title="Representing crystal structures: descriptors" href="ai4materials.descriptors.html"/>
+        <link rel="next" title="ai4materials.descriptors.diffraction3d module" href="ai4materials.descriptors.diffraction3d.html"/>
+        <link rel="prev" title="ai4materials.descriptors.diffraction1d module" href="ai4materials.descriptors.diffraction1d.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors.atomic_features-example">Example: atomic features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors.diffraction2d-example">Example: two-dimensional diffraction fingerprint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors.diffraction3d-example">Example: three-dimensional diffraction fingerprint</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.descriptors.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.atomic_features.html">ai4materials.descriptors.atomic_features module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.base_descriptor.html">ai4materials.descriptors.base_descriptor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.diffraction1d.html">ai4materials.descriptors.diffraction1d module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ai4materials.descriptors.diffraction2d module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.diffraction3d.html">ai4materials.descriptors.diffraction3d module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.ft_soap_descriptor.html">ai4materials.descriptors.ft_soap_descriptor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.prdf.html">ai4materials.descriptors.prdf module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.quippy_soap_descriptor.html">ai4materials.descriptors.quippy_soap_descriptor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.descriptors.soap_model.html">ai4materials.descriptors.soap_model module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ai4materials.descriptors.html#module-ai4materials.descriptors">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a> &raquo;</li>
+        
+      <li>ai4materials.descriptors.diffraction2d module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.descriptors.diffraction2d.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.descriptors.diffraction2d">
+<span id="ai4materials-descriptors-diffraction2d-module"></span><h1>ai4materials.descriptors.diffraction2d module<a class="headerlink" href="#module-ai4materials.descriptors.diffraction2d" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ai4materials.descriptors.diffraction2d.Diffraction2D">
+<em class="property">class </em><code class="descclassname">ai4materials.descriptors.diffraction2d.</code><code class="descname">Diffraction2D</code><span class="sig-paren">(</span><em>configs=None</em>, <em>param_source=None</em>, <em>param_detector=None</em>, <em>desc_angles=None</em>, <em>atoms_scaling='avg_nn'</em>, <em>atoms_scaling_cutoffs=None</em>, <em>use_mask=True</em>, <em>mask_r_min=None</em>, <em>mask_r_max=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction2d.html#Diffraction2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction2d.Diffraction2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ai4materials.descriptors.base_descriptor.html#ai4materials.descriptors.base_descriptor.Descriptor" title="ai4materials.descriptors.base_descriptor.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ai4materials.descriptors.base_descriptor.Descriptor</span></code></a></p>
+<p>The two dimensional diffraction descriptor.</p>
+<p>This is the descriptor introduced in Ziletti et al., Nature Communications 9, 2775, (2018). The default values
+of the parameters used are the one used in the reference above.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>configs: dict</dt>
+<dd>Contains configuration information such as folders for input and output
+(e.g. <cite>desc_folder</cite>, <cite>tmp_folder</cite>), logging level, and metadata location.
+See also <a class="reference internal" href="ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.set_configs" title="ai4materials.utils.utils_config.set_configs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_config.set_configs</span></code></a>.</dd>
+<dt>param_source: dict, optional (default={‘wavelength’: 5.0E-12, ‘pulse_energy’: 1E-6, ‘focus_diameter’: 1E-6})</dt>
+<dd><p class="first">Contains parameters that are passed to the underlying package used for the diffraction computation (Condor).
+This parameters are passed to Condor via:</p>
+<p><cite>src = condor.Source(**self.param_source)</cite></p>
+<p class="last">See <a class="reference external" href="http://condor.readthedocs.io/en/latest/config.html#source">http://condor.readthedocs.io/en/latest/config.html#source</a> for the parameters that can be used.</p>
+</dd>
+<dt>param_detector: dict, optional (default={‘distance’: 0.1, ‘pixel_size’: 4E-4, ‘nx’: 64, ‘ny’: 64})</dt>
+<dd><p class="first">Contains parameters that are passed to the underlying package used for the diffraction computation (Condor).
+This parameters are passed to Condor via:</p>
+<p><cite>det = condor.Detector(**self.param_detector)</cite></p>
+<p class="last">See <a class="reference external" href="http://condor.readthedocs.io/en/latest/config.html#detector">http://condor.readthedocs.io/en/latest/config.html#detector</a> for the parameters that can be used.</p>
+</dd>
+<dt>desc_angles: dict, optional (default={“r”: [-45., 45.], “g”: [-45., 45.], “b”: [-45., 45.]})</dt>
+<dd><p class="first">As described in Ziletti et al., each structure is rotated clockwise and counterclockwise about a given
+crystal axis, the diffraction pattern for each rotation is calculated, and then the two patterns
+are superimposed. This procedure is then repeated for all three crystal axes.
+The final result is represented as one RGB image for crystal structure, where each color channel shows
+the diffraction patterns obtained by rotating about a given axis
+(red (R) for x-axis, green (G) for y-axis, and blue (B) for z-axis).
+For example:</p>
+<p><cite>“r”: [-45., 45.]</cite></p>
+<p class="last">means that the diffraction pattern for the R channel is given by the superposition of the diffraction pattern
+obtained by rotating the structure around the first crystal axis clockwise and counterclockwise by 45 degrees.</p>
+</dd>
+<dt>atoms_scaling: string, optional (default=’avg_nn’)</dt>
+<dd>Type of scaling used in the atom structure scaling. See <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.scale_structure" title="ai4materials.utils.utils_crystals.scale_structure"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.scale_structure</span></code></a>
+for more details.</dd>
+<dt>atoms_scaling_cutoffs: list of float, optional (default=[4.0, 5.0, 7.0, 9.0, 11.0, 12.0])</dt>
+<dd>List of cutoffs to be used in the determination of the lengthscale of the system to be used in
+<a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.scale_structure" title="ai4materials.utils.utils_crystals.scale_structure"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.scale_structure</span></code></a>.</dd>
+<dt>use_mask: bool, optional (default=True)</dt>
+<dd>If <cite>True</cite>, a mask such that only (<cite>mask_r_min</cite> &lt; points &lt; <cite>mask_r_max</cite>) are kept in the calculated
+diffraction pattern. This is done because the central peak in diffraction is very intense
+but does not carry useful information regarding the atomic structure.</dd>
+<dt>mask_r_min: float, optional (default=5)</dt>
+<dd>The intensity of the points in the diffraction pattern with a radius smaller than <cite>mask_r_min</cite> are set to zero.</dd>
+<dt>mask_r_max: float, optional (default=30)</dt>
+<dd>The intensity of the points in the diffraction pattern with a radius larger than <cite>mask_r_max</cite> are set to zero.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>This descriptor was introduced in the following article:</p>
+<p>A. Ziletti, D. Kumar, M. Scheffler, and L. M. Ghiringhelli, “Insightful classification of crystal structures
+using deep learning”, Nature Communications 9, 2775, (2018) [<a class="reference external" href="https://www.nature.com/articles/s41467-018-05169-6">Link to article</a>]</p>
+<p class="last">Please cite this manuscript if you find this descriptor useful in your work.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">To calculate the diffraction pattern we use the open source software Condor.
+See the Condor webpage for more details: <a class="reference external" href="http://condor.readthedocs.io/en/">http://condor.readthedocs.io/en/</a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="ai4materials.descriptors.diffraction2d.Diffraction2D.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>structure</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction2d.html#Diffraction2D.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction2d.Diffraction2D.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the descriptor for the given ASE structure.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structure: <cite>ase.Atoms</cite> object</dt>
+<dd>Atomic structure.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ai4materials.descriptors.diffraction2d.Diffraction2D.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>structure</em>, <em>tar</em>, <em>op_id=0</em>, <em>write_intensity_npy=True</em>, <em>write_intensity_png=True</em>, <em>write_rspace_png=False</em>, <em>write_phase_png=False</em>, <em>write_geo=True</em>, <em>format_geometry='aims'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/descriptors/diffraction2d.html#Diffraction2D.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.descriptors.diffraction2d.Diffraction2D.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the descriptor to file.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structure: <cite>ase.Atoms</cite> obejct</dt>
+<dd>Atomic structure.</dd>
+<dt>tar: TarFile object</dt>
+<dd>TarFile archive where the descriptor is added. This is created internally with <cite>tarfile.open</cite>.</dd>
+<dt>op_id: int, optional (default=0)</dt>
+<dd>Number of the applied operation to the descriptor. At present always set to zero in the code.</dd>
+<dt>write_intensity_png: bool, optional (default=`True`)</dt>
+<dd>If <cite>True</cite>, write to file diffraction intensities as numpy arrays.</dd>
+<dt>write_rspace_png: bool, optional (default=`False`)</dt>
+<dd>If <cite>True</cite>, write to file a png file with the real space structure for which the diffraction pattern
+is calculated.</dd>
+<dt>write_phase_png: bool, optional (default=`False`)</dt>
+<dd>If <cite>True</cite>, write to file a png file with the phases of the diffraction pattern.</dd>
+<dt>write_geo: bool, optional (default=`True`)</dt>
+<dd>If <cite>True</cite>, write a coordinate file of the structure for which the diffraction pattern is calculated.</dd>
+<dt>format_geometry: string, optional (default=`aims`)</dt>
+<dd>Output format of the geometry file. All ASE valid output formats are accepted.
+For a complete list see: <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/io/io.html">https://wiki.fysik.dtu.dk/ase/ase/io/io.html</a></dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.descriptors.diffraction3d.html" class="btn btn-neutral float-right" title="ai4materials.descriptors.diffraction3d module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.descriptors.diffraction1d.html" class="btn btn-neutral" title="ai4materials.descriptors.diffraction1d module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

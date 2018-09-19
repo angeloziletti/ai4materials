@@ -1,0 +1,639 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_parsing &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_parsing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.utils.utils_parsing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;23/09/18&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">pymatgen</span> <span class="k">as</span> <span class="nn">mg</span>
+<span class="kn">import</span> <span class="nn">ase</span>
+<span class="kn">from</span> <span class="nn">ase.spacegroup</span> <span class="k">import</span> <span class="n">get_spacegroup</span>
+<span class="kn">from</span> <span class="nn">pymatgen.io.ase</span> <span class="k">import</span> <span class="n">AseAtomsAdaptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="k">import</span> <span class="n">get_spacegroup_analyzer</span>
+<span class="kn">from</span> <span class="nn">pymatgen.symmetry.analyzer</span> <span class="k">import</span> <span class="n">PointGroupAnalyzer</span>
+<span class="kn">from</span> <span class="nn">future.utils</span> <span class="k">import</span> <span class="n">viewitems</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_gdb_7k"><a class="viewcode-back" href="../../../ai4materials.utils.utils_parsing.html#ai4materials.utils.utils_parsing.read_gdb_7k">[docs]</a><span class="k">def</span> <span class="nf">read_gdb_7k</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xyz_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read the gdb_7k dataset.</span>
+
+<span class="sd">    Link to reference: http://iopscience.iop.org/article/10.1088/1367-2630/15/9/095003/meta;jsessionid=BE06A5911A9B58D271F6E2C145D54FDC.c2.iopscience.cld.iop.org</span>
+<span class="sd">    Link to dataset: http://www.mrupp.info/Data/2013dsgdb7njp.zip</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    dataset: string</span>
+<span class="sd">        File containing the dataset. If taken from the link above, it is named &quot;dsgdb7njp.xyz&quot;.</span>
+
+<span class="sd">    xyz_file: string, optional, default ./dsgdb7njp_ase.xyz</span>
+<span class="sd">        File containing the configurations in the dataset that can be read by the ASE python library.</span>
+
+<span class="sd">    target_file: string, optional, default ./dsgdb7njp.csv</span>
+<span class="sd">        CSV file containing the target values as panda dataframe. See the code below for details.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    dataset: dataframe</span>
+<span class="sd">         Dataframe containing the data read from the datasets. It is 7211 rows.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">xyz_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xyz_file</span> <span class="o">=</span> <span class="s1">&#39;./dsgdb7njp_ase.xyz&#39;</span>
+        <span class="kn">import</span> <span class="nn">pymatgen</span> <span class="k">as</span> <span class="nn">mg</span>
+
+    <span class="k">if</span> <span class="n">target_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_file</span> <span class="o">=</span> <span class="s1">&#39;./dsgdb7njp.csv&#39;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Preprocessing gdb13_7k database&#39;</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">xyz_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+    <span class="c1"># to read the 1st line correctly</span>
+    <span class="n">id_empty</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">l_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">l_</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">id_empty</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="n">target_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">id_empty</span><span class="p">]</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">target_</span> <span class="ow">in</span> <span class="n">target_values</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">target_</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># ae_pbe0    kcal/mol   Atomization energy (DFT/PBE0)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ae_pbe0&#39;</span><span class="p">)</span>
+    <span class="c1"># p_pbe0     Angstrom^3 Polarizability (DFT/PBE0)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;p_pbe0&#39;</span><span class="p">)</span>
+    <span class="c1"># p_scs      Angstrom^3 Polarizability (self-consistent screening)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;p_scs&#39;</span><span class="p">)</span>
+    <span class="c1"># homo_gw    eV         Highest occupied molecular orbital (GW)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;homo_gw&#39;</span><span class="p">)</span>
+    <span class="c1"># homo_pbe0  eV         Highest occupied molecular orbital (DFT/PBE0)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;homo_pbe0&#39;</span><span class="p">)</span>
+    <span class="c1"># homo_zindo eV         Highest occupied molecular orbital (ZINDO/s)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;homo_zindo&#39;</span><span class="p">)</span>
+    <span class="c1"># lumo_gw    eV         Lowest unoccupied molecular orbital (GW)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;lumo_gw&#39;</span><span class="p">)</span>
+    <span class="c1"># lumo_pbe0  eV         Lowest unoccupied molecular orbital (DFT/PBE0)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;lumo_pbe0&#39;</span><span class="p">)</span>
+    <span class="c1"># lumo_zindo eV         Lowest unoccupied molecular orbital (ZINDO/s)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;lumo_zindo&#39;</span><span class="p">)</span>
+    <span class="c1"># ip_zindo   eV         Ionization potential (ZINDO/s)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ip_zindo&#39;</span><span class="p">)</span>
+    <span class="c1"># ea_zindo   eV         Electron affinity (ZINDO/s)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ea_zindo&#39;</span><span class="p">)</span>
+    <span class="c1"># e1_zindo   eV         First excitation energy (ZINDO)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;e1_zindo&#39;</span><span class="p">)</span>
+    <span class="c1"># emax_zindo eV         Maximal absorption intensity (ZINDO)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;emax_zindo&#39;</span><span class="p">)</span>
+    <span class="c1"># imax_zindo arbitrary  Excitation energy at maximal absorption (ZINDO)</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;imax_zindo&#39;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="c1"># add homo-lumo gaps</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;homo_lumo_gap_gw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;lumo_gw&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;homo_gw&#39;</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;homo_lumo_gap_pbe0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;lumo_pbe0&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;homo_pbe0&#39;</span><span class="p">]</span>
+
+    <span class="c1"># copy in the xyz file the original dataset without the empty lines</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">7211</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;The target value array should contain 7211 elements.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Your target value contains </span><span class="si">{0}</span><span class="s1"> elements.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">target_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Printing some statistics on the dataset&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Preprocessing: done.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="read_data"><a class="viewcode-back" href="../../../ai4materials.utils.utils_parsing.html#ai4materials.utils.utils_parsing.read_data">[docs]</a><span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">json_list</span><span class="p">,</span> <span class="n">calc_spgroup</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-03</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read json file from the NOMAD Archive format and get a list of ASE structures&quot;&quot;&quot;</span>
+
+    <span class="n">frame_list</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">frame_list_idcs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="n">data_file_format</span> <span class="o">=</span> <span class="s1">&#39;NOMAD&#39;</span>
+
+    <span class="n">op_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">json_list</span><span class="p">))</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Converting data (</span><span class="si">%d</span><span class="s2"> archives)...&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_list</span><span class="p">))</span>
+    <span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nmd_struct_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">frame_list_idx_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">z_count_global</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">json_idx</span><span class="p">,</span> <span class="n">json_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">json_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">json_idx</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">json_list</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading: file </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_list</span><span class="p">)))</span>
+
+        <span class="n">nmd_struct</span> <span class="o">=</span> <span class="n">NOMADStructure</span><span class="p">(</span><span class="n">in_file</span><span class="o">=</span><span class="n">json_file</span><span class="p">,</span> <span class="n">frame_list</span><span class="o">=</span><span class="n">frame_list</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">data_file_format</span><span class="p">)</span>
+        <span class="n">frame_list_idx_list</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">frame_list_idcs</span><span class="p">:</span>
+            <span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">nmd_struct</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">ase_atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">)</span>
+            <span class="n">frame_list_idx_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">nmd_struct_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nmd_struct</span><span class="p">)</span>
+
+    <span class="c1"># name is filename without extension</span>
+    <span class="n">ase_atoms_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">json_list</span><span class="p">]</span>
+
+    <span class="c1"># probably better to use a unique hash instead.</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ase_atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">):</span>
+        <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ase_atoms_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">calc_spgroup</span><span class="p">:</span>
+            <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;spacegroup_nb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">space_group_analyzer</span> <span class="o">=</span> <span class="n">get_spacegroup_analyzer</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">space_group_analyzer</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;spacegroup_nb&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_space_group_number</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">ase_atoms_list</span></div>
+
+
+<div class="viewcode-block" id="get_pymatgen_ase_from_cif_structure"><a class="viewcode-back" href="../../../ai4materials.utils.utils_parsing.html#ai4materials.utils.utils_parsing.get_pymatgen_ase_from_cif_structure">[docs]</a><span class="k">def</span> <span class="nf">get_pymatgen_ase_from_cif_structure</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="c1"># warnings.filterwarnings(&#39;ignore&#39;)#, category=DeprecationWarning)</span>
+    <span class="n">struct</span> <span class="o">=</span> <span class="n">mg</span><span class="o">.</span><span class="n">Structure</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">AseAtomsAdaptor</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">struct</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ase_atoms</span></div>
+
+
+<div class="viewcode-block" id="read_atomic_structures"><a class="viewcode-back" href="../../../ai4materials.utils.utils_parsing.html#ai4materials.utils.utils_parsing.read_atomic_structures">[docs]</a><span class="k">def</span> <span class="nf">read_atomic_structures</span><span class="p">(</span><span class="n">data_folder</span><span class="p">,</span> <span class="n">nb_max_folders</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">nb_max_files</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">filename_suffix</span><span class="o">=</span><span class="s1">&#39;.aims&#39;</span><span class="p">,</span>
+                           <span class="n">format_input</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">,</span> <span class="n">calc_spgroup</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-03</span><span class="p">,</span> <span class="mf">1e-06</span><span class="p">,</span> <span class="mf">1e-09</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Read geometry files from data_folder, and return ASE list&quot;&quot;&quot;</span>
+
+    <span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">data_folder</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">nb_max_folders</span><span class="p">:</span>  <span class="c1"># this is for folders</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">nb_max_files</span><span class="p">:</span>  <span class="c1"># this is for files</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">nb_max_folders</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">file_</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">filename_suffix</span><span class="p">):</span>
+                <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file_</span><span class="p">)</span>
+                <span class="n">filename_no_ext</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+                <span class="c1"># read only first element</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">format_input</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">calc_spgroup</span><span class="p">:</span>
+                    <span class="n">spgroups</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_spacegroup</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">no</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">symprec</span><span class="p">]</span>
+
+                    <span class="k">for</span> <span class="n">idx_spgroup</span><span class="p">,</span> <span class="n">spgroups</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spgroups</span><span class="p">):</span>
+                        <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;spacegroup_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">symprec</span><span class="p">[</span><span class="n">idx_spgroup</span><span class="p">])]</span> <span class="o">=</span> <span class="n">spgroups</span>
+
+                <span class="n">ase_atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ase_atoms_list</span></div>
+
+
+<div class="viewcode-block" id="nmd_uri_to_ase_atoms_tmp"><a class="viewcode-back" href="../../../ai4materials.utils.utils_parsing.html#ai4materials.utils.utils_parsing.nmd_uri_to_ase_atoms_tmp">[docs]</a><span class="k">def</span> <span class="nf">nmd_uri_to_ase_atoms_tmp</span><span class="p">(</span><span class="n">nmd_uris</span><span class="p">,</span> <span class="n">get_energy_total</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">calc_spacegroup</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Temporary function to build ASE atoms from nmd uri. Will be substituted from the new option in nomad resolve.&quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">nomadcore.nomad_query</span> <span class="k">import</span> <span class="n">NomadQuery</span>
+    <span class="n">nomad_query</span> <span class="o">=</span> <span class="n">NomadQuery</span><span class="p">()</span>
+
+    <span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">target_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">get_energy_total</span><span class="p">:</span>
+        <span class="n">energy_total_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sec_retrieval_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;section-2&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">section_name</span><span class="o">=</span><span class="s1">&#39;section_single_configuration_calculation&#39;</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[</span>
+            <span class="s1">&#39;/section_run/0c/section_single_configuration_calculation/0c&#39;</span><span class="p">])}</span>
+
+        <span class="c1"># for key, section in sec_retrieval.iteritems():</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span> <span class="ow">in</span> <span class="n">viewitems</span><span class="p">(</span><span class="n">sec_retrieval_energy</span><span class="p">):</span>
+            <span class="c1"># define a default for retrieved keys</span>
+            <span class="c1"># so it will not fail if nothing can be retrieved</span>
+            <span class="k">for</span> <span class="n">idx_nmd</span><span class="p">,</span> <span class="n">nmd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nmd_uris</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">idx_nmd</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx_nmd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nmd_uris</span><span class="p">)))</span>
+
+                <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]:</span>
+                    <span class="n">nmd_dict</span> <span class="o">=</span> <span class="n">nomad_query</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">nmd</span><span class="o">=</span><span class="n">nmd</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">energy_total</span> <span class="o">=</span> <span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;energy_total&#39;</span><span class="p">]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">nmd</span><span class="p">)</span>
+                <span class="n">energy_total_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy_total</span><span class="p">)</span>
+
+    <span class="n">sec_retrieval</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;section-1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;section_name&#39;</span><span class="p">:</span> <span class="s1">&#39;section_system&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;paths&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;/section_run/0c/section_system/0c&#39;</span><span class="p">,</span> <span class="s1">&#39;/section_run/0c/section_system/1c&#39;</span><span class="p">],</span>
+                                   <span class="s1">&#39;required_keys_atom_species&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;atom_positions&#39;</span><span class="p">,</span> <span class="s1">&#39;atom_species&#39;</span><span class="p">,</span>
+                                                                  <span class="s1">&#39;configuration_periodic_dimensions&#39;</span><span class="p">],</span>
+                                   <span class="s1">&#39;required_keys_atom_labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;atom_positions&#39;</span><span class="p">,</span> <span class="s1">&#39;atom_labels&#39;</span><span class="p">,</span>
+                                                                 <span class="s1">&#39;configuration_periodic_dimensions&#39;</span><span class="p">]}}</span>
+
+    <span class="c1"># for key, section in sec_retrieval.iteritems():</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span> <span class="ow">in</span> <span class="n">viewitems</span><span class="p">(</span><span class="n">sec_retrieval</span><span class="p">):</span>
+        <span class="c1"># define a default for retrieved keys</span>
+        <span class="c1"># so it will not fail if nothing can be retrieved</span>
+        <span class="n">required_keys</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_species&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">idx_nmd</span><span class="p">,</span> <span class="n">nmd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nmd_uris</span><span class="p">):</span>
+            <span class="n">retrieval_success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">idx_nmd</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx_nmd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nmd_uris</span><span class="p">)))</span>
+
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nmd_dict</span> <span class="o">=</span> <span class="n">nomad_query</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">nmd</span><span class="o">=</span><span class="n">nmd</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                    <span class="n">nmd_dict</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="c1"># first try with atom species (this is the correct procedure)</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">required_key</span> <span class="ow">in</span> <span class="n">nmd_dict</span> <span class="k">for</span> <span class="n">required_key</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_species&#39;</span><span class="p">]]):</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using path </span><span class="si">{}</span><span class="s2"> for query-data retrieval&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+                    <span class="n">retrieval_success</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">required_keys</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_species&#39;</span><span class="p">]</span>
+                    <span class="c1"># logger.debug(&quot;Retrieval succedeed: {}&quot;.format(retrieval_success))</span>
+                    <span class="c1"># logger.debug(&quot;Retrieved keys: {}&quot;.format(retrieved_keys))</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">retrieval_success</span><span class="p">:</span>
+                <span class="c1"># try with atom labels (this is not the correct procedure because atom_labels do not have</span>
+                <span class="c1"># necessary to be atomic species (e.g. C1, C2)</span>
+                <span class="c1"># we need to do this because there was a bug in the Gaussian parser</span>
+                <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;paths&#39;</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">nmd_dict</span> <span class="o">=</span> <span class="n">nomad_query</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">nmd</span><span class="o">=</span><span class="n">nmd</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                        <span class="n">nmd_dict</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="c1"># first try with atom species (this is the correct procedure)</span>
+                    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">required_key</span> <span class="ow">in</span> <span class="n">nmd_dict</span> <span class="k">for</span> <span class="n">required_key</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_labels&#39;</span><span class="p">]]):</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using path </span><span class="si">{}</span><span class="s2"> for query-data retrieval&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+                        <span class="n">required_keys</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_labels&#39;</span><span class="p">]</span>
+                        <span class="c1"># logger.debug(&quot;Retrieved keys: {}&quot;.format(retrieved_keys))</span>
+                        <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">required_key</span> <span class="ow">in</span> <span class="n">nmd_dict</span> <span class="k">for</span> <span class="n">required_key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;section_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;section_system&#39;</span><span class="p">:</span>
+                    <span class="n">atom_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;atom_positions&#39;</span><span class="p">][</span><span class="s1">&#39;flatData&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                        <span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;atom_positions&#39;</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.0E+10</span>
+                    <span class="n">periodicity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;configuration_periodic_dimensions&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;flatData&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">required_keys</span> <span class="o">==</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_species&#39;</span><span class="p">]:</span>
+                        <span class="n">atom_species</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;atom_species&#39;</span><span class="p">])</span>
+                    <span class="k">elif</span> <span class="n">required_keys</span> <span class="o">==</span> <span class="n">section</span><span class="p">[</span><span class="s1">&#39;required_keys_atom_labels&#39;</span><span class="p">]:</span>
+                        <span class="n">atom_species</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;atom_labels&#39;</span><span class="p">][</span><span class="s1">&#39;flatData&#39;</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No retrieved keys. Stopping.&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># read cell only if periodicity is all True</span>
+                    <span class="c1"># the Gaussian parser for non-periodic systems still the cell (0., 0., 0.) even if there is no cell</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">periodicity</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">simulation_cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;simulation_cell&#39;</span><span class="p">][</span><span class="s1">&#39;flatData&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                                <span class="n">nmd_dict</span><span class="p">[</span><span class="s1">&#39;simulation_cell&#39;</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.0E+10</span>
+                        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                            <span class="n">simulation_cell</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculation </span><span class="si">{}</span><span class="s2"> is not periodic over three dimensions.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nmd</span><span class="p">))</span>
+
+                    <span class="c1"># create ASE object</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">periodicity</span><span class="p">):</span>
+                        <span class="n">atoms</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">Atoms</span><span class="p">(</span><span class="n">symbols</span><span class="o">=</span><span class="n">atom_species</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="n">atom_positions</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="n">simulation_cell</span><span class="p">,</span>
+                                          <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                        <span class="c1"># calculate spacegroup on-the-fly</span>
+                        <span class="c1"># use spacegroup as target for crystals</span>
+                        <span class="k">if</span> <span class="n">calc_spacegroup</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">spgroup_nb</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span><span class="o">.</span><span class="n">no</span>
+                            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                                <span class="n">spgroup_nb</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;spgroup_nb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spgroup_nb</span>
+                        <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spgroup_nb</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">atoms</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">Atoms</span><span class="p">(</span><span class="n">symbols</span><span class="o">=</span><span class="n">atom_species</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="n">atom_positions</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="n">simulation_cell</span><span class="p">,</span>
+                                          <span class="n">pbc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                        <span class="c1"># calculate pointgroup on-the-fly</span>
+                        <span class="c1"># use pointgroup as target for molecules from pymatgen</span>
+                        <span class="k">if</span> <span class="n">calc_spacegroup</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">point_group_symbol</span> <span class="o">=</span> <span class="n">PointGroupAnalyzer</span><span class="p">(</span><span class="n">AseAtomsAdaptor</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span>
+                                                                        <span class="n">symprec</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span><span class="o">.</span><span class="n">get_point_group_symbol</span><span class="p">()</span>
+                            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                                <span class="n">point_group_symbol</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;point_group_symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_group_symbol</span>
+                        <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_group_symbol</span>
+
+                    <span class="c1"># add label</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;nmd_uri&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nmd</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;nmd_checksum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nmd</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="c1"># set label</span>
+                    <span class="c1"># using NMD uri is better because unique, but it prints more to screen</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nmd</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="c1"># atoms.info[&#39;label&#39;] = str(idx_nmd)</span>
+
+                    <span class="n">ase_atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+                    <span class="n">target_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Could not retrieve atom_positions and/or atom_species for entry: </span><span class="si">{}</span><span class="s2"> in paths </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nmd</span><span class="p">,</span>
+                                                                                                             <span class="n">section</span><span class="p">[</span>
+                                                                                                                 <span class="s1">&#39;paths&#39;</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">get_energy_total</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy_total_list</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">):</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;energy_total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy_total_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">ase_atoms_list</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

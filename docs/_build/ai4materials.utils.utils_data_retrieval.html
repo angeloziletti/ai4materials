@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_data_retrieval module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ai4materials.utils.utils_mp module" href="ai4materials.utils.utils_mp.html" />
+    <link rel="prev" title="ai4materials.utils.utils_crystals module" href="ai4materials.utils.utils_crystals.html" />
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.utils.html">Utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals">Utils crystals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#pristine-and-defective-supercell-generation">Pristine and defective supercell generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_supercell">Example: pristine supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_vacancies">Example: defective supercell creation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ai4materials.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_binaries.html">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_config.html">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_crystals.html">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_vol_data.html">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.utils.html">Utils</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_data_retrieval module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.utils.utils_data_retrieval.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.utils.utils_data_retrieval">
+<span id="ai4materials-utils-utils-data-retrieval-module"></span><h1>ai4materials.utils.utils_data_retrieval module<a class="headerlink" href="#module-ai4materials.utils.utils_data_retrieval" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.analize_dataset">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">analize_dataset</code><span class="sig-paren">(</span><em>df_filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#analize_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.analize_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analize the csv generated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.check_structure_list">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">check_structure_list</code><span class="sig-paren">(</span><em>structure_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#check_structure_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.check_structure_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the descriptor name is the same for all structures in the list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.clean_folder">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">clean_folder</code><span class="sig-paren">(</span><em>tmp_folder</em>, <em>endings_to_delete=('.png'</em>, <em>'.npy'</em>, <em>'_target.json'</em>, <em>'_aims.in'</em>, <em>'_ase_atoms_info.pkl'</em>, <em>'_ase_atoms.json'</em>, <em>'_coord.in'</em>, <em>'summary.json'</em>, <em>'_atomic_features.csv')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#clean_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.clean_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean tmp folder from files that do not end in allowed_endings.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>tmp_folder: string</dt>
+<dd>Absolute path to the folder from which we want to erase the files that ends
+with the endings in <cite>endings_to_delete</cite></dd>
+<dt>endings_to_delete: tuple of strings, optional (default=(“.png”, “.npy”, “_target.json”, “_aims.in”))</dt>
+<dd>Delete from <cite>tmp_folder</cite> all the files that which filenames end with the mentioned endings.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.create_sprite_atlas">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">create_sprite_atlas</code><span class="sig-paren">(</span><em>images</em>, <em>main_folder</em>, <em>sprite_atlas_filename='sprite_atlas'</em>, <em>max_imgs_row=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#create_sprite_atlas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.create_sprite_atlas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a sprite atlas for numpy array of images(nb_images, px, py, nb_channels)
+Based on: <a class="reference external" href="https://minzkraut.com/2016/11/23/making-a-simple-spritesheet-generator-in-python/">https://minzkraut.com/2016/11/23/making-a-simple-spritesheet-generator-in-python/</a></p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.expand_dict_labels">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">expand_dict_labels</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#expand_dict_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.expand_dict_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a Pandas Dataframe, it expands the columns that are dictionaries.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.extract_ase_db_files">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">extract_ase_db_files</code><span class="sig-paren">(</span><em>filename</em>, <em>tmp_folder=None</em>, <em>clean_tmp=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#extract_ase_db_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.extract_ase_db_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read target files from descriptor folder.
+Change to put the extractall inside.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.extract_files">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">extract_files</code><span class="sig-paren">(</span><em>filename</em>, <em>file_type='target_files'</em>, <em>tmp_folder=None</em>, <em>clean_tmp=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#extract_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.extract_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read files from descriptor folder.</p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.extract_img_list">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">extract_img_list</code><span class="sig-paren">(</span><em>filename</em>, <em>desc_folder=None</em>, <em>tmp_folder=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#extract_img_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.extract_img_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of images from .</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.extract_labels">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">extract_labels</code><span class="sig-paren">(</span><em>target_list</em>, <em>target_name</em>, <em>target_categorical</em>, <em>disc_type='uniform'</em>, <em>n_bins=100</em>, <em>new_labels=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#extract_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.extract_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a target_list obtained from <cite>nomad-ml.wrappers.load_descriptor</cite>, extract the labels.</p>
+<p>Assumes that all the classes are contained in the training set.
+The test set can have less classes.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>target_list: list of dict</dt>
+<dd><p class="first">List of dictionaries as returned by the <cite>nomad-ml.wrappers.load_descriptor</cite>.
+Each element of this list is a dictionary with only one key (<cite>data</cite>), which has as value a list of dicts.
+For example:</p>
+<p>{u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}.</p>
+<p class="last">More keywords are possible.</p>
+</dd>
+<dt>target_name: str</dt>
+<dd>Name of the target to extract from the target list. <cite>target_name</cite> needs to be a key in the dict contained in
+<cite>target_list</cite>. For the example above, valid target names are ‘spacegroup_symbol_symprec_0.001’ and
+‘chemical_formula’.</dd>
+<dt>target_categorical: bool</dt>
+<dd>If <cite>True</cite>, the target to extract is assumed to be categorical, i.e. for classification.
+If <cite>False</cite>, the target to extract is assumed to be continuous, i.e. for regression.
+If <cite>True</cite>, the labels are discretized according to <cite>disc_type</cite>.</dd>
+<dt>disc_type: { ‘uniform’, ‘quantiles’}</dt>
+<dd>Type of discretization used if target is categorical. In both case, <cite>n_bins</cite> are used.</dd>
+<dt>n_bins: int, optional (default=100)</dt>
+<dd>Number of bins used in the discretization.</dd>
+<dt>new_labels: dict, optional (default = <cite>None</cite>)</dt>
+<dd><p class="first">It allows to substitute the label names that are in <cite>target_list</cite>.
+For example:</p>
+<p>new_labels = {“hcp”: [“194”], “fcc”: [“225”], “diam”: [“227”], “bcc”: [“229”]}</p>
+<p class="last">will substitute each occurrence of “194” with “hcp” in the label list which is extracted.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">sklearn.preprocessing.LabelEncoder</span></code>, ndarray, ndarray</dt>
+<dd><p class="first">Returns <code class="docutils literal notranslate"><span class="pre">sklearn.preprocessing.LabelEncoder</span></code> object, ndarray with the numerical labels, ndarray with the
+text labels.
+The ndarray with the numerical labels is obtained via:</p>
+<blockquote class="last">
+<div><p>label_encoder = preprocessing.LabelEncoder()</p>
+<p>label_encoder.fit(text_labels)</p>
+<p>numerical_labels = label_encoder.transform(text_labels)</p>
+</div></blockquote>
+</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.generate_facets_input">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">generate_facets_input</code><span class="sig-paren">(</span><em>structure_list</em>, <em>desc_metadata</em>, <em>target_list</em>, <em>configs</em>, <em>sprite_atlas_filename='desc_atlas'</em>, <em>df_filename='df_facets'</em>, <em>make_sprite_atlas=True</em>, <em>normalize=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#generate_facets_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.generate_facets_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate facets input.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>structure_list: list of <code class="docutils literal notranslate"><span class="pre">ase.Atoms</span></code> objects</dt>
+<dd>List of atomic structures.</dd>
+<dt>desc_metadata: string</dt>
+<dd>Name of the descriptor metadata to be retrieved from the .
+A list of metadata for each descriptor can be found in <cite>descriptors.nomadmetainfo.json</cite></dd>
+<dt>target_list: list of dict</dt>
+<dd><p class="first">List of dictionaries as returned by <cite>nomad-ml.wrappers.load_descriptor</cite>.</p>
+<p>Each element of this list is a dictionary with only one key (data),</p>
+<p>which has as value a list of dicts.</p>
+<p>For example:</p>
+<p>{u’data’: [{u’spacegroup_symbol_symprec_0.001’: 194, u’chemical_formula’: u’Ac258’}]}.</p>
+<p class="last">More keywords are possible.</p>
+</dd>
+<dt>configs: dict</dt>
+<dd><p class="first">Dictionary containing configuration information such as folders for input and output</p>
+<p>(e.g. <cite>desc_folder</cite>, <cite>tmp_folder</cite>), logging level, and metadata location.</p>
+<p class="last">See also <a class="reference internal" href="ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.set_configs" title="ai4materials.utils.utils_config.set_configs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_config.set_configs</span></code></a>.</p>
+</dd>
+<dt>sprite_atlas_filename: string, optional (default = <cite>desc_atlas</cite>)</dt>
+<dd>Name (without extension) for the generated texture atlas containing the descriptor images.
+The .png extension will be automatically appended to the filename.</dd>
+<dt>df_filename: string, optional (default = <cite>df_facets</cite>)</dt>
+<dd>Name (without extension) for the generated Pandas dataframe containing information
+on the list of structures.
+The .csv extension will be automatically appended to the filename.</dd>
+<dt>make_sprite_atlas: bool, optional (default = <cite>True</cite>)</dt>
+<dd>If <cite>True</cite>, a texture atlas containing the descriptor images is generated.
+If <cite>False</cite>, only the <cite>df_filename.csv</cite> containing the Pandas dataframe is generated.</dd>
+<dt>normalize: bool, optional (default = <cite>False</cite>)</dt>
+<dd>If <cite>True</cite>, each descriptor image is normalized (separately), i.e. all descriptor images
+will have a maximum of 1 and a minimum of 0.</dd>
+</dl>
+<p>Return:</p>
+<dl class="docutils">
+<dt>string, string</dt>
+<dd>Absolute path to the Pandas dataframe file and the texture atlas file (if created, otherwise returns <cite>None</cite>).</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.get_json_list">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">get_json_list</code><span class="sig-paren">(</span><em>data_folder=None</em>, <em>show_preview=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#get_json_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.get_json_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the json file list.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>method: string, {‘folder’, ‘file’}</dt>
+<dd><p class="first">Specify how to obtain the json files where the structures are included.</p>
+<p>‘folder’: read from the specified folder all the NOMAD (json) files.</p>
+<p>‘file’: read summary file containing: JSON file, frame number, clustering x_coord, clustering y_coord</p>
+<p class="last">In addition to the file, also the path to the folder where the json files
+(<cite>data_folder</cite>) are stored needs to be given (for now)</p>
+</dd>
+<dt>data_folder <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Folder where the json files are. .</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>list</dt>
+<dd>List with the absolute paths to the json files.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.get_metadata_value">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">get_metadata_value</code><span class="sig-paren">(</span><em>structure_list</em>, <em>desc_metadata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#get_metadata_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.get_metadata_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a given metadata from a list of structures from the descriptor key</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.get_paths_from_filter_dict">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">get_paths_from_filter_dict</code><span class="sig-paren">(</span><em>filter_dict</em>, <em>accepted_keys=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#get_paths_from_filter_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.get_paths_from_filter_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.group_filter_files">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">group_filter_files</code><span class="sig-paren">(</span><em>configs</em>, <em>ending</em>, <em>get_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#group_filter_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.group_filter_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.read_archive_desc">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">read_archive_desc</code><span class="sig-paren">(</span><em>filename</em>, <em>summary_filename='summary.json'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#read_archive_desc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.read_archive_desc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read descriptor file archive and return a dictionary.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>filename: string</dt>
+<dd>Absolute path the the descriptor file to be read.</dd>
+<dt>summary_filename: string, optional (default=`summary.json`)</dt>
+<dd>Name of the summary file that contains a recap of the content of the
+descriptor archive to be read.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>dict or None</dt>
+<dd>A dictionary with (key=filetype, value=list_of_files_for_that_type) if the files can be
+successfully loaded, <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise. See <a class="reference internal" href="#ai4materials.utils.utils_data_retrieval.write_summary_file" title="ai4materials.utils.utils_data_retrieval.write_summary_file"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.write_summary_file</span></code></a>
+for the possible file types and corresponding allowed endings.</dd>
+</dl>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For possible file types see
+<a class="reference internal" href="#ai4materials.utils.utils_data_retrieval.write_summary_file" title="ai4materials.utils.utils_data_retrieval.write_summary_file"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.write_summary_file</span></code></a>.</p>
+</div>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.read_ase_db">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">read_ase_db</code><span class="sig-paren">(</span><em>db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#read_ase_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.read_ase_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>From the path to an ASE database file, return a list of ASE atom object contained in it.</p>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.silent_remove">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">silent_remove</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#silent_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.silent_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a file that might not exist.</p>
+<p>Taken from <a class="reference external" href="https://stackoverflow.com/questions/10840533/most-pythonic-way-to-delete-a-file-which-may-not-exist">https://stackoverflow.com/questions/10840533/most-pythonic-way-to-delete-a-file-which-may-not-exist</a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.write_ase_db">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">write_ase_db</code><span class="sig-paren">(</span><em>ase_atoms_list</em>, <em>main_folder</em>, <em>db_name='my_ase_db'</em>, <em>db_type='db'</em>, <em>overwrite=True</em>, <em>folder_name='db_ase'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#write_ase_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.write_ase_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a list of ASE atom objects, write an ASE database to file.</p>
+<p>It uses ASE database functionality to write to file a database given the structures in ase_atoms_list.
+For more information regarding ASE databases: <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/db/db.html#module-ase.db.core">https://wiki.fysik.dtu.dk/ase/ase/db/db.html#module-ase.db.core</a></p>
+<dl class="docutils">
+<dt>db_type: str, optional (default=‘db’)</dt>
+<dd>One of ‘json’, ‘db’, ‘postgresql’, (JSON, SQLite, PostgreSQL).</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.write_ase_db_file">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">write_ase_db_file</code><span class="sig-paren">(</span><em>structure</em>, <em>configs</em>, <em>tar=None</em>, <em>filename_suffix='_ase_atoms.json'</em>, <em>filename_suffix_info='_ase_atoms_info.pkl'</em>, <em>op_nb=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#write_ase_db_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.write_ase_db_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.write_summary_file">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">write_summary_file</code><span class="sig-paren">(</span><em>descriptor</em>, <em>desc_file_list</em>, <em>tmp_folder</em>, <em>allowed_endings_user=None</em>, <em>desc_file_master=None</em>, <em>summary_filename='summary.json'</em>, <em>clean_tmp=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#write_summary_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.write_summary_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a summary of the files present in the descriptor archive list.</p>
+<p>If more than one descriptor archive is passed, the files present will be merged
+and a summary files containing all files present in all descriptor archives
+will be written. A typical example is when descriptor archives created by different
+processes in a parallel computation are merged by the master in a single
+file containing all the results.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>descriptor: <cite>ai4materials.descriptors.base_descriptor.Descriptor</cite> object</dt>
+<dd>Descriptor obejct for which the summary file is written.</dd>
+<dt>desc_file_list: string or list of strings</dt>
+<dd>Desc archive or list of descriptor archives for which the summary file is written.</dd>
+<dt>tmp_folder: string</dt>
+<dd>Path to the tmp folder.</dd>
+<dt>allowed_endings_user: dict</dt>
+<dd>A dictionary containing as key the filetype and as value the allowed endings.
+For example: {‘target_files’: ‘_target.json’}
+These allowed endings will be added to the possible filetypes specified in the
+descriptor metadatas and in this function.</dd>
+<dt>desc_file_master: string</dt>
+<dd>Full path to the archive where the summary file will be written.</dd>
+<dt>summary_filename: string, optional (default=`summary.json`)</dt>
+<dd>Name of the summary file that contains a recap of the content of the
+descriptor file to be read.</dd>
+<dt>clean_tmp: bool, optional (default=`False`)</dt>
+<dd>If <cite>True</cite>, clear the <cite>tmp_folder</cite> calling <a class="reference internal" href="#ai4materials.utils.utils_data_retrieval.clean_folder" title="ai4materials.utils.utils_data_retrieval.clean_folder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval.clean_folder</span></code></a>
+with argument <cite>tmp_folder</cite>.</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>string</dt>
+<dd>Return the absolute path to the descriptor archive (<cite>desc_file_master</cite>) where the summary file is written.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_data_retrieval.write_target_values">
+<code class="descclassname">ai4materials.utils.utils_data_retrieval.</code><code class="descname">write_target_values</code><span class="sig-paren">(</span><em>structure, configs, op_nb, tar=None, filename_suffix='_target.json', target=None, calc_spgroup=True, symprec=[0.001, 1e-06]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_data_retrieval.html#write_target_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_data_retrieval.write_target_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write target values. One file for each frame.
+The target works only if one frame is considered. Please check.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>filename_suffix: string, default ‘_target.json’</dt>
+<dd>Suffix added after filename</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.utils.utils_mp.html" class="btn btn-neutral float-right" title="ai4materials.utils.utils_mp module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.utils.utils_crystals.html" class="btn btn-neutral" title="ai4materials.utils.utils_crystals module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

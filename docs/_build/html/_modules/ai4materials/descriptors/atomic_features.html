@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.descriptors.atomic_features &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.descriptors.atomic_features</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.descriptors.atomic_features</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016-2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;09/08/17&quot;</span>
+
+<span class="kn">from</span> <span class="nn">atomic_data.collections</span> <span class="k">import</span> <span class="n">AtomicCollection</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">mendeleev</span> <span class="k">import</span> <span class="n">element</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.base_descriptor</span> <span class="k">import</span> <span class="n">Descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="k">import</span> <span class="n">convert_energy_substance</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="k">import</span> <span class="n">read_nomad_metainfo</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="k">import</span> <span class="n">get_data_filename</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AtomicFeatures"><a class="viewcode-back" href="../../../ai4materials.descriptors.atomic_features.html#ai4materials.descriptors.atomic_features.AtomicFeatures">[docs]</a><span class="k">class</span> <span class="nc">AtomicFeatures</span><span class="p">(</span><span class="n">Descriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the atomic features corresponding to a given crystal structure.</span>
+
+<span class="sd">    For each atom species present in the crystal structure, a list of atomic features are retrieved</span>
+<span class="sd">    either from user-defined atomic collection, or the python package Mendeleev (https://pypi.org/project/mendeleev/).</span>
+<span class="sd">    Example of atomic features are atomic number, electron affinity, ionization potential, orbital radii etc.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    configs: dict</span>
+<span class="sd">        Contains configuration information such as folders for input and output</span>
+<span class="sd">        (e.g. `desc_folder`, `tmp_folder`), logging level, and metadata location.</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_config.set_configs`.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_to_collection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">feature_order_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">energy_unit</span><span class="o">=</span><span class="s1">&#39;eV&#39;</span><span class="p">,</span> <span class="n">length_unit</span><span class="o">=</span><span class="s1">&#39;angstrom&#39;</span><span class="p">,</span>
+                 <span class="n">materials_class</span><span class="o">=</span><span class="s1">&#39;binaries&#39;</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">AtomicFeatures</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">feature_order_by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">feature_order_by</span> <span class="o">=</span> <span class="s1">&#39;atomic_mulliken_electronegativity&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_order_by</span> <span class="o">=</span> <span class="n">feature_order_by</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy_unit</span> <span class="o">=</span> <span class="n">energy_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length_unit</span> <span class="o">=</span> <span class="n">length_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">materials_class</span> <span class="o">=</span> <span class="n">materials_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_info</span> <span class="o">=</span> <span class="n">read_nomad_metainfo</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">path_to_collection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path_to_collection</span> <span class="o">=</span> <span class="n">get_data_filename</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s1">&#39;../tests/ExtendedBinaries_Dimers_Atoms_new.json&#39;</span><span class="p">,</span>
+                                                   <span class="n">package</span><span class="o">=</span><span class="s1">&#39;atomic_data&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_to_collection</span> <span class="o">=</span> <span class="n">path_to_collection</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">AtomicCollection</span><span class="p">(</span><span class="s2">&quot;binaries&quot;</span><span class="p">,</span> <span class="n">collections</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_collection</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading atomic collection from &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_collection</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_order_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ordering atomic features by &#39;</span><span class="si">{0}</span><span class="s2">&#39; of the elements&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_order_by</span><span class="p">))</span>
+
+<div class="viewcode-block" id="AtomicFeatures.calculate"><a class="viewcode-back" href="../../../ai4materials.descriptors.atomic_features.html#ai4materials.descriptors.atomic_features.AtomicFeatures.calculate">[docs]</a>    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">selected_feature_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">selected_feature_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_feature_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please select at least two primary features.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selected_feature_list</span> <span class="o">=</span> <span class="n">selected_feature_list</span>
+
+        <span class="n">value_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ordered_chemical_symbols&#39;</span><span class="p">]</span>
+        <span class="n">features_mendeleev</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;atomic_number&#39;</span><span class="p">]</span>
+
+        <span class="n">chemical_symbols</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">materials_class</span> <span class="o">==</span> <span class="s1">&#39;binaries&#39;</span><span class="p">:</span>
+            <span class="c1"># reduce chemical symbols and formula to binary</span>
+            <span class="n">chemical_symbols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">chemical_symbols</span> <span class="o">*=</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;More than 2 different atoms in structure </span><span class="si">{}</span><span class="s2">. At the moment only structures with one or &quot;</span>
+                             <span class="s2">&quot;two different chemical species are possible. &quot;</span>
+                             <span class="s2">&quot;The chemical symbols are </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">chemical_symbols</span><span class="p">))</span>
+
+        <span class="c1"># in a given structure, order by the user-specified atomic_metadata</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_order_by</span><span class="p">)</span>
+        <span class="n">value_order_by</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">)</span>
+
+        <span class="c1"># add lambda because the key that is being used to sort</span>
+        <span class="c1"># is (val, sym), and not just value.</span>
+        <span class="c1"># in case of sorting of multiple arrays this is needed</span>
+        <span class="n">chemical_symbols</span> <span class="o">=</span> <span class="p">[</span><span class="n">sym</span> <span class="k">for</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">sym</span><span class="p">)</span> <span class="ow">in</span>
+                            <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">value_order_by</span><span class="p">,</span> <span class="n">chemical_symbols</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">el_symb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">selected_feature_list</span><span class="p">:</span>
+                <span class="c1"># divide features for mendeleev and collection</span>
+                <span class="k">if</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features_mendeleev</span><span class="p">:</span>
+                    <span class="n">elem_mendeleev</span> <span class="o">=</span> <span class="n">element</span><span class="p">(</span><span class="n">el_symb</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">elem_mendeleev</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not found for element </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">el_symb</span><span class="p">))</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># add features from collection</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">el_symb</span><span class="p">)</span>  <span class="c1"># convert to desired units</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">el_symb</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">)</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_energy_substance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">energy_unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_unit</span><span class="p">,</span>
+                                                         <span class="n">length_unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length_unit</span><span class="p">)</span>
+
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not found for element </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">el_symb</span><span class="p">))</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)[</span><span class="n">idx</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">value_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="n">atomic_features_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">value_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="c1"># add results in ASE structure info</span>
+        <span class="n">descriptor_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">descriptor_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">descriptor_info</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                               <span class="n">atomic_features_table</span><span class="o">=</span><span class="n">atomic_features_table</span><span class="p">)</span>
+        <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">descriptor_data</span>
+
+        <span class="k">return</span> <span class="n">structure</span></div>
+
+<div class="viewcode-block" id="AtomicFeatures.write"><a class="viewcode-back" href="../../../ai4materials.descriptors.atomic_features.html#ai4materials.descriptors.atomic_features.AtomicFeatures.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">tar</span><span class="p">,</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">dict_delta_e</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename_suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">json_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given the chemical composition, build the descriptor made of atomic features only.&quot;&quot;&quot;</span>
+
+        <span class="n">desc_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span>
+
+        <span class="c1"># make dictionary {primary_feature: value} for each structure</span>
+        <span class="c1"># dictionary of a dictionary, key: Mat, value: atomic_features</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;atomic_features_table&#39;</span><span class="p">]</span>
+        <span class="c1"># dict_features = df.set_index(&#39;chemical_formula&#39;).T.to_dict()</span>
+
+        <span class="c1"># filename is the normalized absolute path</span>
+        <span class="n">atomic_features_table_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span>
+                                                                                       <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">desc_metadata</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span>
+                                                                                           <span class="s1">&#39;atomic_features_table&#39;</span><span class="p">][</span>
+                                                                                           <span class="s1">&#39;file_ending&#39;</span><span class="p">])))</span>
+
+        <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;atomic_features_table_filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atomic_features_table_filename</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;atomic_features_table_filename&#39;</span><span class="p">])</span>
+        <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;atomic_features_table_filename&#39;</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="get_table_atomic_features"><a class="viewcode-back" href="../../../ai4materials.descriptors.atomic_features.html#ai4materials.descriptors.atomic_features.get_table_atomic_features">[docs]</a><span class="k">def</span> <span class="nf">get_table_atomic_features</span><span class="p">(</span><span class="n">structures</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Starting from atomic structures retrieve the table with atomic features.</span>
+
+<span class="sd">    The list of structures must contain the calculated :py:class:`ai4materials.descriptors.atomic_features.AtomicFeatures`.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    structures: `ase.Atoms` object or list of `ase.Atoms` object</span>
+<span class="sd">        Atomic structure or list of atomic structure.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structures</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">structures</span> <span class="o">=</span> <span class="p">[</span><span class="n">structures</span><span class="p">]</span>
+
+    <span class="c1"># create empty dataframe to append to</span>
+    <span class="n">df_atomic_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">idx_atoms</span><span class="p">,</span> <span class="n">ase_atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structures</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df_desc_structure</span> <span class="o">=</span> <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;atomic_features_table&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Key [&#39;descriptor&#39;][&#39;atomic_features_table&#39;] not found in structure </span><span class="si">{}</span><span class="s2">. &quot;</span>
+                          <span class="s2">&quot;Details on the first structure which caused the error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx_atoms</span><span class="p">,</span> <span class="n">ase_atoms</span><span class="p">))</span>
+
+        <span class="n">df_atomic_features</span> <span class="o">=</span> <span class="n">df_atomic_features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_desc_structure</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># check columns with NaNs</span>
+    <span class="n">cols_with_nan</span> <span class="o">=</span> <span class="n">df_atomic_features</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df_atomic_features</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cols_with_nan</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The following columns contain NaN: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cols_with_nan</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">df_atomic_features</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

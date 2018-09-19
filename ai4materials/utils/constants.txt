@@ -1,0 +1,50 @@
+# Pint constants for NomadParsers
+# source: http://physics.nist.gov/cuu/Constants/Table/allascii.txt
+# Source: http://physics.nist.gov/cuu/Constants/Table/allascii.txt
+
+speedOfLight = 299792458 * meter / second = c
+standardGravity = 9.806650 * meter / second ** 2 = gZero = gN = gravity
+vacuumPermeability = 4 * pi * 1e-7 * newton / ampere ** 2 = muZero = magneticConstant
+vacuumPermittivity = 1 / (muZero * c **2 ) = epsilonZero = electricConstant
+ZZero = muZero * c = impedanceOfFreeSpace = characteristicImpedanceOfVacuum
+bohr = 0.52917721067e-10 m
+
+# 0.000 000 29 e-34
+planckConstant = 6.62606957e-34 J s = h
+hbar = planckConstant / (2 * pi) = ħ
+
+# 0.000 80 e-11
+newtonianConstantOfGravitation = 6.67384e-11 m^3 kg^-1 s^-2
+
+# 0.000 000 035 e-19
+# elementaryCharge = 1.602176565e-19 C = e
+
+# 0.000 0075
+molarGasConstant = 8.3144621 J mol^-1 K^-1 = R
+
+# 0.000 000 0024 e-3
+fineStructureConstant = 7.2973525698e-3
+
+# 0.000 000 27 e23
+avogadroNumber = 6.02214129e23 mol^-1 =NA
+
+# 0.000 0013 e-23
+boltzmannConstant = 1.3806488e-23 J K^-1 = k
+
+# 0.000 021 e-8
+stefanBoltzmannConstant = 5.670373e-8 W m^-2 K^-4 = σ
+
+# 0.000 0053 e10
+wienFrequencyDisplacementLawConstant = 5.8789254e10 Hz K^-1
+
+# 0.000 055
+rydbergConstant = 10973731.568539 m^-1
+
+# 0.000 000 40 e-31
+electronMass = 9.10938291e-31 kg = mE
+
+# 0.000 000 074 e-27
+neutronMass = 1.674927351e-27 kg = mN
+
+# 0.000 000 074 e-27
+protonMass = 1.672621777e-27 kg = mP

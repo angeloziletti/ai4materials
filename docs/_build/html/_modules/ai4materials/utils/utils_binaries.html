@@ -1,0 +1,441 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_binaries &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_binaries</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.utils.utils_binaries</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">ase.data</span> <span class="k">import</span> <span class="n">chemical_symbols</span>
+<span class="kn">from</span> <span class="nn">ase.spacegroup</span> <span class="k">import</span> <span class="n">get_spacegroup</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">permutations</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_target_diff_dic"><a class="viewcode-back" href="../../../ai4materials.utils.utils_binaries.html#ai4materials.utils.utils_binaries.get_target_diff_dic">[docs]</a><span class="k">def</span> <span class="nf">get_target_diff_dic</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">sample_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spacegroup</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get a dictionary of dictionaries: samples -&gt; space group tuples -&gt; energy differences.</span>
+
+<span class="sd">    Dropping all rows which do not correspond to the minimum energy per sample AND space group,</span>
+<span class="sd">    then making a new data frame with space groups as columns. Finally constructing the dictionary</span>
+<span class="sd">    of dictionaries.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    df: pandas data frame</span>
+<span class="sd">        with columns=[samples_title, energies_title, SG_title]</span>
+
+<span class="sd">    sample_key: string</span>
+<span class="sd">        Needs to be column title of samples of input df</span>
+
+<span class="sd">    energy: string</span>
+<span class="sd">        Needs to be column title of energies of input df</span>
+
+<span class="sd">    spacegroup : string</span>
+<span class="sd">        Needs to be column title of space groups of input df</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    dic_out: dictionary of dictionaries:</span>
+<span class="sd">        In the form:</span>
+<span class="sd">        {</span>
+<span class="sd">        sample_a: { (SG_1,SG_2):E_diff_a12, (SG_1,SG_3):E_diff_a13,...},</span>
+<span class="sd">        sample_b: { (SG_1,SG_2):E_diff_b12, (SG_1,SG_3):E_diff_b13,... },</span>
+<span class="sd">        ...</span>
+<span class="sd">        }</span>
+<span class="sd">        E_diff_a12 = energy_SG_1 - energy_SG_2   of sample a.</span>
+<span class="sd">        Both (SG_1,SG_2) and (SG_2,SG_1) are considered.</span>
+<span class="sd">        If SG_1 or SG_2 is NaN, energy difference to it is ignored.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># use only rows with minimum energies</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">spacegroup</span><span class="p">])[</span><span class="n">energy</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">min</span><span class="p">)</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="n">energy</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+    <span class="c1"># make new table with the different supgroups as columns</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="p">[</span><span class="n">sample_key</span><span class="p">],</span> <span class="n">spacegroup</span><span class="p">)</span>
+
+    <span class="c1"># make dictionary of dictionaries</span>
+    <span class="n">SG_list</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">Samples_list</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">dic_out</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">Samples_list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Samples_list</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">not_nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">))</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">sample_dic</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">j_1</span><span class="p">,</span> <span class="n">j_2</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">not_nan_indices</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">SG_1</span><span class="p">,</span> <span class="n">SG_2</span> <span class="o">=</span> <span class="n">SG_list</span><span class="p">[</span><span class="n">j_1</span><span class="p">],</span> <span class="n">SG_list</span><span class="p">[</span><span class="n">j_2</span><span class="p">]</span>
+            <span class="n">Energy_diff</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">j_1</span><span class="p">]</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="n">j_2</span><span class="p">]</span>
+            <span class="n">sample_dic</span><span class="o">.</span><span class="n">update</span><span class="p">({(</span><span class="n">SG_1</span><span class="p">,</span> <span class="n">SG_2</span><span class="p">):</span> <span class="n">Energy_diff</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">sample_dic</span><span class="p">:</span>
+            <span class="n">dic_out</span><span class="p">[</span><span class="n">sample</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_dic</span>
+    <span class="k">return</span> <span class="n">dic_out</span></div>
+
+
+<div class="viewcode-block" id="select_diff_from_dic"><a class="viewcode-back" href="../../../ai4materials.utils.utils_binaries.html#ai4materials.utils.utils_binaries.select_diff_from_dic">[docs]</a><span class="k">def</span> <span class="nf">select_diff_from_dic</span><span class="p">(</span><span class="n">dic</span><span class="p">,</span> <span class="n">spacegroup_tuples</span><span class="p">,</span> <span class="n">sample_key</span><span class="o">=</span><span class="s1">&#39;Mat&#39;</span><span class="p">,</span> <span class="n">drop_nan</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get data frame of selected spacegroup_tuples from dictionary of dictionaries.</span>
+
+<span class="sd">        Creating a pandas data frame with columns of samples and selected space group tuples (energy differnces).</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        dic: dict {samples -&gt; space group tuples -&gt; energy differences.}</span>
+
+<span class="sd">        spacegroup_tuples: tuple, list of tuples, tuples of tuples</span>
+<span class="sd">            Each tuple has to contain two space groups numbers,</span>
+<span class="sd">            to be looked up in the input dic.</span>
+
+<span class="sd">        sample_key: string</span>
+<span class="sd">            Will be the column title of the samples of the created data frame</span>
+
+<span class="sd">        drop_nan: string, optional {&#39;rows&#39;, &#39;SG_tuples&#39;}</span>
+<span class="sd">            Drops all rows or columns (SG_tuples) containing NaN.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spacegroup_tuples</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">spacegroup_tuples</span><span class="p">):</span>
+        <span class="n">spacegroup_tuples</span> <span class="o">=</span> <span class="p">[</span><span class="n">spacegroup_tuples</span><span class="p">]</span>
+    <span class="n">df_out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dic</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">spacegroup_tuples</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">drop_nan</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">drop_nan</span> <span class="o">==</span> <span class="s1">&#39;rows&#39;</span><span class="p">:</span>
+            <span class="n">df_out</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">drop_nan</span> <span class="o">==</span> <span class="s1">&#39;SG_tuples&#39;</span><span class="p">:</span>
+            <span class="n">df_out</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Argument &#39;drop_nan&#39; has to be &#39;None&#39;, &#39;rows&#39; or &#39;SG_tuples&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># check if df_out is empty</span>
+    <span class="n">len_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_out</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">len_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_out</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">len_columns</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">len_rows</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">len_rows</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;rows&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;spacegroup_tuples&#39;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Dropping </span><span class="si">{0}</span><span class="s1"> with NaNs leads to empty data frame.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Hint: Select different spacegroup_tuples or set drop_nan=None&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df_out</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_out</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">sample_key</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_out</span></div>
+
+
+<div class="viewcode-block" id="get_chemical_formula_binaries"><a class="viewcode-back" href="../../../ai4materials.utils.utils_binaries.html#ai4materials.utils.utils_binaries.get_chemical_formula_binaries">[docs]</a><span class="k">def</span> <span class="nf">get_chemical_formula_binaries</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+
+    <span class="n">numbers</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_atomic_numbers</span><span class="p">()</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+    <span class="n">symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">chemical_symbols</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">])</span>
+
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">symbols</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+    <span class="n">symbols</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">symbols</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbols</span><span class="p">))[</span><span class="n">symbols</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">]</span>
+        <span class="n">symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">symbols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s1">&#39;C&#39;</span> <span class="ow">in</span> <span class="n">symbols</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbols</span><span class="p">))[</span><span class="n">symbols</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">]</span>
+        <span class="n">symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">symbols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">formula</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">formula</span> <span class="o">+=</span> <span class="s1">&#39;2&#39;</span>
+
+    <span class="k">return</span> <span class="n">formula</span></div>
+
+
+<div class="viewcode-block" id="get_binaries_dict_delta_e"><a class="viewcode-back" href="../../../ai4materials.utils.utils_binaries.html#ai4materials.utils.utils_binaries.get_binaries_dict_delta_e">[docs]</a><span class="k">def</span> <span class="nf">get_binaries_dict_delta_e</span><span class="p">(</span><span class="n">chemical_formula_list</span><span class="p">,</span> <span class="n">energy_list</span><span class="p">,</span> <span class="n">label_list</span><span class="p">,</span> <span class="n">equiv_spgroups</span><span class="p">):</span>
+    <span class="n">energy_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">energy_list</span><span class="p">]</span>
+
+    <span class="c1"># make dataframe with chemical formula, energy, and labels</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">chemical_formula_list</span><span class="p">,</span> <span class="n">energy_list</span><span class="p">,</span> <span class="n">label_list</span><span class="p">)</span>
+    <span class="n">df_energy_diff</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chemical_formula&#39;</span><span class="p">,</span> <span class="s1">&#39;energy_total&#39;</span><span class="p">,</span> <span class="s1">&#39;spacegroup&#39;</span><span class="p">])</span>
+    <span class="n">sample_key</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">spacegroup</span> <span class="o">=</span> <span class="s1">&#39;chemical_formula&#39;</span><span class="p">,</span> <span class="s1">&#39;energy_total&#39;</span><span class="p">,</span> <span class="s1">&#39;spacegroup&#39;</span>
+    <span class="n">drop_nan</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># or &#39;rows&#39; or &#39;SG_tuples&#39;</span>
+
+    <span class="n">selected_spacegroup_tuples</span><span class="p">,</span> <span class="n">spacegroups_replace</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">equiv_spgroups</span><span class="p">)</span>
+    <span class="c1"># replace space groups such that only one space group per structure is present</span>
+    <span class="n">df_energy_diff</span><span class="p">[</span><span class="n">spacegroup</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_energy_diff</span><span class="p">[</span><span class="n">spacegroup</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">spacegroups_replace</span><span class="p">,</span> <span class="n">selected_spacegroup_tuples</span><span class="p">)</span>
+
+    <span class="n">target_diff_dic</span> <span class="o">=</span> <span class="n">get_target_diff_dic</span><span class="p">(</span>
+        <span class="n">df_energy_diff</span><span class="p">,</span>
+        <span class="n">sample_key</span><span class="o">=</span><span class="n">sample_key</span><span class="p">,</span>
+        <span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span>
+        <span class="n">spacegroup</span><span class="o">=</span><span class="n">spacegroup</span><span class="p">)</span>
+
+    <span class="n">target_df</span> <span class="o">=</span> <span class="n">select_diff_from_dic</span><span class="p">(</span>
+        <span class="n">target_diff_dic</span><span class="p">,</span>
+        <span class="n">selected_spacegroup_tuples</span><span class="p">,</span>
+        <span class="n">sample_key</span><span class="o">=</span><span class="n">sample_key</span><span class="p">,</span>
+        <span class="n">drop_nan</span><span class="o">=</span><span class="n">drop_nan</span><span class="p">)</span>
+
+    <span class="n">df_with_e_diff</span> <span class="o">=</span> <span class="n">df_energy_diff</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">target_df</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="n">sample_key</span><span class="p">)</span>
+    <span class="n">dict_delta_e</span> <span class="o">=</span> <span class="n">df_with_e_diff</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">sample_key</span><span class="p">)[</span><span class="n">selected_spacegroup_tuples</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">dict_delta_e</span></div>
+
+
+<div class="viewcode-block" id="get_energy_diff_by_spacegroup"><a class="viewcode-back" href="../../../ai4materials.utils.utils_binaries.html#ai4materials.utils.utils_binaries.get_energy_diff_by_spacegroup">[docs]</a><span class="k">def</span> <span class="nf">get_energy_diff_by_spacegroup</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;energy_total&#39;</span><span class="p">,</span> <span class="n">equiv_spgroups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using </span><span class="si">{}</span><span class="s2"> as target.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+
+    <span class="n">chemical_formula_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">energy_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">label_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx_atoms</span><span class="p">,</span> <span class="n">ase_atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">):</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">ase_atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+        <span class="c1"># get chemical_formula, energy, classification (space group) for binaires</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">get_spacegroup</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">no</span>
+        <span class="c1"># chemical_formula = list(set(ase_atoms.get_chemical_symbols()))</span>
+        <span class="n">chemical_formula</span> <span class="o">=</span> <span class="n">ase_atoms</span><span class="o">.</span><span class="n">get_chemical_formula</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;hill&#39;</span><span class="p">)</span>
+
+        <span class="n">chemical_formula_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chemical_formula</span><span class="p">)</span>
+        <span class="n">label_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">energy_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+
+        <span class="c1"># the last iteration calculate the energy differences between space group with all the json_file data</span>
+
+    <span class="n">dict_delta_e</span> <span class="o">=</span> <span class="n">get_binaries_dict_delta_e</span><span class="p">(</span>
+        <span class="n">chemical_formula_list</span><span class="p">,</span>
+        <span class="n">energy_list</span><span class="p">,</span>
+        <span class="n">label_list</span><span class="p">,</span>
+        <span class="n">equiv_spgroups</span><span class="o">=</span><span class="n">equiv_spgroups</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dict_delta_e</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+{ 
+  "type": "descriptor_metadata_1.0",
+  "description": "Metadata information for descriptors.",
+  "descriptors": ["AtomicFeatures", "Diffraction1D", "Diffraction2D", "DISH","quippy_SOAP_descriptor","FT_SOAP_harmonics", "PRDF"],
+  "FT_SOAP_harmonics": [
+  {
+      "name": "FT_SOAP_harmonics",
+      "description": "FT SOAP descriptor where harmonics are selected",
+      "filename": "FT_SOAP_harmonics_filename_npy",
+      "file_ending": "_FT_SOAP_harmonics.npy"
+  },
+  {
+      "name": "FT_SOAP_harmonics_image",
+      "description": "Image of FT SOAP descriptor where harmonics are selected",
+      "filename": "FT_SOAP_harmonics_filename_png",
+      "file_ending": "_FT_SOAP_harmonics.png"
+  },
+  {
+      "name": "FT_SOAP_full_fft",
+      "description": "Full FFT of SOAP descriptor",
+      "filename": "FT_SOAP_full_filename_npy",
+      "file_ending": "_FT_SOAP_full.npy"
+  }
+  ],
+  "PRDF": [
+  {
+      "name": "prdf",
+      "description": "Partial radial distribution fuction",
+      "filename": "prdf_filename_npy",
+      "file_ending": "_prdf.npy"
+  },
+  {
+      "name": "rdf",
+      "description": "Radial distribution function",
+      "filename": "rdf_filename_npy",
+      "file_ending": "_rdf.npy"
+  },
+  {
+      "name": "prdf_coordinates",
+      "description": "x, y, z coordinates of the structure",
+      "filename": "prdf_coord_filename_in",
+      "file_ending": "_prdf_coord.in"
+  }
+  ],
+  "quippy_SOAP_descriptor": [
+  {
+      "name": "quippy_SOAP",
+      "description": "SOAP descriptor from quippy",
+      "filename": "quippy_SOAP_descriptor_filename_npy",
+      "file_ending": "_quippy_SOAP_descriptor.npy"
+  },
+  {
+      "name": "quippy_SOAP_image",
+      "description": "Image of SOAP descriptor from quippy",
+      "filename": "quippy_SOAP_descriptor_filename_png",
+      "file_ending": "_quippy_SOAP_descriptor.png"
+  }
+  ],
+  "DISH": [
+  {
+      "name": "diffraction_3d_sh_spectrum",
+      "description": "Rotational invariant spherical harmonics spectrum",
+      "filename": "diff_3d_sh_spectra_filename_npy",
+      "file_ending": "_3d_diff_sh_spectrum.npy"
+  },
+  {
+      "name": "diffraction_3d_sh_spectrum_image",
+      "description": "Rotational invariant spherical harmonics spectrum saved as png image",
+      "filename": "diff_3d_sh_spectra_filename_png",
+      "file_ending": "_3d_diff_sh_spectrum.png"
+  },
+  {
+      "name": "diffraction_3d_real_space",
+      "description": "Inverse Fourier transform of the three-dimensional diffraction pattern intensity",
+      "filename": "diff_3d_real_space_filename_png",
+      "file_ending": "_3d_diff_rs.png"
+  },
+  {
+      "name": "diffraction_3d_phase",
+      "description": "Phase of the three-dimensional diffraction pattern",
+      "filename": "diff_3d_phase_filename_png",
+      "file_ending": "_3d_diff_phase.png"
+  },
+ {
+      "name": "diffraction_3d_coordinates",
+      "description": "x, y, z coordinates of the structure",
+      "filename": "diff_3d_coord_filename_in",
+      "file_ending": "_3d_diff_coord.in"
+  }],
+  "Diffraction2D": [
+  {
+      "name": "diffraction_2d_intensity",
+      "description": "Two-dimensional diffraction pattern intensity",
+      "filename": "diff_2d_intensity_filename_npy",
+      "file_ending": "_2d_diff_intensity.npy"
+  },
+  {
+      "name": "diffraction_2d_intensity_image",
+      "description": "Intensity of the two-dimensional diffraction pattern saved as png image",
+      "filename": "diff_2d_intensity_filename_png",
+      "file_ending": "_2d_diff_intensity.png"
+  },
+  {
+      "name": "diffraction_2d_real_space",
+      "description": "Inverse Fourier transform of the two-dimensional diffraction pattern intensity",
+      "filename": "diff_2d_real_space_filename_png",
+      "file_ending": "_2d_diff_rs.png"
+  },
+  {
+      "name": "diffraction_2d_phase",
+      "description": "Phase of the two-dimensioanl diffraction pattern",
+      "filename": "diff_2d_phase_filename_png",
+      "file_ending": "_2d_diff_phase.png"
+  },
+ {
+      "name": "diffraction_2d_coordinates",
+      "description": "x, y, z coordinates of the structure",
+      "filename": "diff_2d_coord_filename_in",
+      "file_ending": "_2d_diff_coord.in"
+  }],
+ "Diffraction1D": [
+  {
+      "name": "xrd_pattern",
+      "description": "X-ray diffraction pattern",
+      "filename": "xrd_pattern",
+      "file_ending": "_xrd_pattern.npy"
+  }
+  ],
+ "AtomicFeatures": [
+  {
+      "name": "atomic_features_table",
+      "description": "Table with atomic features for the elements included in the structure",
+      "filename": "atomic_features_table_filename",
+      "file_ending": "_atomic_features.csv"
+  }]
+}

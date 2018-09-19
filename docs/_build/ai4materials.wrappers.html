@@ -1,0 +1,1097 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Creating and loading materials science datasets &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Regression and classification models" href="ai4materials.models.html" />
+    <link rel="prev" title="ai4materials.descriptors.soap_model module" href="ai4materials.descriptors.soap_model.html" />
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating and loading materials science datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-ai4materials.calc_descriptor.multiple-structures">Example: diffraction fingerprint calculation for multiple structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ai4materials.descriptors.atomic_features-example">Example: atomic feature retrieval for multiple structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-dataset-creation-for-data-analytics">Example: dataset creation for data analytics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Creating and loading materials science datasets</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.wrappers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="creating-and-loading-materials-science-datasets">
+<h1>Creating and loading materials science datasets<a class="headerlink" href="#creating-and-loading-materials-science-datasets" title="Permalink to this headline">¶</a></h1>
+<p>Before performing any data analysis, pre-processing steps (e.g. descriptor calculation) are often needed to transform materials
+science data in a suitable form for the algorithm of choice, being it for example a neural network.
+This pre-processing is usually a computationally demanding step, especially if hundred of thousands of structures needs to be calculated,
+possible for different parameters setting.</p>
+<p>Since hyperparameter tuning of the regression/classification algorithm typically requires to run the model several times
+(for a given pre-processed dataset), it is thus highly beneficial to be able to save and re-load the pre-processed results in a
+consistent and traceable manner.</p>
+<p>Here we provide functions to pre-process (in parallel), save and subsequently load materials science datasets;
+this not only eases the traceability and reproduciblity of data analysis on materials science data, but speeds up the
+prototyping of new models.</p>
+<div class="section" id="module-ai4materials.calc_descriptor.multiple-structures">
+<span id="example-diffraction-fingerprint-calculation-for-multiple-structures"></span><h2>Example: diffraction fingerprint calculation for multiple structures<a class="headerlink" href="#module-ai4materials.calc_descriptor.multiple-structures" title="Permalink to this headline">¶</a></h2>
+<p>The code below illustrates how to compute a descriptor for multiple crystal structures using multiple processors, save the results to file,
+and reload the file for later use (e.g. for classification).</p>
+<p>As illustrative example we calculate the two-dimensional diffraction fingerprint <a class="footnote-reference" href="#id4" id="id1">[1]</a> of pristine (e.g. perfect) and highly defective (50% of missing atoms) crystal structures.
+In particular, the four crystal structures considered are: body-centered cubic (bcc), face-centered cubic(fcc),
+diamond (diam), and hexagonal closed packed (hcp) structures; more than 80% of elemental solids adopt one of these four crystal structures
+under standard conditions.</p>
+<p>The steps performed in the code below are the following:</p>
+<ul class="simple">
+<li>define the folders where the results are going to be saved</li>
+<li>build the four crystal structures (bcc, fcc, diam, hcp) using the ASE package</li>
+<li>create a pristine supercell using the function <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a></li>
+<li>create a defective supercell (50% of atoms missing) using the function <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_vacancies" title="ai4materials.utils.utils_crystals.create_vacancies"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_vacancies</span></code></a></li>
+<li>calculate the two-dimensional diffraction fingerprint for all (eight) crystal structures using <a class="reference internal" href="#ai4materials.wrappers.calc_descriptor" title="ai4materials.wrappers.calc_descriptor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.wrappers.calc_descriptor</span></code></a></li>
+<li>save the results to file</li>
+<li>reload the results from file</li>
+<li>generate a texture atlas with the two-dimensional diffraction fingerprints of all structures and write it to file.</li>
+</ul>
+<p>Implementation details of the two-dimensional diffraction fingerprint can be found at
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.diffraction2d</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ase.spacegroup</span> <span class="kn">import</span> <span class="n">crystal</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.diffraction2d</span> <span class="kn">import</span> <span class="n">Diffraction2D</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">set_configs</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">create_supercell</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">create_vacancies</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_data_retrieval</span> <span class="kn">import</span> <span class="n">generate_facets_input</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="kn">import</span> <span class="n">calc_descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="kn">import</span> <span class="n">load_descriptor</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+<span class="c1"># set configs</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="n">set_configs</span><span class="p">(</span><span class="n">main_folder</span><span class="o">=</span><span class="s1">&#39;./multiple_2d_diff_ai4materials/&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span> <span class="n">display_configs</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c1"># setup folder and files</span>
+<span class="n">desc_file_name</span> <span class="o">=</span> <span class="s1">&#39;fcc_bcc_diam_hcp_example&#39;</span>
+
+<span class="c1"># build crystal structures</span>
+<span class="n">fcc_al</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;Al&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">4.05</span><span class="p">,</span> <span class="mf">4.05</span><span class="p">,</span> <span class="mf">4.05</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">bcc_fe</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;Fe&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">229</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">2.87</span><span class="p">,</span> <span class="mf">2.87</span><span class="p">,</span> <span class="mf">2.87</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">diamond_c</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">227</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">3.57</span><span class="p">,</span> <span class="mf">3.57</span><span class="p">,</span> <span class="mf">3.57</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">hcp_mg</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;Mg&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mf">1.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">2.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">3.</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">194</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">3.21</span><span class="p">,</span> <span class="mf">3.21</span><span class="p">,</span> <span class="mf">5.21</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">])</span>
+<span class="c1"># create supercells - pristine</span>
+<span class="n">fcc_al_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">fcc_al</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">bcc_fe_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">bcc_fe</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">diamond_c_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">diamond_c</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">hcp_mg_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">hcp_mg</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="c1"># create supercells - vacancies</span>
+<span class="n">fcc_al_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">fcc_al</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">bcc_fe_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">bcc_fe</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">diamond_c_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">diamond_c</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">hcp_mg_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">hcp_mg</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+
+<span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fcc_al_supercell</span><span class="p">,</span> <span class="n">fcc_al_supercell_vac</span><span class="p">,</span>
+                  <span class="n">bcc_fe_supercell</span><span class="p">,</span> <span class="n">bcc_fe_supercell_vac</span><span class="p">,</span>
+                  <span class="n">diamond_c_supercell</span><span class="p">,</span> <span class="n">diamond_c_supercell_vac</span><span class="p">,</span>
+                  <span class="n">hcp_mg_supercell</span><span class="p">,</span> <span class="n">hcp_mg_supercell_vac</span><span class="p">]</span>
+
+<span class="c1"># calculate the descriptor for the list of structures and save it to file</span>
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">Diffraction2D</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+<span class="n">desc_file_path</span> <span class="o">=</span> <span class="n">calc_descriptor</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="n">ase_atoms_list</span><span class="o">=</span><span class="n">ase_atoms_list</span><span class="p">,</span>
+                                 <span class="n">desc_file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">desc_file_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.tar.gz&#39;</span><span class="p">,</span> <span class="n">format_geometry</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">,</span>
+                                 <span class="n">nb_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># load the previously saved file containing the crystal structures and their corresponding descriptor</span>
+<span class="n">target_list</span><span class="p">,</span> <span class="n">structure_list</span> <span class="o">=</span> <span class="n">load_descriptor</span><span class="p">(</span><span class="n">desc_files</span><span class="o">=</span><span class="n">desc_file_path</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+
+<span class="c1"># create a texture atlas with all the two-dimensional diffraction fingerprints</span>
+<span class="n">df</span><span class="p">,</span> <span class="n">texture_atlas</span> <span class="o">=</span> <span class="n">generate_facets_input</span><span class="p">(</span><span class="n">structure_list</span><span class="o">=</span><span class="n">structure_list</span><span class="p">,</span> <span class="n">desc_metadata</span><span class="o">=</span><span class="s1">&#39;diffraction_2d_intensity&#39;</span><span class="p">,</span>
+                                          <span class="n">target_list</span><span class="o">=</span><span class="n">target_list</span><span class="p">,</span>
+                                          <span class="n">sprite_atlas_filename</span><span class="o">=</span><span class="n">desc_file_name</span><span class="p">,</span>
+                                          <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This are the calculated two-dimensional diffraction fingerprints for all crystal structures in the list :</p>
+<img alt="_images/fcc_bcc_diam_hcp_example.png" src="_images/fcc_bcc_diam_hcp_example.png" />
+</div>
+<div class="section" id="module-ai4materials.descriptors.atomic_features-example">
+<span id="example-atomic-feature-retrieval-for-multiple-structures"></span><h2>Example: atomic feature retrieval for multiple structures<a class="headerlink" href="#module-ai4materials.descriptors.atomic_features-example" title="Permalink to this headline">¶</a></h2>
+<p>It was recently shown in Ref. <a class="footnote-reference" href="#id5" id="id2">[2]</a> that the crystal structure of binary compounds can be predicted using compressed-sensing
+technique using atomic features only.</p>
+<p>The code below illustrates how to retrieve atomic features, performing the following steps:</p>
+<ul class="simple">
+<li>build a list of crystal structure using the ASE package</li>
+<li>retrieve atomic features using the descriptor <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.atomic_features.AtomicFeatures</span></code> for all crystal structures</li>
+<li>save the results to file</li>
+<li>reload the results from file</li>
+<li>construct a table <code class="docutils literal notranslate"><span class="pre">df_atomic_features</span></code> containing the atomic features using the function <code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.atomic_features.get_table_atomic_features</span></code></li>
+<li>write the atomic feature table as csv file</li>
+<li>build a heatmap of the atomic feature table</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+<span class="n">atomic_data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="s2">&quot;/home/ziletti/nomad/nomad-lab-base/analysis-tools/atomic-data&quot;</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">atomic_data_dir</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">ase.spacegroup</span> <span class="kn">import</span> <span class="n">crystal</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">set_configs</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">get_spacegroup_old</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_binaries</span> <span class="kn">import</span> <span class="n">get_binaries_dict_delta_e</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="kn">import</span> <span class="n">calc_descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="kn">import</span> <span class="n">load_descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.atomic_features</span> <span class="kn">import</span> <span class="n">AtomicFeatures</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.atomic_features</span> <span class="kn">import</span> <span class="n">get_table_atomic_features</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+
+<span class="c1"># set configs</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="n">set_configs</span><span class="p">(</span><span class="n">main_folder</span><span class="o">=</span><span class="s1">&#39;./dataset_atomic_features_ai4materials/&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span> <span class="n">display_configs</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="n">desc_file_name</span> <span class="o">=</span> <span class="s1">&#39;atomic_features_try1&#39;</span>
+
+<span class="c1"># build atomic structures</span>
+<span class="n">group_1a</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Na&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;Rb&#39;</span><span class="p">]</span>
+<span class="n">group_1b</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;Cl&#39;</span><span class="p">,</span> <span class="s1">&#39;Br&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">]</span>
+<span class="n">group_2a</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Be&#39;</span><span class="p">,</span> <span class="s1">&#39;Mg&#39;</span><span class="p">,</span> <span class="s1">&#39;Ca&#39;</span><span class="p">,</span> <span class="s1">&#39;Sr&#39;</span><span class="p">]</span>
+<span class="n">group_2b</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;Se&#39;</span><span class="p">,</span> <span class="s1">&#39;Te&#39;</span><span class="p">]</span>
+
+<span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">el_1a</span> <span class="ow">in</span> <span class="n">group_1a</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">el_1b</span> <span class="ow">in</span> <span class="n">group_1b</span><span class="p">:</span>
+        <span class="n">ase_atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crystal</span><span class="p">([</span><span class="n">el_1a</span><span class="p">,</span> <span class="n">el_1b</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">5.64</span><span class="p">,</span> <span class="mf">5.64</span><span class="p">,</span> <span class="mf">5.64</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">]))</span>
+
+<span class="k">for</span> <span class="n">el_2a</span> <span class="ow">in</span> <span class="n">group_2a</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">el_2b</span> <span class="ow">in</span> <span class="n">group_2b</span><span class="p">:</span>
+        <span class="n">ase_atoms_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">crystal</span><span class="p">([</span><span class="n">el_2a</span><span class="p">,</span> <span class="n">el_2b</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">5.64</span><span class="p">,</span> <span class="mf">5.64</span><span class="p">,</span> <span class="mf">5.64</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">]))</span>
+
+<span class="n">selected_feature_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;atomic_ionization_potential&#39;</span><span class="p">,</span> <span class="s1">&#39;atomic_electron_affinity&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;atomic_rs_max&#39;</span><span class="p">,</span> <span class="s1">&#39;atomic_rp_max&#39;</span><span class="p">,</span> <span class="s1">&#39;atomic_rd_max&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># define and calculate descriptor</span>
+<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;feature_order_by&#39;</span><span class="p">:</span> <span class="s1">&#39;atomic_mulliken_electronegativity&#39;</span><span class="p">,</span> <span class="s1">&#39;energy_unit&#39;</span><span class="p">:</span> <span class="s1">&#39;eV&#39;</span><span class="p">,</span> <span class="s1">&#39;length_unit&#39;</span><span class="p">:</span> <span class="s1">&#39;angstrom&#39;</span><span class="p">}</span>
+
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">AtomicFeatures</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">desc_file_path</span> <span class="o">=</span> <span class="n">calc_descriptor</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="n">ase_atoms_list</span><span class="o">=</span><span class="n">ase_atoms_list</span><span class="p">,</span>
+                                 <span class="n">desc_file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">desc_file_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.tar.gz&#39;</span><span class="p">,</span> <span class="n">format_geometry</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">,</span>
+                                 <span class="n">selected_feature_list</span><span class="o">=</span><span class="n">selected_feature_list</span><span class="p">,</span>
+                                 <span class="n">nb_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">target_list</span><span class="p">,</span> <span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="n">load_descriptor</span><span class="p">(</span><span class="n">desc_files</span><span class="o">=</span><span class="n">desc_file_path</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+<span class="n">df_atomic_features</span> <span class="o">=</span> <span class="n">get_table_atomic_features</span><span class="p">(</span><span class="n">ase_atoms_list</span><span class="p">)</span>
+
+<span class="c1"># write table to file</span>
+<span class="n">df_atomic_features</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;atomic_features_table.csv&#39;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.4f</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># plot the table with seaborn</span>
+<span class="n">df_atomic_features</span> <span class="o">=</span> <span class="n">df_atomic_features</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;ordered_chemical_symbols&#39;</span><span class="p">)</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">df_atomic_features</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">sns_plot</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df_atomic_features</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">sns_plot</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;atomic_features_plot.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is the table containing the atomic features obtained using the code above:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#160;</th>
+<th class="head">ordered_chemical_symbols</th>
+<th class="head">atomic_ionization_potential(A)</th>
+<th class="head">atomic_electron_affinity(A)</th>
+<th class="head">atomic_rs_max(A)</th>
+<th class="head">atomic_rp_max(A)</th>
+<th class="head">atomic_rd_max(A)</th>
+<th class="head">atomic_ionization_potential(B)</th>
+<th class="head">atomic_electron_affinity(B)</th>
+<th class="head">atomic_rs_max(B)</th>
+<th class="head">atomic_rp_max(B)</th>
+<th class="head">atomic_rd_max(B)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0</td>
+<td>LiF</td>
+<td>-5.3291</td>
+<td>-0.6981</td>
+<td>1.6500</td>
+<td>2.0000</td>
+<td>6.9300</td>
+<td>-19.4043</td>
+<td>-4.2735</td>
+<td>0.4100</td>
+<td>0.3700</td>
+<td>1.4300</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>KBr</td>
+<td>-4.4332</td>
+<td>-0.6213</td>
+<td>2.1300</td>
+<td>2.4400</td>
+<td>1.7900</td>
+<td>-12.6496</td>
+<td>-3.7393</td>
+<td>0.7500</td>
+<td>0.8800</td>
+<td>1.8700</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>KI</td>
+<td>-4.4332</td>
+<td>-0.6213</td>
+<td>2.1300</td>
+<td>2.4400</td>
+<td>1.7900</td>
+<td>-11.2571</td>
+<td>-3.5135</td>
+<td>0.9000</td>
+<td>1.0700</td>
+<td>1.7200</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>RbF</td>
+<td>-4.2889</td>
+<td>-0.5904</td>
+<td>2.2400</td>
+<td>3.2000</td>
+<td>1.9600</td>
+<td>-19.4043</td>
+<td>-4.2735</td>
+<td>0.4100</td>
+<td>0.3700</td>
+<td>1.4300</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>RbCl</td>
+<td>-4.2889</td>
+<td>-0.5904</td>
+<td>2.2400</td>
+<td>3.2000</td>
+<td>1.9600</td>
+<td>-13.9018</td>
+<td>-3.9708</td>
+<td>0.6800</td>
+<td>0.7600</td>
+<td>1.6700</td>
+</tr>
+<tr class="row-odd"><td>5</td>
+<td>RbBr</td>
+<td>-4.2889</td>
+<td>-0.5904</td>
+<td>2.2400</td>
+<td>3.2000</td>
+<td>1.9600</td>
+<td>-12.6496</td>
+<td>-3.7393</td>
+<td>0.7500</td>
+<td>0.8800</td>
+<td>1.8700</td>
+</tr>
+<tr class="row-even"><td>6</td>
+<td>RbI</td>
+<td>-4.2889</td>
+<td>-0.5904</td>
+<td>2.2400</td>
+<td>3.2000</td>
+<td>1.9600</td>
+<td>-11.2571</td>
+<td>-3.5135</td>
+<td>0.9000</td>
+<td>1.0700</td>
+<td>1.7200</td>
+</tr>
+<tr class="row-odd"><td>7</td>
+<td>BeO</td>
+<td>-9.4594</td>
+<td>0.6305</td>
+<td>1.0800</td>
+<td>1.2100</td>
+<td>2.8800</td>
+<td>-16.4332</td>
+<td>-3.0059</td>
+<td>0.4600</td>
+<td>0.4300</td>
+<td>2.2200</td>
+</tr>
+<tr class="row-even"><td>8</td>
+<td>BeS</td>
+<td>-9.4594</td>
+<td>0.6305</td>
+<td>1.0800</td>
+<td>1.2100</td>
+<td>2.8800</td>
+<td>-11.7951</td>
+<td>-2.8449</td>
+<td>0.7400</td>
+<td>0.8500</td>
+<td>2.3700</td>
+</tr>
+<tr class="row-odd"><td>9</td>
+<td>BeSe</td>
+<td>-9.4594</td>
+<td>0.6305</td>
+<td>1.0800</td>
+<td>1.2100</td>
+<td>2.8800</td>
+<td>-10.9460</td>
+<td>-2.7510</td>
+<td>0.8000</td>
+<td>0.9500</td>
+<td>2.1800</td>
+</tr>
+<tr class="row-even"><td>10</td>
+<td>BeTe</td>
+<td>-9.4594</td>
+<td>0.6305</td>
+<td>1.0800</td>
+<td>1.2100</td>
+<td>2.8800</td>
+<td>-9.8667</td>
+<td>-2.6660</td>
+<td>0.9400</td>
+<td>1.1400</td>
+<td>1.8300</td>
+</tr>
+<tr class="row-odd"><td>11</td>
+<td>LiCl</td>
+<td>-5.3291</td>
+<td>-0.6981</td>
+<td>1.6500</td>
+<td>2.0000</td>
+<td>6.9300</td>
+<td>-13.9018</td>
+<td>-3.9708</td>
+<td>0.6800</td>
+<td>0.7600</td>
+<td>1.6700</td>
+</tr>
+<tr class="row-even"><td>12</td>
+<td>MgO</td>
+<td>-8.0371</td>
+<td>0.6925</td>
+<td>1.3300</td>
+<td>1.9000</td>
+<td>3.1700</td>
+<td>-16.4332</td>
+<td>-3.0059</td>
+<td>0.4600</td>
+<td>0.4300</td>
+<td>2.2200</td>
+</tr>
+<tr class="row-odd"><td>13</td>
+<td>MgS</td>
+<td>-8.0371</td>
+<td>0.6925</td>
+<td>1.3300</td>
+<td>1.9000</td>
+<td>3.1700</td>
+<td>-11.7951</td>
+<td>-2.8449</td>
+<td>0.7400</td>
+<td>0.8500</td>
+<td>2.3700</td>
+</tr>
+<tr class="row-even"><td>14</td>
+<td>MgSe</td>
+<td>-8.0371</td>
+<td>0.6925</td>
+<td>1.3300</td>
+<td>1.9000</td>
+<td>3.1700</td>
+<td>-10.9460</td>
+<td>-2.7510</td>
+<td>0.8000</td>
+<td>0.9500</td>
+<td>2.1800</td>
+</tr>
+<tr class="row-odd"><td>15</td>
+<td>MgTe</td>
+<td>-8.0371</td>
+<td>0.6925</td>
+<td>1.3300</td>
+<td>1.9000</td>
+<td>3.1700</td>
+<td>-9.8667</td>
+<td>-2.6660</td>
+<td>0.9400</td>
+<td>1.1400</td>
+<td>1.8300</td>
+</tr>
+<tr class="row-even"><td>16</td>
+<td>CaO</td>
+<td>-6.4280</td>
+<td>0.3039</td>
+<td>1.7600</td>
+<td>2.3200</td>
+<td>0.6800</td>
+<td>-16.4332</td>
+<td>-3.0059</td>
+<td>0.4600</td>
+<td>0.4300</td>
+<td>2.2200</td>
+</tr>
+<tr class="row-odd"><td>17</td>
+<td>CaS</td>
+<td>-6.4280</td>
+<td>0.3039</td>
+<td>1.7600</td>
+<td>2.3200</td>
+<td>0.6800</td>
+<td>-11.7951</td>
+<td>-2.8449</td>
+<td>0.7400</td>
+<td>0.8500</td>
+<td>2.3700</td>
+</tr>
+<tr class="row-even"><td>18</td>
+<td>CaSe</td>
+<td>-6.4280</td>
+<td>0.3039</td>
+<td>1.7600</td>
+<td>2.3200</td>
+<td>0.6800</td>
+<td>-10.9460</td>
+<td>-2.7510</td>
+<td>0.8000</td>
+<td>0.9500</td>
+<td>2.1800</td>
+</tr>
+<tr class="row-odd"><td>19</td>
+<td>CaTe</td>
+<td>-6.4280</td>
+<td>0.3039</td>
+<td>1.7600</td>
+<td>2.3200</td>
+<td>0.6800</td>
+<td>-9.8667</td>
+<td>-2.6660</td>
+<td>0.9400</td>
+<td>1.1400</td>
+<td>1.8300</td>
+</tr>
+<tr class="row-even"><td>20</td>
+<td>SrO</td>
+<td>-6.0316</td>
+<td>0.3431</td>
+<td>1.9100</td>
+<td>2.5500</td>
+<td>1.2000</td>
+<td>-16.4332</td>
+<td>-3.0059</td>
+<td>0.4600</td>
+<td>0.4300</td>
+<td>2.2200</td>
+</tr>
+<tr class="row-odd"><td>21</td>
+<td>SrS</td>
+<td>-6.0316</td>
+<td>0.3431</td>
+<td>1.9100</td>
+<td>2.5500</td>
+<td>1.2000</td>
+<td>-11.7951</td>
+<td>-2.8449</td>
+<td>0.7400</td>
+<td>0.8500</td>
+<td>2.3700</td>
+</tr>
+<tr class="row-even"><td>22</td>
+<td>LiBr</td>
+<td>-5.3291</td>
+<td>-0.6981</td>
+<td>1.6500</td>
+<td>2.0000</td>
+<td>6.9300</td>
+<td>-12.6496</td>
+<td>-3.7393</td>
+<td>0.7500</td>
+<td>0.8800</td>
+<td>1.8700</td>
+</tr>
+<tr class="row-odd"><td>23</td>
+<td>SrSe</td>
+<td>-6.0316</td>
+<td>0.3431</td>
+<td>1.9100</td>
+<td>2.5500</td>
+<td>1.2000</td>
+<td>-10.9460</td>
+<td>-2.7510</td>
+<td>0.8000</td>
+<td>0.9500</td>
+<td>2.1800</td>
+</tr>
+<tr class="row-even"><td>24</td>
+<td>SrTe</td>
+<td>-6.0316</td>
+<td>0.3431</td>
+<td>1.9100</td>
+<td>2.5500</td>
+<td>1.2000</td>
+<td>-9.8667</td>
+<td>-2.6660</td>
+<td>0.9400</td>
+<td>1.1400</td>
+<td>1.8300</td>
+</tr>
+<tr class="row-odd"><td>25</td>
+<td>LiI</td>
+<td>-5.3291</td>
+<td>-0.6981</td>
+<td>1.6500</td>
+<td>2.0000</td>
+<td>6.9300</td>
+<td>-11.2571</td>
+<td>-3.5135</td>
+<td>0.9000</td>
+<td>1.0700</td>
+<td>1.7200</td>
+</tr>
+<tr class="row-even"><td>26</td>
+<td>NaF</td>
+<td>-5.2231</td>
+<td>-0.7157</td>
+<td>1.7100</td>
+<td>2.6000</td>
+<td>6.5700</td>
+<td>-19.4043</td>
+<td>-4.2735</td>
+<td>0.4100</td>
+<td>0.3700</td>
+<td>1.4300</td>
+</tr>
+<tr class="row-odd"><td>27</td>
+<td>NaCl</td>
+<td>-5.2231</td>
+<td>-0.7157</td>
+<td>1.7100</td>
+<td>2.6000</td>
+<td>6.5700</td>
+<td>-13.9018</td>
+<td>-3.9708</td>
+<td>0.6800</td>
+<td>0.7600</td>
+<td>1.6700</td>
+</tr>
+<tr class="row-even"><td>28</td>
+<td>NaBr</td>
+<td>-5.2231</td>
+<td>-0.7157</td>
+<td>1.7100</td>
+<td>2.6000</td>
+<td>6.5700</td>
+<td>-12.6496</td>
+<td>-3.7393</td>
+<td>0.7500</td>
+<td>0.8800</td>
+<td>1.8700</td>
+</tr>
+<tr class="row-odd"><td>29</td>
+<td>NaI</td>
+<td>-5.2231</td>
+<td>-0.7157</td>
+<td>1.7100</td>
+<td>2.6000</td>
+<td>6.5700</td>
+<td>-11.2571</td>
+<td>-3.5135</td>
+<td>0.9000</td>
+<td>1.0700</td>
+<td>1.7200</td>
+</tr>
+<tr class="row-even"><td>30</td>
+<td>KF</td>
+<td>-4.4332</td>
+<td>-0.6213</td>
+<td>2.1300</td>
+<td>2.4400</td>
+<td>1.7900</td>
+<td>-19.4043</td>
+<td>-4.2735</td>
+<td>0.4100</td>
+<td>0.3700</td>
+<td>1.4300</td>
+</tr>
+<tr class="row-odd"><td>31</td>
+<td>KCl</td>
+<td>-4.4332</td>
+<td>-0.6213</td>
+<td>2.1300</td>
+<td>2.4400</td>
+<td>1.7900</td>
+<td>-13.9018</td>
+<td>-3.9708</td>
+<td>0.6800</td>
+<td>0.7600</td>
+<td>1.6700</td>
+</tr>
+</tbody>
+</table>
+<p>and this is its corresponding heatmap:</p>
+<img alt="_images/atomic_features_plot.png" src="_images/atomic_features_plot.png" />
+</div>
+<div class="section" id="example-dataset-creation-for-data-analytics">
+<h2>Example: dataset creation for data analytics<a class="headerlink" href="#example-dataset-creation-for-data-analytics" title="Permalink to this headline">¶</a></h2>
+<p>The code below illustrates how to compute a descriptor (the two-dimensional diffraction fingerprint <a class="footnote-reference" href="#id4" id="id3">[1]</a>) for
+multiple crystal structures, save the results to file, and reload the file for later use (e.g. for classification).</p>
+<p>The steps performed in the code below are the following:</p>
+<ul class="simple">
+<li>define the folders where the results are going to be saved</li>
+<li>build the four crystal structures (bcc, fcc, diam, hcp) using the ASE package</li>
+<li>create a pristine supercell using the function <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a></li>
+<li>create a defective supercell (50% of atoms missing) using the function <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_vacancies" title="ai4materials.utils.utils_crystals.create_vacancies"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_vacancies</span></code></a></li>
+<li>calculate the two-dimensional diffraction fingerprint for all (eight) crystal structures</li>
+<li>save the results to file</li>
+<li>reload the results from file</li>
+<li>define a user-specified target variable (i.e. the variable that one want to predict with the classification/regression model);
+in this case this variable is the crystal structure type (‘fcc’, ‘bcc’, ‘diam’, ‘hcp’)</li>
+<li>create a dataset containing the specified <code class="docutils literal notranslate"><span class="pre">desc_metadata</span></code> (this needs to be compatible with the descriptor choice)</li>
+<li>save the dataset to file in the folder <code class="docutils literal notranslate"><span class="pre">dataset_folder</span></code>, including data (numpy array), target variable (numpy array),
+and metadata regarding the dataset (JSON format)</li>
+<li>re-load from file the saved dataset to be used for example in a classification task</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ase.spacegroup</span> <span class="kn">import</span> <span class="n">crystal</span>
+<span class="kn">from</span> <span class="nn">ai4materials.dataprocessing.preprocessing</span> <span class="kn">import</span> <span class="n">load_dataset_from_file</span>
+<span class="kn">from</span> <span class="nn">ai4materials.dataprocessing.preprocessing</span> <span class="kn">import</span> <span class="n">prepare_dataset</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.diffraction2d</span> <span class="kn">import</span> <span class="n">Diffraction2D</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">set_configs</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_config</span> <span class="kn">import</span> <span class="n">setup_logger</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">create_supercell</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">create_vacancies</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="kn">import</span> <span class="n">calc_descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.wrappers</span> <span class="kn">import</span> <span class="n">load_descriptor</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+<span class="c1"># set configs</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="n">set_configs</span><span class="p">(</span><span class="n">main_folder</span><span class="o">=</span><span class="s1">&#39;./dataset_2d_diff_ai4materials/&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span> <span class="n">display_configs</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c1"># setup folder and files</span>
+<span class="n">dataset_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="s1">&#39;my_datasets&#39;</span><span class="p">)</span>
+<span class="n">desc_file_name</span> <span class="o">=</span> <span class="s1">&#39;fcc_bcc_diam_hcp_example&#39;</span>
+
+<span class="c1"># build crystal structures</span>
+<span class="n">fcc_al</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;Al&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">4.05</span><span class="p">,</span> <span class="mf">4.05</span><span class="p">,</span> <span class="mf">4.05</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">bcc_fe</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;Fe&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">229</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">2.87</span><span class="p">,</span> <span class="mf">2.87</span><span class="p">,</span> <span class="mf">2.87</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">diamond_c</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">227</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">3.57</span><span class="p">,</span> <span class="mf">3.57</span><span class="p">,</span> <span class="mf">3.57</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">hcp_mg</span> <span class="o">=</span> <span class="n">crystal</span><span class="p">(</span><span class="s1">&#39;Mg&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mf">1.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">2.</span> <span class="o">/</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">3.</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)],</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">194</span><span class="p">,</span> <span class="n">cellpar</span><span class="o">=</span><span class="p">[</span><span class="mf">3.21</span><span class="p">,</span> <span class="mf">3.21</span><span class="p">,</span> <span class="mf">5.21</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">])</span>
+<span class="c1"># create supercells - pristine</span>
+<span class="n">fcc_al_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">fcc_al</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">bcc_fe_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">bcc_fe</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">diamond_c_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">diamond_c</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">hcp_mg_supercell</span> <span class="o">=</span> <span class="n">create_supercell</span><span class="p">(</span><span class="n">hcp_mg</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="c1"># create supercells - vacancies</span>
+<span class="n">fcc_al_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">fcc_al</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">bcc_fe_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">bcc_fe</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">diamond_c_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">diamond_c</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+<span class="n">hcp_mg_supercell_vac</span> <span class="o">=</span> <span class="n">create_vacancies</span><span class="p">(</span><span class="n">hcp_mg</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.50</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cell_type</span><span class="o">=</span><span class="s1">&#39;standard_no_symmetries&#39;</span><span class="p">)</span>
+
+<span class="n">ase_atoms_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fcc_al_supercell</span><span class="p">,</span> <span class="n">fcc_al_supercell_vac</span><span class="p">,</span>
+                  <span class="n">bcc_fe_supercell</span><span class="p">,</span> <span class="n">bcc_fe_supercell_vac</span><span class="p">,</span>
+                  <span class="n">diamond_c_supercell</span><span class="p">,</span> <span class="n">diamond_c_supercell_vac</span><span class="p">,</span>
+                  <span class="n">hcp_mg_supercell</span><span class="p">,</span> <span class="n">hcp_mg_supercell_vac</span><span class="p">]</span>
+
+<span class="c1"># calculate the descriptor for the list of structures and save it to file</span>
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">Diffraction2D</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+<span class="n">desc_file_path</span> <span class="o">=</span> <span class="n">calc_descriptor</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span> <span class="n">ase_atoms_list</span><span class="o">=</span><span class="n">ase_atoms_list</span><span class="p">,</span>
+                                 <span class="n">desc_file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">desc_file_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.tar.gz&#39;</span><span class="p">,</span> <span class="n">format_geometry</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">,</span>
+                                 <span class="n">nb_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># load the previously saved file containing the crystal structures and their corresponding descriptor</span>
+<span class="n">target_list</span><span class="p">,</span> <span class="n">structure_list</span> <span class="o">=</span> <span class="n">load_descriptor</span><span class="p">(</span><span class="n">desc_files</span><span class="o">=</span><span class="n">desc_file_path</span><span class="p">,</span> <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+
+<span class="c1"># add as target the spacegroup (using spacegroup of the &quot;parental&quot; structure for the defective structure)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fcc&#39;</span><span class="p">,</span> <span class="s1">&#39;fcc&#39;</span><span class="p">,</span> <span class="s1">&#39;bcc&#39;</span><span class="p">,</span> <span class="s1">&#39;bcc&#39;</span><span class="p">,</span> <span class="s1">&#39;diam&#39;</span><span class="p">,</span> <span class="s1">&#39;diam&#39;</span><span class="p">,</span> <span class="s1">&#39;hcp&#39;</span><span class="p">,</span> <span class="s1">&#39;hcp&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target_list</span><span class="p">):</span>
+    <span class="n">item</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">targets</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+<span class="n">path_to_x</span><span class="p">,</span> <span class="n">path_to_y</span><span class="p">,</span> <span class="n">path_to_summary</span> <span class="o">=</span> <span class="n">prepare_dataset</span><span class="p">(</span>
+    <span class="n">structure_list</span><span class="o">=</span><span class="n">structure_list</span><span class="p">,</span>
+    <span class="n">target_list</span><span class="o">=</span><span class="n">target_list</span><span class="p">,</span>
+    <span class="n">desc_metadata</span><span class="o">=</span><span class="s1">&#39;diffraction_2d_intensity&#39;</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;bcc-fcc-diam-hcp&#39;</span><span class="p">,</span>
+    <span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">,</span>
+    <span class="n">target_categorical</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">input_dims</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">,</span>
+    <span class="n">dataset_folder</span><span class="o">=</span><span class="n">dataset_folder</span><span class="p">,</span>
+    <span class="n">main_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span>
+    <span class="n">desc_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">],</span>
+    <span class="n">tmp_folder</span><span class="o">=</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_folder&#39;</span><span class="p">],</span>
+    <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;Dataset with bcc, fcc, diam and hcp structures, pristine and with 50</span><span class="si">% o</span><span class="s2">f defects.&quot;</span><span class="p">)</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dataset_info</span> <span class="o">=</span> <span class="n">load_dataset_from_file</span><span class="p">(</span><span class="n">path_to_x</span><span class="o">=</span><span class="n">path_to_x</span><span class="p">,</span> <span class="n">path_to_y</span><span class="o">=</span><span class="n">path_to_y</span><span class="p">,</span>
+                                                              <span class="n">path_to_summary</span><span class="o">=</span><span class="n">path_to_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the code above, the numpy array <cite>x</cite> contains the specified <code class="docutils literal notranslate"><span class="pre">desc_metadata</span></code>,  the numpy array <cite>y</cite> contains
+the specified targets, and <cite>dataset_info</cite> is a dictionary containing information regarding the dataset was just loaded:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>    <span class="p">{</span>
+          <span class="nt">&quot;data&quot;</span><span class="p">:[{</span>
+  <span class="nt">&quot;target_name&quot;</span><span class="p">:</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> 
+  <span class="nt">&quot;n_bins&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> 
+  <span class="nt">&quot;path_to_summary&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ziletti/Documents/calc_xray/2d_nature_comm/my_datasets/bcc-fcc-diam-hcp_summary.json&quot;</span><span class="p">,</span> 
+  <span class="nt">&quot;creation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-06-20T18:42:07.110239&quot;</span><span class="p">,</span> 
+  <span class="nt">&quot;numerical_labels&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="mi">2</span><span class="p">,</span> 
+    <span class="mi">2</span><span class="p">,</span> 
+    <span class="mi">0</span><span class="p">,</span> 
+    <span class="mi">0</span><span class="p">,</span> 
+    <span class="mi">1</span><span class="p">,</span> 
+    <span class="mi">1</span><span class="p">,</span> 
+    <span class="mi">3</span><span class="p">,</span> 
+    <span class="mi">3</span>
+  <span class="p">],</span> 
+  <span class="nt">&quot;classes&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;bcc&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;diam&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;fcc&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;hcp&quot;</span>
+  <span class="p">],</span> 
+  <span class="nt">&quot;nb_classes&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> 
+  <span class="nt">&quot;path_to_y&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ziletti/Documents/calc_xray/2d_nature_comm/my_datasets/bcc-fcc-diam-hcp_y.pkl&quot;</span><span class="p">,</span> 
+  <span class="nt">&quot;path_to_x&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/ziletti/Documents/calc_xray/2d_nature_comm/my_datasets/bcc-fcc-diam-hcp_x.pkl&quot;</span><span class="p">,</span> 
+  <span class="nt">&quot;text_labels&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;fcc&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;fcc&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;bcc&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;bcc&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;diam&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;diam&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;hcp&quot;</span><span class="p">,</span> 
+    <span class="s2">&quot;hcp&quot;</span>
+  <span class="p">],</span> 
+  <span class="nt">&quot;target_categorical&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> 
+  <span class="nt">&quot;disc_type&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span> 
+  <span class="nt">&quot;notes&quot;</span><span class="p">:</span> <span class="s2">&quot;Dataset with bcc, fcc, diam and hcp structures, pristine and with 50% of defects.&quot;</span><span class="p">,</span> 
+  <span class="nt">&quot;dataset_name&quot;</span><span class="p">:</span> <span class="s2">&quot;bcc-fcc-diam-hcp&quot;</span>
+<span class="p">}</span>
+    <span class="p">]</span> <span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> A. Ziletti, D. Kumar, M. Scheffler, and L. M. Ghiringhelli, “Insightful classification of crystal structures
+using deep learning,” Nature Communications, vol. 9, pp. 2775, 2018.
+[<a class="reference external" href="https://arxiv.org/abs/1709.02298">Link to article</a>]</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>L. M. Ghiringhelli, J. Vybiral, S. V. Levchenko, C. Draxl, and M. Scheffler, “Big Data of Materials
+Science: Critical Role of the Descriptor,” Physical Review Letters, vol. 114, no. 10, p. 105503 .
+[<a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevLett.114.105503">Link to article</a>]</td></tr>
+</tbody>
+</table>
+<p><em>Section author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<span class="target" id="module-ai4materials.wrappers"></span><dl class="function">
+<dt id="ai4materials.wrappers.calc_descriptor">
+<code class="descclassname">ai4materials.wrappers.</code><code class="descname">calc_descriptor</code><span class="sig-paren">(</span><em>descriptor</em>, <em>configs</em>, <em>desc_file</em>, <em>ase_atoms_list</em>, <em>tmp_folder=None</em>, <em>desc_folder=None</em>, <em>desc_info_file=None</em>, <em>target_list=None</em>, <em>operations_on_structure=None</em>, <em>nb_jobs=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/wrappers.html#calc_descriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.wrappers.calc_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the descriptor for a list of atomic structures.</p>
+<p>Starting from a list of ASE structures, calculates for each file the descriptor
+specified by <code class="docutils literal notranslate"><span class="pre">descriptor</span></code>, and stores the results in the compressed archive
+desc_file in the directory <cite>desc_folder</cite>.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>descriptor: <a class="reference internal" href="ai4materials.descriptors.base_descriptor.html#ai4materials.descriptors.base_descriptor.Descriptor" title="ai4materials.descriptors.base_descriptor.Descriptor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.descriptors.base_descriptor.Descriptor</span></code></a> object</dt>
+<dd>Descriptor to calculate.</dd>
+<dt>configs: dict</dt>
+<dd>Contains configuration information such as folders for input and output (e.g. desc_folder, tmp_folder),
+logging level, and metadata location. See also <a class="reference internal" href="ai4materials.utils.utils_config.html#ai4materials.utils.utils_config.set_configs" title="ai4materials.utils.utils_config.set_configs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_config.set_configs</span></code></a>.</dd>
+<dt>ase_atoms_list: list of <code class="docutils literal notranslate"><span class="pre">ase.Atoms</span></code> objects</dt>
+<dd>Atomic structures.</dd>
+<dt>desc_file: string</dt>
+<dd>Name of the compressed archive where the file containing the descriptors are written.</dd>
+<dt>desc_folder: string, optional (default=`None`)</dt>
+<dd>Folder where the desc_file is written. If not specified, the desc_folder in read from
+<code class="docutils literal notranslate"><span class="pre">configs['io']['desc_folder']</span></code>.</dd>
+<dt>tmp_folder: string, optional (default=`None`)</dt>
+<dd>Folder where the desc_file is written. If not specified, the desc_folder in read from
+<code class="docutils literal notranslate"><span class="pre">configs['io']['tmp_folder']</span></code>.</dd>
+<dt>desc_info_file: string, optional (default=`None`)</dt>
+<dd>File where information about the descriptor are written to disk.</dd>
+<dt>target_list: list, optional (default=`None`)</dt>
+<dd>List of target values. These values are saved to disk when the descriptor is calculated, and they can loaded
+for subsequent analysis.</dd>
+<dt>operations_on_structure: list of objects</dt>
+<dd>List of operations to be applied to the atomic structures before calculating the descriptor.</dd>
+<dt>nb_jobs: int, optional (default=-1)</dt>
+<dd>Number of processors to use in the calculation of the descriptor.
+If set to -1, all available processors will be used.</dd>
+</dl>
+<p><em>Code author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.wrappers.calc_model">
+<code class="descclassname">ai4materials.wrappers.</code><code class="descname">calc_model</code><span class="sig-paren">(</span><em>method</em>, <em>tmp_folder</em>, <em>results_folder</em>, <em>combine_features_with_ops=True</em>, <em>cols_to_drop=None</em>, <em>df_features=None</em>, <em>target=None</em>, <em>energy_unit=None</em>, <em>length_unit=None</em>, <em>allowed_operations=None</em>, <em>derived_features=None</em>, <em>max_dim=None</em>, <em>sis_control=None</em>, <em>control_file=None</em>, <em>lookup_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/wrappers.html#calc_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.wrappers.calc_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates model.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.wrappers.load_descriptor">
+<code class="descclassname">ai4materials.wrappers.</code><code class="descname">load_descriptor</code><span class="sig-paren">(</span><em>desc_files</em>, <em>configs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/wrappers.html#load_descriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.wrappers.load_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a descriptor file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.wrappers.worker_apply_operations">
+<code class="descclassname">ai4materials.wrappers.</code><code class="descname">worker_apply_operations</code><span class="sig-paren">(</span><em>arg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/wrappers.html#worker_apply_operations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.wrappers.worker_apply_operations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.models.html" class="btn btn-neutral float-right" title="Regression and classification models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.descriptors.soap_model.html" class="btn btn-neutral" title="ai4materials.descriptors.soap_model module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

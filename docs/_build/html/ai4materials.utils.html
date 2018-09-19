@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utils &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="index.html"/>
+        <link rel="next" title="ai4materials.utils.unit_conversion module" href="ai4materials.utils.unit_conversion.html"/>
+        <link rel="prev" title="ai4materials.visualization.viewer module" href="ai4materials.visualization.viewer.html"/>
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-ai4materials.utils.utils_crystals">Utils crystals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pristine-and-defective-supercell-generation">Pristine and defective supercell generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ai4materials.utils.utils_crystals.create_supercell">Example: pristine supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ai4materials.utils.utils_crystals.create_vacancies">Example: defective supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_binaries.html">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_config.html">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_crystals.html">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_vol_data.html">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ai4materials.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
+<p>This package contains utility functions for data analytics applied to materials science data.
+Specifically,</p>
+<ul class="simple">
+<li><a class="reference internal" href="ai4materials.utils.utils_config.html#module-ai4materials.utils.utils_config" title="ai4materials.utils.utils_config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_config</span></code></a>: functions to set up useful parameters for calculations.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_crystals.html#module-ai4materials.utils.utils_crystals" title="ai4materials.utils.utils_crystals"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals</span></code></a>: functions related to crystal structures</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html#module-ai4materials.utils.utils_data_retrieval" title="ai4materials.utils.utils_data_retrieval"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_data_retrieval</span></code></a>: functions to retrieve data.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_mp.html#module-ai4materials.utils.utils_mp" title="ai4materials.utils.utils_mp"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_mp</span></code></a>: functions for parallel execution.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_plotting.html#module-ai4materials.utils.utils_plotting" title="ai4materials.utils.utils_plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_plotting</span></code></a>: functions for plotting results of modelling.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_vol_data.html#module-ai4materials.utils.utils_vol_data" title="ai4materials.utils.utils_vol_data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_vol_data</span></code></a>: functions to deal with three-dimensional volumetric data.</li>
+</ul>
+<div class="section" id="module-ai4materials.utils.utils_crystals">
+<span id="utils-crystals"></span><h2>Utils crystals<a class="headerlink" href="#module-ai4materials.utils.utils_crystals" title="Permalink to this headline">¶</a></h2>
+<p>This package contains functions to build pristine and defective supercells,
+starting from ASE (Atomistic Simulation Environment) Atoms object
+<a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/atoms.html?highlight=atoms%20object">[link]</a>.
+It also allows to obtain the spacegroup of a given structure,
+or to get the standard conventional cell (using Pymatgen).</p>
+<div class="section" id="pristine-and-defective-supercell-generation">
+<h3>Pristine and defective supercell generation<a class="headerlink" href="#pristine-and-defective-supercell-generation" title="Permalink to this headline">¶</a></h3>
+<p>The main functions available to modify crystal structures are:</p>
+<ul class="simple">
+<li><a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a> creates a pristine supercell starting from a given atom structure.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.random_displace_atoms" title="ai4materials.utils.utils_crystals.random_displace_atoms"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.random_displace_atoms</span></code></a> creates a supercell with randomly displace atoms.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_vacancies" title="ai4materials.utils.utils_crystals.create_vacancies"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_vacancies</span></code></a> creates a supercell with vacancies.</li>
+<li><a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.substitute_atoms" title="ai4materials.utils.utils_crystals.substitute_atoms"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.substitute_atoms</span></code></a> creates a supercell with randomly substitute atoms.</li>
+</ul>
+<p>For additional details on each function, see their respective descriptions below.</p>
+</div>
+<div class="section" id="module-ai4materials.utils.utils_crystals.create_supercell">
+<span id="example-pristine-supercell-creation"></span><h3>Example: pristine supercell creation<a class="headerlink" href="#module-ai4materials.utils.utils_crystals.create_supercell" title="Permalink to this headline">¶</a></h3>
+<p>Starting from a given ASE structure, the script below uses <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_supercell" title="ai4materials.utils.utils_crystals.create_supercell"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_supercell</span></code></a>
+to generate a supercell of (approximately) 128 atoms:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">write</span>
+<span class="kn">from</span> <span class="nn">ase.build</span> <span class="kn">import</span> <span class="n">bulk</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">ase.visualize.plot</span> <span class="kn">import</span> <span class="n">plot_atoms</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">create_supercell</span>
+<span class="n">cu_fcc</span> <span class="o">=</span> <span class="n">bulk</span><span class="p">(</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;fcc&#39;</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">3.6</span><span class="p">,</span> <span class="n">orthorhombic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">supercell_cu_fcc</span> <span class="o">=</span>  <span class="n">create_supercell</span><span class="p">(</span><span class="n">cu_fcc</span><span class="p">,</span> <span class="n">create_replicas_by</span><span class="o">=</span><span class="s1">&#39;nb_atoms&#39;</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;cu_fcc.png&#39;</span><span class="p">,</span> <span class="n">cu_fcc</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;cu_fcc_supercell.png&#39;</span><span class="p">,</span> <span class="n">supercell_cu_fcc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is the original structure:</p>
+<img alt="_images/cu_fcc.png" src="_images/cu_fcc.png" />
+<p>and this is the supercell obtained replicating the unit cells up to a target number of atoms (<code class="docutils literal notranslate"><span class="pre">target_nb_atoms</span></code>)</p>
+<img alt="_images/cu_fcc_supercell.png" src="_images/cu_fcc_supercell.png" />
+</div>
+<div class="section" id="module-ai4materials.utils.utils_crystals.create_vacancies">
+<span id="example-defective-supercell-creation"></span><h3>Example: defective supercell creation<a class="headerlink" href="#module-ai4materials.utils.utils_crystals.create_vacancies" title="Permalink to this headline">¶</a></h3>
+<p>Starting from a given ASE structure, the script below uses <a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.create_vacancies" title="ai4materials.utils.utils_crystals.create_vacancies"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.create_vacancies</span></code></a>
+to generate a defective supercell of (approximately) 128 atoms with 25% vacancies:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">write</span>
+<span class="kn">from</span> <span class="nn">ase.build</span> <span class="kn">import</span> <span class="n">bulk</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">ase.visualize.plot</span> <span class="kn">import</span> <span class="n">plot_atoms</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">create_vacancies</span>
+<span class="n">cu_fcc</span> <span class="o">=</span> <span class="n">bulk</span><span class="p">(</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;fcc&#39;</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">3.6</span><span class="p">,</span> <span class="n">orthorhombic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">supercell_vac25_cu_fcc</span> <span class="o">=</span>  <span class="n">create_vacancies</span><span class="p">(</span><span class="n">cu_fcc</span><span class="p">,</span> <span class="n">target_vacancy_ratio</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">create_replicas_by</span><span class="o">=</span><span class="s1">&#39;nb_atoms&#39;</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;cu_fcc.png&#39;</span><span class="p">,</span> <span class="n">cu_fcc</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;cu_fcc_supercell_vac25.png&#39;</span><span class="p">,</span> <span class="n">supercell_vac25_cu_fcc</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/cu_fcc_supercell_vac25.png" src="_images/cu_fcc_supercell_vac25.png" />
+<p>Similarly, it is possible to generate a supercell with randomly displaced atoms with
+<a class="reference internal" href="ai4materials.utils.utils_crystals.html#ai4materials.utils.utils_crystals.random_displace_atoms" title="ai4materials.utils.utils_crystals.random_displace_atoms"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ai4materials.utils.utils_crystals.random_displace_atoms</span></code></a>.
+In the script below,
+we generate a defective supercell of (approximately) 200 atoms with displacements sampled from a Gaussian
+distribution with standard deviation of 0.5 Angstrom:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">write</span>
+<span class="kn">from</span> <span class="nn">ase.build</span> <span class="kn">import</span> <span class="n">bulk</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">ase.visualize.plot</span> <span class="kn">import</span> <span class="n">plot_atoms</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="kn">import</span> <span class="n">random_displace_atoms</span>
+<span class="n">cu_fcc</span> <span class="o">=</span> <span class="n">bulk</span><span class="p">(</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;fcc&#39;</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">3.6</span><span class="p">,</span> <span class="n">orthorhombic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">supercell_rand_disp_cu_fcc</span> <span class="o">=</span>  <span class="n">random_displace_atoms</span><span class="p">(</span><span class="n">cu_fcc</span><span class="p">,</span> <span class="n">displacement</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">create_replicas_by</span><span class="o">=</span><span class="s1">&#39;nb_atoms&#39;</span><span class="p">,</span> <span class="n">noise_distribution</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">target_nb_atoms</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;cu_fcc.png&#39;</span><span class="p">,</span> <span class="n">cu_fcc</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="s1">&#39;supercell_rand_disp_cu_fcc_05A.png&#39;</span><span class="p">,</span> <span class="n">supercell_rand_disp_cu_fcc</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/supercell_rand_disp_cu_fcc_05A.png" src="_images/supercell_rand_disp_cu_fcc_05A.png" />
+<p><em>Section author: Angelo Ziletti &lt;<a class="reference external" href="mailto:angelo&#46;ziletti&#37;&#52;&#48;gmail&#46;com">angelo<span>&#46;</span>ziletti<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<div class="section" id="submodules">
+<h3>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_binaries.html">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_config.html">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_crystals.html">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.utils.utils_vol_data.html">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-ai4materials.utils">
+<span id="module-contents"></span><h3>Module contents<a class="headerlink" href="#module-ai4materials.utils" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.utils.unit_conversion.html" class="btn btn-neutral float-right" title="ai4materials.utils.unit_conversion module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.visualization.viewer.html" class="btn btn-neutral" title="ai4materials.visualization.viewer module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

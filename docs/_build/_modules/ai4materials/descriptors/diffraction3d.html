@@ -1,0 +1,938 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.descriptors.diffraction3d &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.descriptors.diffraction3d</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.descriptors.diffraction3d</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright 2016-2018 Angelo Ziletti</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, Angelo Ziletti&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Angelo Ziletti&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;ziletti@fhi-berlin.mpg.de&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;23/03/18&quot;</span>
+
+<span class="kn">import</span> <span class="nn">condor</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="c1"># force matplotlib to not use any Xwindows backend - needed for gitlab continous integration</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;export DISPLAY=:0&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">switch_backend</span><span class="p">(</span><span class="s1">&#39;agg&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.base_descriptor</span> <span class="k">import</span> <span class="n">Descriptor</span>
+<span class="kn">from</span> <span class="nn">ai4materials.descriptors.base_descriptor</span> <span class="k">import</span> <span class="n">is_descriptor_consistent</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_crystals</span> <span class="k">import</span> <span class="n">scale_structure</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_vol_data</span> <span class="k">import</span> <span class="n">interp_theta_phi_surfaces</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_vol_data</span> <span class="k">import</span> <span class="n">get_shells_from_indices</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_vol_data</span> <span class="k">import</span> <span class="n">get_slice_volume_indices</span>
+<span class="kn">from</span> <span class="nn">ai4materials.utils.utils_neural_networks</span> <span class="k">import</span> <span class="n">get_activations</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pyshtools.expand</span> <span class="k">import</span> <span class="n">SHExpandDH</span>
+<span class="kn">from</span> <span class="nn">pyshtools.expand</span> <span class="k">import</span> <span class="n">MakeGridDH</span>
+<span class="kn">from</span> <span class="nn">pyshtools.shclasses</span> <span class="k">import</span> <span class="n">SHCoeffs</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">ndimage</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">fftpack</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">get_window</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ai4materials&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DISH"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.DISH">[docs]</a><span class="k">class</span> <span class="nc">DISH</span><span class="p">(</span><span class="n">Descriptor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculation of the spherical harmonics expansion of diffraction intensity.</span>
+
+<span class="sd">    This is the descriptor introduced in Ziletti et al., in preparation (2018). The default values</span>
+<span class="sd">    of the parameters used are the one used in the reference above.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    configs: dict</span>
+<span class="sd">        Contains configuration information such as folders for input and output</span>
+<span class="sd">        (e.g. `desc_folder`, `tmp_folder`), logging level, and metadata location.</span>
+<span class="sd">        See also :py:mod:`ai4materials.utils.utils_config.set_configs`.</span>
+
+<span class="sd">    param_source: dict, optional (default={&#39;wavelength&#39;: 5.0E-12, &#39;pulse_energy&#39;: 1E-6, &#39;focus_diameter&#39;: 1E-6})</span>
+<span class="sd">        Contains parameters that are passed to the underlying package used for the diffraction computation (Condor).</span>
+<span class="sd">        This parameters are passed to Condor via: \n</span>
+<span class="sd">        `src = condor.Source(**self.param_source)` \n</span>
+<span class="sd">        See http://condor.readthedocs.io/en/latest/config.html#source for the parameters that can be used.</span>
+
+<span class="sd">    param_detector: dict, optional (default={&#39;distance&#39;: 0.1, &#39;pixel_size&#39;: 4E-4, &#39;nx&#39;: 64, &#39;ny&#39;: 64})</span>
+<span class="sd">        Contains parameters that are passed to the underlying package used for the diffraction computation (Condor).</span>
+<span class="sd">        This parameters are passed to Condor via: \n</span>
+<span class="sd">        `det = condor.Detector(**self.param_detector)` \n</span>
+<span class="sd">        See http://condor.readthedocs.io/en/latest/config.html#detector for the parameters that can be used.</span>
+
+<span class="sd">    atoms_scaling: string, optional (default=&#39;avg_nn&#39;)</span>
+<span class="sd">        Type of scaling used in the atom structure scaling. See :py:mod:`ai4materials.utils.utils_crystals.scale_structure`</span>
+<span class="sd">        for more details.</span>
+
+<span class="sd">    atoms_scaling_cutoffs: list of float, optional (default=[4.0, 5.0, 7.0, 9.0, 11.0, 12.0])</span>
+<span class="sd">        List of cutoffs to be used in the determination of the lengthscale of the system to be used in</span>
+<span class="sd">        :py:mod:`ai4materials.utils.utils_crystals.scale_structure`.</span>
+
+<span class="sd">    extrinsic_scale_factor: float, optional (default=1.0)</span>
+<span class="sd">        Scale the structure by another factor on top of the one obtained by isotropic scaling.</span>
+<span class="sd">        This can be used to do data augmentation on the scaling factor. A factor of 0.95 will scale the structure by</span>
+<span class="sd">        0.95, thus enlarging it. The default is 1.0, i.e. no extrinsic scaling.</span>
+
+<span class="sd">    use_mask: bool, optional (default=True)</span>
+<span class="sd">        If `True`, a mask such that only (`mask_r_min` &lt; points &lt; `mask_r_max`) are kept in the calculated</span>
+<span class="sd">        diffraction pattern. This is done because the central peak in diffraction is very intense</span>
+<span class="sd">        but does not carry useful information regarding the atomic structure.</span>
+
+<span class="sd">    mask_r_min: int, optional (default=12)</span>
+<span class="sd">        The intensity of the points in the diffraction pattern with a radius smaller than `mask_r_min` are set to zero.</span>
+
+<span class="sd">    mask_r_max: int, optional (default=92)</span>
+<span class="sd">        The intensity of the points in the diffraction pattern with a radius larger than `mask_r_max` are set to zero.</span>
+
+<span class="sd">    theta_bins: int, optional (default=50)</span>
+<span class="sd">        Bins to be used in the :py:mod:`ai4materials.utils.utils_vol_data.slice_3d_volume` for the theta angle of the</span>
+<span class="sd">        spherical coordinates. This is used to extract the spherical shells from the 3d volume in cartesian</span>
+<span class="sd">        coordinates. See :py:mod:`ai4materials.utils.utils_vol_data.slice_3d_volume` for more details.</span>
+
+<span class="sd">    phi_bins: int, optional (default=100)</span>
+<span class="sd">        Bins to be used in the :py:mod:`ai4materials.utils.utils_vol_data.slice_3d_volume` for the phi angle of the</span>
+<span class="sd">        spherical coordinates. This is used to extract the spherical shells from the 3d volume in cartesian</span>
+<span class="sd">        coordinates. See :py:mod:`ai4materials.utils.utils_vol_data.slice_3d_volume` for more details.</span>
+
+<span class="sd">    theta_bins_fine: int, optional (default=256)</span>
+<span class="sd">        Bins to be used in the :py:mod:`ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces` for the theta</span>
+<span class="sd">        angle of the spherical coordinates. This is used to interpolate on a finer grid the spherical shells</span>
+<span class="sd">        extracted from the 3d volumes - now in spherical coordinates. It can be much higher than ``theta_bins`` because</span>
+<span class="sd">        the spherical shells are represented in spherical coordinates (2D) and not in cartesian coordinates (3D).</span>
+<span class="sd">        See :py:mod:`ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces` for more details.</span>
+
+<span class="sd">    phi_bins_fine: int, optional (default=512)</span>
+<span class="sd">        Bins to be used in the :py:mod:`ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces` for the theta</span>
+<span class="sd">        angle of the spherical coordinates. This is used to interpolate on a finer grid the spherical shells</span>
+<span class="sd">        extracted from the 3d volumes - now in spherical coordinates. It can be much higher than ``theta_bins`` because</span>
+<span class="sd">        the spherical shells are represented in spherical coordinates (2D) and not in cartesian coordinates (3D).</span>
+<span class="sd">        See :py:mod:`ai4materials.utils.utils_vol_data.interp_theta_phi_surfaces` for more details.</span>
+
+<span class="sd">    sph_l_cutoff: int, optional (default=32)</span>
+<span class="sd">        Cut-off for the spherical harmonics expansion. Only spherical harmonics with degree l up to sph_l_cutoff</span>
+<span class="sd">        will be kept. The reconstruction of the sperical shells for different values of the ``sph_l_cutoff``</span>
+<span class="sd">        can be visually checked (for each slice) by plotting the reconstructed images via</span>
+<span class="sd">        ai4materials.descriptors.diffraction3d.plot_concentric_shells_spherical_coords.</span>
+
+<span class="sd">    window: str, optional (default=&#39;hanning&#39;)</span>
+<span class="sd">        Window to be used when performing the Fourier transform. In principle any window from</span>
+<span class="sd">        ``scipy.signal.get_window`` can be used.</span>
+
+<span class="sd">    nx_fft: int, optional (default=128)</span>
+<span class="sd">        Size of the Fourier transform along the x axis.</span>
+
+<span class="sd">    ny_fft: int, optional (default=128)</span>
+<span class="sd">        Size of the Fourier transform along the y axis.</span>
+
+<span class="sd">    nz_fft: int, optional (default=128)</span>
+<span class="sd">        Size of the Fourier transform along the z axis.</span>
+
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This descriptor was introduced in the following article:</span>
+
+<span class="sd">        A. Ziletti, A. Leitherer, M. Scheffler, and L. M. Ghiringhelli, &quot;Crystal-structure classification</span>
+<span class="sd">        via Bayesian deep learning - towards superhuman performance&quot;, to be submitted (2018).</span>
+
+<span class="sd">        Please cite this manuscript if you find this descriptor useful in your work.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        To calculate the three-dimensional diffraction pattern we use the open source software Condor.</span>
+<span class="sd">        See the Condor webpage for more details: http://condor.readthedocs.io/en/.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configs</span><span class="p">,</span> <span class="n">param_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">param_detector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_param_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">user_param_detector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">atoms_scaling</span><span class="o">=</span><span class="s1">&#39;quantile_nn&#39;</span><span class="p">,</span> <span class="n">extrinsic_scale_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">atoms_scaling_cutoffs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask_r_min</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">mask_r_max</span><span class="o">=</span><span class="mi">92</span><span class="p">,</span> <span class="n">phi_bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">theta_bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                 <span class="n">phi_bins_fine</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">theta_bins_fine</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">sph_l_cutoff</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s1">&#39;hanning&#39;</span><span class="p">,</span> <span class="n">nx_fft</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">ny_fft</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+                 <span class="n">nz_fft</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DISH</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">configs</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">Descriptor</span><span class="o">.</span><span class="n">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">param_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">param_source</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wavelength&#39;</span><span class="p">:</span> <span class="mf">4.0E-12</span><span class="p">,</span> <span class="s1">&#39;pulse_energy&#39;</span><span class="p">:</span> <span class="mf">1E-3</span><span class="p">,</span> <span class="s1">&#39;focus_diameter&#39;</span><span class="p">:</span> <span class="mf">1E-3</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">param_detector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">param_detector</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;pixel_size&#39;</span><span class="p">:</span> <span class="mf">3E-4</span><span class="p">,</span> <span class="s1">&#39;nx&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;ny&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">user_param_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">param_source</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">user_param_source</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user_param_detector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">param_detector</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">user_param_detector</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">atoms_scaling_cutoffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">atoms_scaling_cutoffs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">,</span> <span class="mf">13.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms_scaling</span> <span class="o">=</span> <span class="n">atoms_scaling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extrinsic_scale_factor</span> <span class="o">=</span> <span class="n">extrinsic_scale_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms_scaling_cutoffs</span> <span class="o">=</span> <span class="n">atoms_scaling_cutoffs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_source</span> <span class="o">=</span> <span class="n">param_source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_detector</span> <span class="o">=</span> <span class="n">param_detector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_mask</span> <span class="o">=</span> <span class="n">use_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_r_min</span> <span class="o">=</span> <span class="n">mask_r_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_r_max</span> <span class="o">=</span> <span class="n">mask_r_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phi_bins</span> <span class="o">=</span> <span class="n">phi_bins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_bins</span> <span class="o">=</span> <span class="n">theta_bins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phi_bins_fine</span> <span class="o">=</span> <span class="n">phi_bins_fine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_bins_fine</span> <span class="o">=</span> <span class="n">theta_bins_fine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sph_l_cutoff</span> <span class="o">=</span> <span class="n">sph_l_cutoff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_px</span> <span class="o">=</span> <span class="n">param_detector</span><span class="p">[</span><span class="s2">&quot;nx&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_py</span> <span class="o">=</span> <span class="n">param_detector</span><span class="p">[</span><span class="s2">&quot;ny&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">window</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_px</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_py</span><span class="p">,</span> <span class="s2">&quot;Images needs to have equal width and height while we have </span><span class="si">{0}</span><span class="s2"> and </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_px</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_py</span><span class="p">)</span>
+
+        <span class="c1"># we assume that the pz is the same as n_px and n_py</span>
+        <span class="c1"># in condor it is not defined, but from the output we see that it is the same as n_px and n_py</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_pz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_px</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;param_source&quot;</span><span class="p">:</span> <span class="n">param_source</span><span class="p">,</span> <span class="s2">&quot;param_detector&quot;</span><span class="p">:</span> <span class="n">param_detector</span><span class="p">,</span> <span class="s2">&quot;use_mask&quot;</span><span class="p">:</span> <span class="n">use_mask</span><span class="p">})</span>
+
+        <span class="c1"># add derived parameters</span>
+        <span class="k">if</span> <span class="n">nx_fft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nx_fft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_px</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ny_fft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ny_fft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_py</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">nz_fft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nz_fft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pz</span> <span class="o">*</span> <span class="mi">2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span> <span class="o">=</span> <span class="n">nx_fft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span> <span class="o">=</span> <span class="n">ny_fft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span> <span class="o">=</span> <span class="n">nz_fft</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span><span class="p">,</span> <span class="s2">&quot;The fft sampling should be cubic while we have </span><span class="si">{0}</span><span class="s2"> and </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span><span class="p">,</span> <span class="s2">&quot;The fft sampling should be cubic while we have </span><span class="si">{0}</span><span class="s2"> and </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+<div class="viewcode-block" id="DISH.calculate"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.DISH.calculate">[docs]</a>    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">min_nb_atoms</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">plot_3d</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot_slices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot_slices_sph_coords</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the descriptor for the given ASE structure.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        structure: `ase.Atoms` object</span>
+<span class="sd">            Atomic structure.</span>
+
+<span class="sd">        min_nb_atoms: int, optional (default=20)</span>
+<span class="sd">            If the structure contains less than ``min_nb_atoms``, the descriptor is not calculated and an array with</span>
+<span class="sd">            zeros is return as descriptor. This is because the descriptor is expected to be no longer meaningful for</span>
+<span class="sd">            such a small amount of atoms present in the chosen structure.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_nb_atoms</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">scale_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">scaling_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms_scaling</span><span class="p">,</span>
+                                    <span class="n">atoms_scaling_cutoffs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms_scaling_cutoffs</span><span class="p">,</span>
+                                    <span class="n">extrinsic_scale_factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">extrinsic_scale_factor</span><span class="p">)</span>
+
+            <span class="c1"># Source</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">condor</span><span class="o">.</span><span class="n">Source</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">param_source</span><span class="p">)</span>
+
+            <span class="c1"># Detector</span>
+            <span class="c1"># solid_angle_correction are meaningless for 3d diffraction</span>
+            <span class="n">det</span> <span class="o">=</span> <span class="n">condor</span><span class="o">.</span><span class="n">Detector</span><span class="p">(</span><span class="n">solid_angle_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">param_detector</span><span class="p">)</span>
+
+            <span class="c1"># Atoms</span>
+            <span class="n">atomic_numbers</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">el</span><span class="p">:</span> <span class="n">el</span><span class="o">.</span><span class="n">number</span><span class="p">,</span> <span class="n">atoms</span><span class="p">)</span>
+            <span class="n">atomic_numbers</span> <span class="o">=</span> <span class="p">[</span><span class="n">atomic_number</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">for</span> <span class="n">atomic_number</span> <span class="ow">in</span> <span class="n">atomic_numbers</span><span class="p">]</span>
+            <span class="c1"># atomic_numbers = [82 for atomic_number in atomic_numbers]</span>
+
+            <span class="c1"># convert Angstrom to m (CONDOR uses meters)</span>
+            <span class="n">atomic_positions</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">pos</span><span class="p">:</span> <span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="mf">1E-10</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="mf">1E-10</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">z</span> <span class="o">*</span> <span class="mf">1E-10</span><span class="p">],</span> <span class="n">atoms</span><span class="p">)</span>
+
+            <span class="n">par</span> <span class="o">=</span> <span class="n">condor</span><span class="o">.</span><span class="n">ParticleAtoms</span><span class="p">(</span><span class="n">atomic_numbers</span><span class="o">=</span><span class="n">atomic_numbers</span><span class="p">,</span> <span class="n">atomic_positions</span><span class="o">=</span><span class="n">atomic_positions</span><span class="p">)</span>
+
+            <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;particle_atoms&quot;</span>
+            <span class="n">condor_exp</span> <span class="o">=</span> <span class="n">condor</span><span class="o">.</span><span class="n">Experiment</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="n">par</span><span class="p">},</span> <span class="n">det</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">condor_exp</span><span class="o">.</span><span class="n">propagate3d</span><span class="p">()</span>
+
+            <span class="c1"># retrieve some physical quantities that might be useful for users</span>
+            <span class="n">intensity</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;entry_1&quot;</span><span class="p">][</span><span class="s2">&quot;data_1&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+            <span class="n">fourier_space</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;entry_1&quot;</span><span class="p">][</span><span class="s2">&quot;data_1&quot;</span><span class="p">][</span><span class="s2">&quot;data_fourier&quot;</span><span class="p">]</span>
+            <span class="n">phases</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">fourier_space</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+            <span class="c1"># 3D diffraction calculation</span>
+            <span class="n">real_space</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;entry_1&quot;</span><span class="p">][</span><span class="s2">&quot;data_1&quot;</span><span class="p">][</span><span class="s2">&quot;data_fourier&quot;</span><span class="p">])))</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="n">get_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_px</span><span class="p">)</span>
+            <span class="n">tot_density</span> <span class="o">=</span> <span class="n">window</span> <span class="o">*</span> <span class="n">real_space</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">center_of_mass</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">measurements</span><span class="o">.</span><span class="n">center_of_mass</span><span class="p">(</span><span class="n">tot_density</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Tot density data dimensions: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tot_density</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Center of mass of total density: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">center_of_mass</span><span class="p">))</span>
+
+            <span class="c1"># take the fourier transform of structure in real_space</span>
+            <span class="n">fft_coeff</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">tot_density</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span><span class="p">))</span>
+
+            <span class="c1"># now shift the quadrants around so that low spatial frequencies are in</span>
+            <span class="c1"># the center of the 2D fourier transformed image.</span>
+            <span class="n">fft_coeff_shifted</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">fft_coeff</span><span class="p">)</span>
+
+            <span class="c1"># calculate a 3D power spectrum</span>
+            <span class="n">power_spect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fft_coeff_shifted</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_mask</span><span class="p">:</span>
+                <span class="n">xc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+                <span class="n">yc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+                <span class="n">zc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+                <span class="c1"># spherical mask</span>
+                <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">zc</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ogrid</span><span class="p">[</span><span class="o">-</span><span class="n">a</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span> <span class="o">-</span> <span class="n">a</span><span class="p">,</span> <span class="o">-</span><span class="n">b</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span> <span class="o">-</span> <span class="n">b</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span> <span class="o">-</span> <span class="n">c</span><span class="p">]</span>
+
+                <span class="n">mask_int</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span> <span class="o">*</span> <span class="n">z</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_r_min</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_r_min</span>
+                <span class="n">mask_out</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span> <span class="o">*</span> <span class="n">z</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_r_max</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_r_max</span>
+
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx_fft</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny_fft</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nz_fft</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">mask_int</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]:</span>
+                                <span class="n">power_spect</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                            <span class="k">if</span> <span class="n">mask_out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]:</span>
+                                <span class="n">power_spect</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="c1"># cut the spectrum and keep only the relevant part for crystal-structure recognition of</span>
+            <span class="c1"># hexagonal closed packed (spacegroup=194)</span>
+            <span class="c1"># simple cubic (spacegroup=221)</span>
+            <span class="c1"># face centered cubic (spacegroup=225)</span>
+            <span class="c1"># diamond (spacegroup=227)</span>
+            <span class="c1"># body centered cubic (spacegroup=229)</span>
+            <span class="c1"># this interval (20:108) might need to be varied if other classes are added</span>
+            <span class="n">power_spect_cut</span> <span class="o">=</span> <span class="n">power_spect</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">108</span><span class="p">,</span> <span class="mi">20</span><span class="p">:</span><span class="mi">108</span><span class="p">,</span> <span class="mi">20</span><span class="p">:</span><span class="mi">108</span><span class="p">]</span>
+            <span class="c1"># zoom by two times using spline interpolation</span>
+            <span class="n">power_spect</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">power_spect_cut</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="c1"># power_spect.shape = 176, 176, 176</span>
+            <span class="k">if</span> <span class="n">plot_3d</span><span class="p">:</span>
+                <span class="n">plot_3d_volume</span><span class="p">(</span><span class="n">power_spect</span><span class="p">)</span>
+
+            <span class="n">vox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">power_spect</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;nan in data: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vox</span><span class="p">))))</span>
+
+            <span class="c1"># optimized</span>
+            <span class="c1"># these specifications are valid for a power_spect = power_spect[20:108, 20:108, 20:108]</span>
+            <span class="c1"># and a magnification of 2</span>
+            <span class="n">xyz_indices_r</span> <span class="o">=</span> <span class="n">get_slice_volume_indices</span><span class="p">(</span><span class="n">vox</span><span class="p">,</span> <span class="n">min_r</span><span class="o">=</span><span class="mf">32.0</span><span class="p">,</span> <span class="n">dr</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">max_r</span><span class="o">=</span><span class="mf">83.</span><span class="p">,</span> <span class="n">phi_bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">phi_bins</span><span class="p">,</span>
+                                    <span class="n">theta_bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_bins</span><span class="p">)</span>
+
+            <span class="c1"># slow - only for benchmarking the fast implementation below (shells_to_sph, interp_theta_phi_surfaces)</span>
+            <span class="c1"># (vox_by_slices, theta_phi_by_slices) = _slice_3d_volume_slow(vox)</span>
+
+            <span class="c1"># convert 3d shells</span>
+            <span class="p">(</span><span class="n">vox_by_slices</span><span class="p">,</span> <span class="n">theta_phi_by_slices</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_shells_from_indices</span><span class="p">(</span><span class="n">xyz_indices_r</span><span class="p">,</span> <span class="n">vox</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_slices</span><span class="p">:</span>
+                <span class="n">plot_concentric_shells</span><span class="p">(</span><span class="n">vox_by_slices</span><span class="p">,</span> <span class="n">base_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span> <span class="n">idx_slices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                       <span class="n">create_animation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">image_by_slices</span> <span class="o">=</span> <span class="n">interp_theta_phi_surfaces</span><span class="p">(</span><span class="n">theta_phi_by_slices</span><span class="p">,</span> <span class="n">theta_bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_bins_fine</span><span class="p">,</span>
+                                                        <span class="n">phi_bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">phi_bins_fine</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">plot_slices_sph_coords</span><span class="p">:</span>
+                <span class="n">plot_concentric_shells_spherical_coords</span><span class="p">(</span><span class="n">image_by_slices</span><span class="p">,</span> <span class="n">base_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;main_folder&#39;</span><span class="p">],</span>
+                                                        <span class="n">idx_slices</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+            <span class="n">coeffs_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">nl_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">ls_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">idx_slice</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image_by_slices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;img #</span><span class="si">{}</span><span class="s2"> max: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx_slice</span><span class="p">,</span> <span class="n">image_by_slices</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+
+                <span class="c1"># set to zero the spherical harmonics coefficients above self.sph_l_cutoff</span>
+                <span class="n">coeffs</span> <span class="o">=</span> <span class="n">SHExpandDH</span><span class="p">(</span><span class="n">image_by_slices</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">],</span> <span class="n">sampling</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">coeffs_filtered</span> <span class="o">=</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">coeffs_filtered</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sph_l_cutoff</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="n">coeffs</span> <span class="o">=</span> <span class="n">coeffs_filtered</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                <span class="n">nl</span> <span class="o">=</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">ls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nl</span><span class="p">)</span>
+                <span class="n">coeffs_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span>
+                <span class="n">nl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nl</span><span class="p">)</span>
+                <span class="n">ls_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coeffs_list</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">image_by_slices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                     <span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+            <span class="n">sh_coeffs_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">idx_slice</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">sh_coeffs</span> <span class="o">=</span> <span class="n">SHCoeffs</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">coeffs</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">])</span>
+                <span class="n">sh_coeffs_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sh_coeffs</span><span class="p">)</span>
+
+            <span class="n">sh_spectrum_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">sh_coeff</span> <span class="ow">in</span> <span class="n">sh_coeffs_list</span><span class="p">:</span>
+                <span class="n">sh_spectrum</span> <span class="o">=</span> <span class="n">sh_coeff</span><span class="o">.</span><span class="n">spectrum</span><span class="p">(</span><span class="n">convention</span><span class="o">=</span><span class="s1">&#39;l2norm&#39;</span><span class="p">)</span>
+                <span class="n">sh_spectrum_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sh_spectrum</span><span class="p">)</span>
+
+            <span class="n">sh_spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sh_spectrum_list</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># cut the spherical harmonics expansion to sph_l_cutoff order</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Spherical harmonics spectra maximum before normalization: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sh_spectra</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+            <span class="n">sh_spectra</span> <span class="o">=</span> <span class="n">sh_spectra</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">sph_l_cutoff</span><span class="p">]</span>
+            <span class="n">sh_spectra</span> <span class="o">=</span> <span class="p">(</span><span class="n">sh_spectra</span> <span class="o">-</span> <span class="n">sh_spectra</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">sh_spectra</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">sh_spectra</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+
+            <span class="c1"># add results in ASE structure info</span>
+            <span class="n">descriptor_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">descriptor_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">descriptor_info</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                                   <span class="n">diffraction_3d_sh_spectrum</span><span class="o">=</span><span class="n">sh_spectra</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># return array with zeros for structures with less than min_nb_atoms</span>
+            <span class="n">sh_spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">52</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sph_l_cutoff</span><span class="p">)))</span>
+            <span class="n">descriptor_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">descriptor_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">descriptor_info</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                                   <span class="n">diffraction_3d_sh_spectrum</span><span class="o">=</span><span class="n">sh_spectra</span><span class="p">)</span>
+
+        <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">descriptor_data</span>
+
+        <span class="k">return</span> <span class="n">structure</span></div>
+
+<div class="viewcode-block" id="DISH.write"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.DISH.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">tar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">op_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">write_sh_spectra_npy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">write_sh_spectra_png</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">write_geo</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">format_geometry</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        structure: class, ASE atoms class</span>
+<span class="sd">            Instance of the class ASE atoms class</span>
+
+<span class="sd">        format_geometry: string, optional (default=&#39;aims&#39;)</span>
+<span class="sd">            File output format. All ASE valid output formats are accepted.</span>
+<span class="sd">            For a list: https://wiki.fysik.dtu.dk/ase/ase/io/io.html</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_descriptor_consistent</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Descriptor not consistent. Aborting.&#39;</span><span class="p">)</span>
+
+        <span class="n">desc_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;io&#39;</span><span class="p">][</span><span class="s1">&#39;desc_folder&#39;</span><span class="p">]</span>
+        <span class="n">descriptor_info</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;descriptor_info&#39;</span><span class="p">]</span>
+
+        <span class="n">sh_spectra</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;diffraction_3d_sh_spectrum&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">write_sh_spectra_npy</span><span class="p">:</span>
+            <span class="n">sh_spectra_filename_npy</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span>
+                <span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_op&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">op_id</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc_metadata</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s1">&#39;diffraction_3d_sh_spectrum&#39;</span><span class="p">][</span><span class="s1">&#39;file_ending&#39;</span><span class="p">])))</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">sh_spectra_filename_npy</span><span class="p">,</span> <span class="n">sh_spectra</span><span class="p">)</span>
+            <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;diff_3d_sh_spectrum_filename_npy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sh_spectra_filename_npy</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;diff_3d_sh_spectrum_filename_npy&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">write_sh_spectra_png</span><span class="p">:</span>
+            <span class="n">sh_spectra_filename_png</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span>
+                <span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_op&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">op_id</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc_metadata</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="s1">&#39;diffraction_3d_sh_spectrum_image&#39;</span><span class="p">][</span>
+                                                                                        <span class="s1">&#39;file_ending&#39;</span><span class="p">])))</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">sh_spectra_filename_png</span><span class="p">,</span> <span class="n">sh_spectra</span><span class="p">)</span>
+            <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;diff_3d_sh_spectrum_filename_png&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sh_spectra_filename_png</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;diff_3d_sh_spectrum_filename_png&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">write_geo</span><span class="p">:</span>
+            <span class="c1"># to have the file accessible by the Beaker notebook image we need to put them</span>
+            <span class="c1"># in a special folder (&#39;/user/tmp&#39;)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">[</span><span class="s1">&#39;runtime&#39;</span><span class="p">][</span><span class="s1">&#39;isBeaker&#39;</span><span class="p">]:</span>
+                <span class="c1"># only for Beaker Notebook</span>
+                <span class="n">coord_filename_in</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;/user/tmp/&#39;</span><span class="p">,</span>
+                                                                                  <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                                                                  <span class="bp">self</span><span class="o">.</span><span class="n">desc_metadata</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span>
+                                                                                      <span class="s1">&#39;diffraction_3d_coordinates&#39;</span><span class="p">][</span>
+                                                                                      <span class="s1">&#39;file_ending&#39;</span><span class="p">])))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coord_filename_in</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc_folder</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                                                                  <span class="bp">self</span><span class="o">.</span><span class="n">desc_metadata</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span>
+                                                                                      <span class="s1">&#39;diffraction_3d_coordinates&#39;</span><span class="p">][</span>
+                                                                                      <span class="s1">&#39;file_ending&#39;</span><span class="p">])))</span>
+
+            <span class="n">structure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">coord_filename_in</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">format_geometry</span><span class="p">)</span>
+            <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;diff_3d_coord_filename_in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_filename_in</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;diff_3d_coord_filename_in&#39;</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="get_design_matrix"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.get_design_matrix">[docs]</a><span class="k">def</span> <span class="nf">get_design_matrix</span><span class="p">(</span><span class="n">structures</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;flatten_images&#39;</span><span class="p">,</span> <span class="n">nn_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layer_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Starting from atomic structures calculate the design matrix for the three-dimensional diffraction fingerprint.</span>
+
+<span class="sd">    The list of structures must contain the calculated :py:class:`ai4materials.descriptors.diffraction3d.Diffraction3D`.</span>
+
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    structures: ``ase.Atoms`` object or list of ``ase.Atoms`` object</span>
+<span class="sd">        Atomic structure or list of atomic structure.</span>
+
+
+<span class="sd">    Return:</span>
+
+<span class="sd">    np.ndarray, shape [n_samples, n_features]</span>
+<span class="sd">        Returns the design matrix.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx_structure</span><span class="p">,</span> <span class="n">structure</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structures</span><span class="p">):</span>
+        <span class="n">diffraction_3d_sh_spectrum</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;descriptor&#39;</span><span class="p">][</span><span class="s1">&#39;diffraction_3d_sh_spectrum&#39;</span><span class="p">]</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diffraction_3d_sh_spectrum</span><span class="p">)</span>
+
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;flatten_images&#39;</span><span class="p">:</span>
+        <span class="n">design_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;nn_representation&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">nn_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using the convolutional neural network filters as feature matrix.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Layer name: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">layer_name</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">nn_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+            <span class="n">activations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">get_activations</span><span class="p">(</span><span class="n">nn_model</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">print_shape_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layer_name</span><span class="o">=</span><span class="n">layer_name</span><span class="p">))</span>
+            <span class="n">design_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">activations</span><span class="p">,</span> <span class="p">(</span><span class="n">activations</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please pass a valid Keras neural network model.&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Feature matrix shape: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">design_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">design_matrix</span></div>
+
+
+<div class="viewcode-block" id="plot_3d_volume"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.plot_3d_volume">[docs]</a><span class="k">def</span> <span class="nf">plot_3d_volume</span><span class="p">(</span><span class="n">power_spect</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate a 3d plot given a numpy array with Mayavi.</span>
+
+<span class="sd">    This function can be used to plot any three-dimensional field, passed as a np.array.</span>
+<span class="sd">    It uses the `mayavi.tools.pipeline.volume` from Mayavi:</span>
+<span class="sd">    http://docs.enthought.com/mayavi/mayavi/auto/mlab_pipeline_other_functions.html#volume</span>
+<span class="sd">    In the plot it is assumed that the elements of the array are equally spaced.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    power_spect: np.ndarray, shape [n_px, n_py, n_pz]</span>
+<span class="sd">        Array containing a three-dimensional quantity (i.e. field).</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">mayavi</span> <span class="k">import</span> <span class="n">mlab</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Could not import Mayavi. Mayavi is required for 3d plotting.&quot;</span><span class="p">)</span>
+
+    <span class="n">mlab</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">))</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">offscreen</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+    <span class="c1"># remove nan and normalize the spectrum for plotting purposes only</span>
+    <span class="n">power_spect_plot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">power_spect</span><span class="p">)</span>
+    <span class="n">power_spect_plot_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">power_spect_plot</span> <span class="o">-</span> <span class="n">power_spect_plot</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">power_spect_plot</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">power_spect_plot</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+
+    <span class="n">src</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">scalar_field</span><span class="p">(</span><span class="n">power_spect_plot_norm</span><span class="p">)</span>
+    <span class="n">field_min</span> <span class="o">=</span> <span class="n">power_spect_plot_norm</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">field_max</span> <span class="o">=</span> <span class="n">power_spect_plot_norm</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">volume</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">field_min</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="n">field_max</span> <span class="o">-</span> <span class="n">field_min</span><span class="p">))</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Field intensity&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+
+    <span class="c1"># insert plane parallel to axis passing through the origin</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">image_plane_widget</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">plane_orientation</span><span class="o">=</span><span class="s1">&#39;x_axes&#39;</span><span class="p">,</span> <span class="n">slice_index</span><span class="o">=</span><span class="n">power_spect_plot_norm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">image_plane_widget</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">plane_orientation</span><span class="o">=</span><span class="s1">&#39;y_axes&#39;</span><span class="p">,</span> <span class="n">slice_index</span><span class="o">=</span><span class="n">power_spect_plot_norm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">image_plane_widget</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">plane_orientation</span><span class="o">=</span><span class="s1">&#39;z_axes&#39;</span><span class="p">,</span> <span class="n">slice_index</span><span class="o">=</span><span class="n">power_spect_plot_norm</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">mlab</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Field intensity&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+
+    <span class="n">mlab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">mlab</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_concentric_shells"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.plot_concentric_shells">[docs]</a><span class="k">def</span> <span class="nf">plot_concentric_shells</span><span class="p">(</span><span class="n">vox_by_slices</span><span class="p">,</span> <span class="n">base_folder</span><span class="p">,</span> <span class="n">idx_slices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_animation</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the concentric shells for a given three-dimensional volumetric shape.</span>
+
+<span class="sd">    The volumetric shape is the three-dimensional diffraction intensity, as calculated by</span>
+<span class="sd">    :py:mod:`ai4materials.descriptors.diffraction3d.Diffraction3D`. To plot the concentric shells</span>
+<span class="sd">    for different voxel np.ndarray shapes simply change ``x, y, z = np.mgrid[0:176:176j, 0:176:176j, 0:176:176j]``</span>
+<span class="sd">    to your desire meshgrid.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    vox_by_slices: np.ndarray, shape [n_slices, n_px, n_py, n_pz]</span>
+<span class="sd">        4-dimensional array containing each concentric shell obtained from</span>
+<span class="sd">        :py:mod:`ai4materials.descriptors.diffraction3d.Diffraction3D`.</span>
+<span class="sd">        ``n_px``, ``n_py``, ``n_pz`` are given by the interpolation and the region of the space</span>
+<span class="sd">        considered. In our case, ``n_slices=52``, ``n_px=n_py=n_pz=176``.</span>
+
+<span class="sd">    base_folder: str</span>
+<span class="sd">        Folder to save the figures generated. The figures are saved in a subfolder folder ``shells_png`` of</span>
+<span class="sd">        ``base_folder``.</span>
+
+<span class="sd">    idx_slices: list of int, optional (default=None)</span>
+<span class="sd">        List of integers defining which concentric shells to plot.</span>
+<span class="sd">        If `None`, all concentric shells are plotted.</span>
+
+<span class="sd">    create_animation: bool, optional (default=True)</span>
+<span class="sd">        If `True` create an animation containing all concentric shells.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">mayavi</span> <span class="k">import</span> <span class="n">mlab</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Could not import Mayavi. Mayavi is required for 3d plotting.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">idx_slices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">idx_slices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">vox_by_slices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># create folder for saving files</span>
+    <span class="n">shells_images_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_folder</span><span class="p">,</span> <span class="s1">&#39;png_shells&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">shells_images_folder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">shells_images_folder</span><span class="p">)</span>
+
+    <span class="n">filename_png_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">176</span><span class="p">:</span><span class="mi">176</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">176</span><span class="p">:</span><span class="mi">176</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">176</span><span class="p">:</span><span class="mi">176</span><span class="n">j</span><span class="p">]</span>
+
+    <span class="n">mlab</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx_slice</span> <span class="ow">in</span> <span class="n">idx_slices</span><span class="p">:</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">offscreen</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">filename_png</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shells_images_folder</span><span class="p">,</span> <span class="s1">&#39;desc_slice_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx_slice</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">filename_png_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename_png</span><span class="p">)</span>
+
+        <span class="n">scalars</span> <span class="o">=</span> <span class="n">vox_by_slices</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">]</span>
+        <span class="n">c_of_mass</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">measurements</span><span class="o">.</span><span class="n">center_of_mass</span><span class="p">(</span><span class="n">scalars</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Center of mass: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c_of_mass</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Max scalar field: </span><span class="si">{}</span><span class="s2"> for shell </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scalars</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">idx_slice</span><span class="p">))</span>
+
+        <span class="n">expansion</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">x_new</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">expansion</span> <span class="o">*</span> <span class="n">idx_slice</span><span class="p">)</span>
+        <span class="n">y_new</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">expansion</span> <span class="o">*</span> <span class="n">idx_slice</span><span class="p">)</span>
+        <span class="n">z_new</span> <span class="o">=</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">expansion</span> <span class="o">*</span> <span class="n">idx_slice</span><span class="p">)</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">contour3d</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">z_new</span><span class="p">,</span> <span class="n">scalars</span><span class="p">,</span> <span class="n">contours</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=.</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">disable_render</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">anti_aliasing_frames</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Field intensity&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+
+        <span class="n">mlab</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename_png</span><span class="p">)</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">mlab</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">create_animation</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># import imageio  # with imageio.get_writer(&#39;/home/ziletti/Documents/calc_xray/rot_inv_3d/png_slices/descriptor.gif&#39;, mode=&#39;I&#39;,  #                         fps=2) as writer:  #     for filename_png in filename_png_list:  #         image = imageio.imread(filename_png)  # writer.append_data(image)  # for filename_png in filename_png_list:  #  # os.remove(filename_png)</span></div>
+
+
+<div class="viewcode-block" id="plot_concentric_shells_spherical_coords"><a class="viewcode-back" href="../../../ai4materials.descriptors.diffraction3d.html#ai4materials.descriptors.diffraction3d.plot_concentric_shells_spherical_coords">[docs]</a><span class="k">def</span> <span class="nf">plot_concentric_shells_spherical_coords</span><span class="p">(</span><span class="n">image_by_slices</span><span class="p">,</span> <span class="n">base_folder</span><span class="p">,</span> <span class="n">idx_slices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot the concentric shells for a given three-dimensional volumetric shape.</span>
+
+<span class="sd">    The volumetric shape is the three-dimensional diffraction intensity, as calculated by</span>
+<span class="sd">    :py:mod:`ai4materials.descriptors.diffraction3d.Diffraction3D`.</span>
+
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">    image_by_slices: np.ndarray, shape [n_slices, theta_bins_fine, phi_bins_fine]</span>
+<span class="sd">        Three-dimensional array containing each concentric shell obtained in spherical coordinate, as calculated by</span>
+<span class="sd">        :py:mod:`ai4materials.descriptors.diffraction3d.Diffraction3D`</span>
+<span class="sd">        ``n_slices``, ``theta_bins_fine``, ``phi_bins_fine`` are given by the interpolation and the region of the space</span>
+<span class="sd">        considered. In our case, ``n_slices=52``, ``theta_bins_fine=256``, ``phi_bins_fine=512``, as defined in</span>
+<span class="sd">        :py:mod:`ai4materials.descriptors.diffraction3d.Diffraction3D` in ``phi_bins_fine`` and ``theta_bins_fine``.</span>
+
+<span class="sd">    base_folder: str</span>
+<span class="sd">        Folder to save the figures generated. The figures are saved in a subfolder folder ``shells_png`` of</span>
+<span class="sd">        ``base_folder``.</span>
+
+<span class="sd">    idx_slices: list of int, optional (default=None)</span>
+<span class="sd">        List of integers defining which concentric shells to plot.</span>
+<span class="sd">        If `None`, all concentric shells - in spherical coordinates - are plotted.</span>
+
+<span class="sd">    .. codeauthor:: Angelo Ziletti &lt;angelo.ziletti@gmail.com&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">idx_slices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">idx_slices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">image_by_slices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># create folder for saving files</span>
+    <span class="n">shells_images_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_folder</span><span class="p">,</span> <span class="s1">&#39;shells_png&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">shells_images_folder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">shells_images_folder</span><span class="p">)</span>
+
+    <span class="n">filename_png_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx_slice</span> <span class="ow">in</span> <span class="n">idx_slices</span><span class="p">:</span>
+        <span class="n">filename_png</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shells_images_folder</span><span class="p">,</span> <span class="s1">&#39;desc_sph_coords_slice&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx_slice</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+        <span class="n">filename_png_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename_png</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Slide idx: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx_slice</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Image max: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_by_slices</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">SHExpandDH</span><span class="p">(</span><span class="n">image_by_slices</span><span class="p">[</span><span class="n">idx_slice</span><span class="p">],</span> <span class="n">sampling</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">coeffs_filtered</span> <span class="o">=</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">MakeGridDH</span><span class="p">(</span><span class="n">coeffs_filtered</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">sampling</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">MakeGridDH</span><span class="p">(</span><span class="n">coeffs_filtered</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">16</span><span class="p">,</span> <span class="p">:],</span> <span class="n">sampling</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+                <span class="n">MakeGridDH</span><span class="p">(</span><span class="n">coeffs_filtered</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">32</span><span class="p">,</span> <span class="p">:],</span> <span class="n">sampling</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">MakeGridDH</span><span class="p">(</span><span class="n">coeffs_filtered</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">64</span><span class="p">,</span> <span class="p">:],</span> <span class="n">sampling</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx_ax</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">imgs</span><span class="p">[</span><span class="n">idx_ax</span><span class="p">],</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">cbar_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cbar_ax</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename_png</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

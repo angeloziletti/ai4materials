@@ -1,0 +1,8 @@
+mol.pdbout
+spsim.confout
+/img
+*.cfg
+*.xsf
+*.dat
+*.xyz
+*.txt

@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.unit_conversion &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="ai4materials v0.1.0" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/>
+    <link href="../../../_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="../../../_static/ai_for_materials_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ai4materials.utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ai4materials</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>ai4materials.utils.unit_conversion</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ai4materials.utils.unit_conversion</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for unit conversion routines. Currently uses the Pint unit conversion</span>
+<span class="sd">library (https://pint.readthedocs.org) to do the conversions.</span>
+
+<span class="sd">Any new units and constants can be added to the text files &quot;units.txt&quot; and</span>
+<span class="sd">&quot;constants.txt&quot;.</span>
+
+<span class="sd">NOTE: this is taken from python-common in nomad-lab-base.</span>
+<span class="sd">It is copied here to remove the dependency from nomad-lab-base.</span>
+<span class="sd">For more info on python-common visit:</span>
+<span class="sd">https://gitlab.mpcdf.mpg.de/nomad-lab/python-common</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">str</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">object</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pint</span> <span class="k">import</span> <span class="n">UnitRegistry</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1"># disable warnings from pint</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pint&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">ureg</span> <span class="o">=</span> <span class="n">UnitRegistry</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;units.txt&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="register_userdefined_quantity"><a class="viewcode-back" href="../../../ai4materials.utils.unit_conversion.html#ai4materials.utils.unit_conversion.register_userdefined_quantity">[docs]</a><span class="k">def</span> <span class="nf">register_userdefined_quantity</span><span class="p">(</span><span class="n">quantity</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Registers a user defined quantity, valid until redefined.</span>
+<span class="sd">    The value should be equal to value using units, with value defaulting to 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;usr[A-Za-z]*&quot;</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;User defined quantities should start with usr, and contain only letters&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Units should not contain an = sign&quot;</span><span class="p">)</span>
+    <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># value must be a float number</span>
+    <span class="n">ureg</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">quantity</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; * &quot;</span> <span class="o">+</span> <span class="n">units</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_unit"><a class="viewcode-back" href="../../../ai4materials.utils.unit_conversion.html#ai4materials.utils.unit_conversion.convert_unit">[docs]</a><span class="k">def</span> <span class="nf">convert_unit</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts the given value from the given units to the target units. For</span>
+<span class="sd">    examples see the bottom section.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: The numeric value to be converted. Accepts integers, floats,</span>
+<span class="sd">            lists and numpy arrays</span>
+<span class="sd">        unit: The units that the value is currently given in as a string. All</span>
+<span class="sd">            units that have a corresponding declaration in the &quot;units.txt&quot; file</span>
+<span class="sd">            and combinations like &quot;meter*second**-2&quot; are supported.</span>
+<span class="sd">        target_unit: The target unit as string. Same rules as for the unit</span>
+<span class="sd">            argument. If this argument is not given, SI units are assumed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The given value in the target units. returned as the same data type as</span>
+<span class="sd">        the original values.</span>
+
+<span class="sd">    .. codeauthor:: Fawzi Mohamed &lt;mohamed@fhi-berlin.mpg.de&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check that the unit is valid</span>
+    <span class="n">unit_def</span> <span class="o">=</span> <span class="n">ureg</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_def</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Undefined unit given. Cannot do the conversion&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># If no target is specified, assume SI automatically</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">target_unit</span><span class="p">:</span>
+        <span class="n">Q_</span> <span class="o">=</span> <span class="n">ureg</span><span class="o">.</span><span class="n">Quantity</span>
+        <span class="n">pint_value</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit_def</span><span class="p">)</span>
+        <span class="c1"># Base units are defined in the &quot;units.txt&quot; file, and they are the SI units.</span>
+        <span class="n">converted_value</span> <span class="o">=</span> <span class="n">pint_value</span><span class="o">.</span><span class="n">to_base_units</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">converted_value</span><span class="o">.</span><span class="n">magnitude</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Check that the given target unit is valid</span>
+        <span class="n">target_unit_def</span> <span class="o">=</span> <span class="n">ureg</span><span class="p">(</span><span class="n">target_unit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">target_unit_def</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Undefined target unit given. Cannot do the conversion&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">Q_</span> <span class="o">=</span> <span class="n">ureg</span><span class="o">.</span><span class="n">Quantity</span>
+        <span class="n">pint_value</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit_def</span><span class="p">)</span>
+        <span class="n">converted_value</span> <span class="o">=</span> <span class="n">pint_value</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">target_unit_def</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">converted_value</span><span class="o">.</span><span class="n">magnitude</span></div>
+
+
+<div class="viewcode-block" id="convert_unit_function_immediate"><a class="viewcode-back" href="../../../ai4materials.utils.unit_conversion.html#ai4materials.utils.unit_conversion.convert_unit_function_immediate">[docs]</a><span class="k">def</span> <span class="nf">convert_unit_function_immediate</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a function that converts scalar floats from unit to target_unit</span>
+<span class="sd">    All units need to be already known.</span>
+
+<span class="sd">    For more details see the convert_unit function.</span>
+<span class="sd">    Could be optimized a bit caching the pint quantities</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        unit: The units that the value is currently given in as a string. All</span>
+<span class="sd">            units that have a corresponding declaration in the &quot;units.txt&quot; file</span>
+<span class="sd">            and combinations like &quot;meter*second**-2&quot; are supported.</span>
+<span class="sd">        target_unit: The target unit as string. Same rules as for the unit</span>
+<span class="sd">            argument. If this argument is not given, SI units are assumed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The given value in the target units. returned as the same data type as</span>
+<span class="sd">        the original values.</span>
+
+<span class="sd">    .. codeauthor:: Fawzi Mohamed &lt;mohamed@fhi-berlin.mpg.de&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check that the dimensionality of the source and target units match.</span>
+    <span class="k">if</span> <span class="n">target_unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">ureg</span><span class="p">(</span><span class="n">target_unit</span><span class="p">)</span>
+        <span class="n">source_dim</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dimensionality</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">ureg</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+        <span class="n">target_dim</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">dimensionality</span>
+        <span class="k">if</span> <span class="n">source_dim</span> <span class="o">!=</span> <span class="n">target_dim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;The dimensionality of unit &#39;</span><span class="si">{}</span><span class="s2">&#39; does not match the dimensionality of unit &#39;</span><span class="si">{}</span><span class="s2">&#39;. Cannot do the unit conversion.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">unit</span><span class="p">,</span>
+                    <span class="n">target_unit</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">convert_unit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LazyF"><a class="viewcode-back" href="../../../ai4materials.utils.unit_conversion.html#ai4materials.utils.unit_conversion.LazyF">[docs]</a><span class="k">class</span> <span class="nc">LazyF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;helper class for lazy evaluation of conversion function&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_unit</span> <span class="o">=</span> <span class="n">target_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">convert_unit_function_immediate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_unit</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_unit_function"><a class="viewcode-back" href="../../../ai4materials.utils.unit_conversion.html#ai4materials.utils.unit_conversion.convert_unit_function">[docs]</a><span class="k">def</span> <span class="nf">convert_unit_function</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a function that converts scalar floats from unit to target_unit</span>
+<span class="sd">    if any of the unit are user defined (usr*), then the conversion is done lazily</span>
+<span class="sd">    at the first call (i.e. user defined conversions might be undefined when</span>
+<span class="sd">    calling this)</span>
+
+<span class="sd">    For more details see the convert_unit function.</span>
+<span class="sd">    Could be optimized a bit caching the pint quantities</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        unit: The units that the value is currently given in as a string. All</span>
+<span class="sd">            units that have a corresponding declaration in the &quot;units.txt&quot; file</span>
+<span class="sd">            and combinations like &quot;meter*second**-2&quot; are supported.</span>
+<span class="sd">        target_unit: The target unit as string. Same rules as for the unit</span>
+<span class="sd">            argument. If this argument is not given, SI units are assumed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The given value in the target units. returned as the same data type as</span>
+<span class="sd">        the original values.</span>
+
+<span class="sd">    .. codeauthor:: Fawzi Mohamed &lt;mohamed@fhi-berlin.mpg.de&gt;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;usr&quot;</span> <span class="ow">in</span> <span class="n">unit</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LazyF</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">convert_unit_function_immediate</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">target_unit</span><span class="p">)</span></div>
+
+
+<span class="c1"># Testing</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="c1"># Float</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;angstrom&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+    <span class="n">a_c</span> <span class="o">=</span> <span class="n">convert_unit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a_c</span><span class="p">)</span>
+
+    <span class="c1"># Numpy arrays</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;angstrom&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;meter&quot;</span>
+    <span class="n">b_c</span> <span class="o">=</span> <span class="n">convert_unit</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">b_c</span><span class="p">)</span>
+
+    <span class="c1"># Operators</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;eV*angstrom**-1&quot;</span>
+    <span class="n">c_c</span> <span class="o">=</span> <span class="n">convert_unit</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">c_c</span><span class="p">)</span>
+
+    <span class="c1"># Lists</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;angstrom&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+    <span class="n">d_c</span> <span class="o">=</span> <span class="n">convert_unit</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">d_c</span><span class="p">)</span>
+
+    <span class="c1"># Temperature</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;celsius&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;kelvin&quot;</span>
+    <span class="n">e_c</span> <span class="o">=</span> <span class="n">convert_unit</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e_c</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

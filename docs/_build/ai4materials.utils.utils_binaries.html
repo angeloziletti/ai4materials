@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ai4materials.utils.utils_binaries module &mdash; ai4materials v0.1.0</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ai4materials.utils.utils_config module" href="ai4materials.utils.utils_config.html" />
+    <link rel="prev" title="ai4materials.utils.unit_conversion module" href="ai4materials.utils.unit_conversion.html" />
+    <link href="_static/nomad-analytics.css" rel="stylesheet" type="text/css">
+
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ai4materials
+          
+
+          
+            
+            <img src="_static/ai_for_materials_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.dataprocessing.html">Data preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.descriptors.html">Representing crystal structures: descriptors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.wrappers.html">Creating and loading materials science datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.models.html">Regression and classification models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.interpretation.html">Neural network interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai4materials.visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ai4materials.utils.html">Utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals">Utils crystals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#pristine-and-defective-supercell-generation">Pristine and defective supercell generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_supercell">Example: pristine supercell creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils.utils_crystals.create_vacancies">Example: defective supercell creation</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ai4materials.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.unit_conversion.html">ai4materials.utils.unit_conversion module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ai4materials.utils.utils_binaries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_config.html">ai4materials.utils.utils_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_crystals.html">ai4materials.utils.utils_crystals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_data_retrieval.html">ai4materials.utils.utils_data_retrieval module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_mp.html">ai4materials.utils.utils_mp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_parsing.html">ai4materials.utils.utils_parsing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_plotting.html">ai4materials.utils.utils_plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai4materials.utils.utils_vol_data.html">ai4materials.utils.utils_vol_data module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ai4materials.utils.html#module-ai4materials.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ai4materials</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="ai4materials.utils.html">Utils</a> &raquo;</li>
+        
+      <li>ai4materials.utils.utils_binaries module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ai4materials.utils.utils_binaries.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-ai4materials.utils.utils_binaries">
+<span id="ai4materials-utils-utils-binaries-module"></span><h1>ai4materials.utils.utils_binaries module<a class="headerlink" href="#module-ai4materials.utils.utils_binaries" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ai4materials.utils.utils_binaries.get_binaries_dict_delta_e">
+<code class="descclassname">ai4materials.utils.utils_binaries.</code><code class="descname">get_binaries_dict_delta_e</code><span class="sig-paren">(</span><em>chemical_formula_list</em>, <em>energy_list</em>, <em>label_list</em>, <em>equiv_spgroups</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_binaries.html#get_binaries_dict_delta_e"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_binaries.get_binaries_dict_delta_e" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_binaries.get_chemical_formula_binaries">
+<code class="descclassname">ai4materials.utils.utils_binaries.</code><code class="descname">get_chemical_formula_binaries</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_binaries.html#get_chemical_formula_binaries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_binaries.get_chemical_formula_binaries" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_binaries.get_energy_diff_by_spacegroup">
+<code class="descclassname">ai4materials.utils.utils_binaries.</code><code class="descname">get_energy_diff_by_spacegroup</code><span class="sig-paren">(</span><em>ase_atoms_list</em>, <em>target='energy_total'</em>, <em>equiv_spgroups=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_binaries.html#get_energy_diff_by_spacegroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_binaries.get_energy_diff_by_spacegroup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_binaries.get_target_diff_dic">
+<code class="descclassname">ai4materials.utils.utils_binaries.</code><code class="descname">get_target_diff_dic</code><span class="sig-paren">(</span><em>df</em>, <em>sample_key=None</em>, <em>energy=None</em>, <em>spacegroup=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_binaries.html#get_target_diff_dic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_binaries.get_target_diff_dic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dictionary of dictionaries: samples -&gt; space group tuples -&gt; energy differences.</p>
+<p>Dropping all rows which do not correspond to the minimum energy per sample AND space group,
+then making a new data frame with space groups as columns. Finally constructing the dictionary
+of dictionaries.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt>df: pandas data frame</dt>
+<dd>with columns=[samples_title, energies_title, SG_title]</dd>
+<dt>sample_key: string</dt>
+<dd>Needs to be column title of samples of input df</dd>
+<dt>energy: string</dt>
+<dd>Needs to be column title of energies of input df</dd>
+<dt>spacegroup <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Needs to be column title of space groups of input df</dd>
+</dl>
+<p>Returns:</p>
+<dl class="docutils">
+<dt>dic_out: dictionary of dictionaries:</dt>
+<dd>In the form:
+{
+sample_a: { (SG_1,SG_2):E_diff_a12, (SG_1,SG_3):E_diff_a13,…},
+sample_b: { (SG_1,SG_2):E_diff_b12, (SG_1,SG_3):E_diff_b13,… },
+…
+}
+E_diff_a12 = energy_SG_1 - energy_SG_2   of sample a.
+Both (SG_1,SG_2) and (SG_2,SG_1) are considered.
+If SG_1 or SG_2 is NaN, energy difference to it is ignored.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ai4materials.utils.utils_binaries.select_diff_from_dic">
+<code class="descclassname">ai4materials.utils.utils_binaries.</code><code class="descname">select_diff_from_dic</code><span class="sig-paren">(</span><em>dic</em>, <em>spacegroup_tuples</em>, <em>sample_key='Mat'</em>, <em>drop_nan=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ai4materials/utils/utils_binaries.html#select_diff_from_dic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ai4materials.utils.utils_binaries.select_diff_from_dic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data frame of selected spacegroup_tuples from dictionary of dictionaries.</p>
+<p>Creating a pandas data frame with columns of samples and selected space group tuples (energy differnces).</p>
+<p>Parameters:</p>
+<p>dic: dict {samples -&gt; space group tuples -&gt; energy differences.}</p>
+<dl class="docutils">
+<dt>spacegroup_tuples: tuple, list of tuples, tuples of tuples</dt>
+<dd>Each tuple has to contain two space groups numbers,
+to be looked up in the input dic.</dd>
+<dt>sample_key: string</dt>
+<dd>Will be the column title of the samples of the created data frame</dd>
+<dt>drop_nan: string, optional {‘rows’, ‘SG_tuples’}</dt>
+<dd>Drops all rows or columns (SG_tuples) containing NaN.</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ai4materials.utils.utils_config.html" class="btn btn-neutral float-right" title="ai4materials.utils.utils_config module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ai4materials.utils.unit_conversion.html" class="btn btn-neutral" title="ai4materials.utils.unit_conversion module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Angelo Ziletti.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
