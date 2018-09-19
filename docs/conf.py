@@ -20,7 +20,10 @@ import os
 import sys
 
 atomic_data_dir = os.path.abspath('../../atomic-data')
+ai4materials_dir = os.path.abspath('../ai4materials')
+
 sys.path.insert(0, atomic_data_dir)
+sys.path.insert(0, ai4materials_dir)
 
 # -- Mock imports since readthedocs cannot compile C-based code --------
 
@@ -34,9 +37,7 @@ class Mock(MagicMock):
         return MagicMock()
 
 
-MOCK_MODULES = ['ai4materials', 'ai4materials.dataprocessing', 'ai4materials.descriptors',
-                'ai4materials.interpretation', 'ai4materials.models', 'ai4materials.utils',
-                'ai4materials.visualization', 'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
+MOCK_MODULES = ['ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
                 'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras-tqdm', 'weave', 'seaborn', 'paramiko',
                 'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'numpy', 'h5py', 'cython',
                 'hdbscan']
