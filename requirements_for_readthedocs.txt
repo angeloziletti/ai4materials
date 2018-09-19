@@ -1,9 +1,0 @@
-ase==3.15.0
-scikit-learn>=0.17.1
-future
-pandas
-scipy
-pymatgen
-enum34
-mendeleev
-
