@@ -80,9 +80,9 @@ def main():
         install_requires=['ase==3.15.0',  # neighbors list does not work for ase 3.16
             'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas', 'bokeh==0.11.0',
             'enum34', 'pymatgen', 'keras==1.2.0', 'pillow>=2.7.0', 'mendeleev', 'sqlalchemy', 'keras-tqdm',
-            'theano==0.9.0', 'weave', 'mayavi', 
+            'theano==0.9.0', 'weave', 
             'seaborn', 'paramiko', 'multiprocessing', 'scipy', 'nose>=1.0'],
-#'numpy', 'h5py', 'cython>=0.19', 'hdbscan'],
+#'mayavi', 'numpy', 'h5py', 'cython>=0.19', 'hdbscan'],
 
         #setup_requires=['nomadcore', 'atomic_data'],
         # List additional groups of dependencies here (e.g. development
