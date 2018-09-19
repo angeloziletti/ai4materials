@@ -32,31 +32,33 @@ print(os.getcwd())
 # -- Mock imports since readthedocs cannot compile C-based code --------
 
 import sys
+from mock import Mock as MagicMock
 
-autodoc_mock_imports = [
-		#'ai4materials',
-		#'ai4materials.wrappers',
-		#'ai4materials.descriptors',
-		#'ai4materials.',
-		#'ai4materials.',
-		#'ai4materials.',
-		#'ai4materials.',
-		#'ai4materials.',
-		#'ai4materials.',
-		#'ai4materials.',
-		#'ai4materials.',
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+MOCK_MODULES = [
+        #'numpy', #do not mock numpy - use ReadTheDocs numpy default - bug of RTD
         'nomadml.descriptors.base_descriptor', # to be removed
         'atomic_data.collections',
+        'nomadcore',
         'nomadcore.local_meta_info',
         'condor',
         'soap_model',
         'sklearn.manifold',
         'sklearn',
         'builtins',
-		'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
-                'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras-tqdm', 'weave', 'seaborn', 'paramiko',
+                'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
+                'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras_tqdm', 'weave', 'seaborn', 'paramiko',
                 'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'h5py', 'cython',
                 'hdbscan']
+
+
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
 
 # -- General configuration ------------------------------------------------
 
