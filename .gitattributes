@@ -1,6 +1,5 @@
 docs/* linguist-documentation
-examples/diffraction_fingerprint_calculation.ipynb linguist-vendored
-examples/dish_descriptor_calculation.ipynb linguist-vendored 
+.ipynb linguist-documentation
 ai4materials/data/viewer_files/jsmol/* linguist-vendored
 ai4materials/data/viewer_files/jsmol/j2s/* linguist-vendored
 ai4materials/data/viewer_files/jsmol/j2s/core/* linguist-vendored
