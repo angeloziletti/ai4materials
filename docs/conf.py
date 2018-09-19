@@ -20,8 +20,7 @@ import os
 import sys
 
 atomic_data_dir = os.path.abspath('../../atomic-data')
-ai4materials_dir = os.path.abspath('../ai4materials')
-sys.path.insert(0, os.path.abspath('../..'))
+ai4materials_dir = os.path.abspath('../../ai4materials')
 
 sys.path.insert(0, atomic_data_dir)
 sys.path.insert(0, ai4materials_dir)
