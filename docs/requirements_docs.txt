@@ -1,1 +1,4 @@
 mock
+ai4materials
+ai4materials.dataprocessing
+ai4materials.models.clustering
