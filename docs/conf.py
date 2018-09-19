@@ -64,6 +64,7 @@ autodoc_mock_imports = [
     'nomadcore.local_meta_info',
     'condor',
     'soap_model',
+    'spglib',
     'sklearn.manifold',
     'sklearn',
     'ase', 'sklearn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
