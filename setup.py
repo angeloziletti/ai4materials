@@ -81,7 +81,7 @@ def main():
             'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas', 'bokeh==0.11.0',
             'enum34', 'pymatgen', 'keras==1.2.0', 'pillow>=2.7.0', 'mendeleev', 'sqlalchemy', 'keras-tqdm',
             'theano==0.9.0', 'weave', 'mayavi', 
-            'seaborn', 'paramiko', 'multiprocessing', 'numpy', 'scipy', 'h5py', 'nose>=1.0']
+            'seaborn', 'paramiko', 'multiprocessing', 'numpy', 'scipy', 'h5py', 'nose>=1.0'],
 #, 'cython>=0.19', 'hdbscan'],
 
         #setup_requires=['nomadcore', 'atomic_data'],
