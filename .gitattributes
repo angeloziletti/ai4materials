@@ -1,4 +1,5 @@
 docs/* linguist-documentation
+examples/* linguist-detectable=false
 ai4materials/data/viewer_files/jsmol/* linguist-vendored
 ai4materials/data/viewer_files/jsmol/j2s/* linguist-vendored
 ai4materials/data/viewer_files/jsmol/j2s/core/* linguist-vendored
