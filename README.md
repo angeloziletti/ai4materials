@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/ai4materials/badge/?version=latest)](https://ai4materials.readthedocs.io/en/latest/?badge=latest)
+
 Welcome to ai4materials's README
 ========================================
 
