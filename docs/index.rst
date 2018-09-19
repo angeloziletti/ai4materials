@@ -6,11 +6,11 @@
 Welcome to ai4materials's documentation!
 =========================================
 
-ai4materials allows to perform complex machine learning and compressed sensing modeling of materials science data. It also
+ai4materials allows to perform complex analysis of materials science data, using machine learning and compressed sensing techniques. It also
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
-thus easing the traceability, reproduciblity, and prototyping of new models.
+thus easing the traceability, reproducibility, and prototyping of new models.
 
-On the side panel, you can find a few examples that showcase what ai4materials can do.
+On the left panel, you can find a few examples that showcase what ai4materials can do.
 
 Finally, with ai4materials you can reproduce results from the following publications:
 
@@ -25,8 +25,7 @@ Finally, with ai4materials you can reproduce results from the following publicat
    Science: Critical Role of the Descriptor,” Physical Review Letters, vol. 114, no. 10, p. 105503 .
    [`Link to article <https://link.aps.org/doi/10.1103/PhysRevLett.114.105503>`_]
 
-
-.. sectionauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+.. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
 
 .. toctree::

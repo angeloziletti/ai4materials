@@ -3,10 +3,11 @@
 Welcome to ai4materials's README
 ========================================
 
-
-ai4materials allows to perform complex machine learning and compressed sensing modeling of materials science data. It also
+ai4materials allows to perform complex analysis of materials science data, using machine learning and compressed sensing techniques. It also
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
-thus easing the traceability, reproduciblity, and prototyping of new models.
+thus easing the traceability, reproducibility, and prototyping of new models.
+
+On the left panel, you can find a few examples that showcase what ai4materials can do.
 
 Extensive documentation can be found https://ai4materials.readthedocs.io/en/latest/
 
