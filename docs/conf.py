@@ -26,37 +26,47 @@ sys.path.insert(0, atomic_data_dir)
 sys.path.insert(0, ai4materials_dir)
 
 sys.path.append(os.path.abspath('..'))
-import os
-print(os.getcwd())
 
 # -- Mock imports since readthedocs cannot compile C-based code --------
 
 import sys
-from mock import Mock as MagicMock
+# from mock import Mock as MagicMock
+#
+# class Mock(MagicMock):
+#     @classmethod
+#     def __getattr__(cls, name):
+#         return MagicMock()
+# MOCK_MODULES = [
+#         #'numpy', #do not mock numpy - use ReadTheDocs numpy default - bug of RTD
+#         'nomadml.descriptors.base_descriptor', # to be removed
+#         'atomic_data.collections',
+#         'nomadcore',
+#         'nomadcore.local_meta_info',
+#         'condor',
+#         'soap_model',
+#         'sklearn.manifold',
+#         'sklearn',
+#         'builtins',
+#                 'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
+#                 'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras_tqdm', 'weave', 'seaborn', 'paramiko',
+#                 'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'h5py', 'cython',
+#                 'hdbscan']
+#
+#
+# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-MOCK_MODULES = [
-        #'numpy', #do not mock numpy - use ReadTheDocs numpy default - bug of RTD
-        'nomadml.descriptors.base_descriptor', # to be removed
-        'atomic_data.collections',
-        'nomadcore',
-        'nomadcore.local_meta_info',
-        'condor',
-        'soap_model',
-        'sklearn.manifold',
-        'sklearn',
-        'builtins',
-                'ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
-                'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras_tqdm', 'weave', 'seaborn', 'paramiko',
-                'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'h5py', 'cython',
-                'hdbscan']
-
-
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+autodoc_mock_imports = [
+    'atomic_data.collections',
+    'nomadcore',
+    'nomadcore.local_meta_info',
+    'condor',
+    'soap_model',
+    'sklearn.manifold',
+    'sklearn',
+    'ase', 'sklearn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
+    'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras_tqdm', 'weave', 'seaborn', 'paramiko',
+    'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 'mayavi', 'h5py', 'cython',
+    'hdbscan']
 
 
 
