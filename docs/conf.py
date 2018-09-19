@@ -22,6 +22,26 @@ import sys
 atomic_data_dir = os.path.abspath('../../atomic-data')
 sys.path.insert(0, atomic_data_dir)
 
+
+# -- Mock imports since readthedocs cannot compile C-based code --------
+
+import sys
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+MOCK_MODULES = ['ase', 'scikit-learn', 'tensorflow', 'pint', 'future', 'pandas', 'bokeh',
+		'enum34', 'pymatgen', 'keras', 'pillow', 'mendeleev', 'keras-tqdm', 'weave',
+		'seaborn', 'paramiko', 'multiprocessing', 'scipy', 'nose', 'sqlalchemy', 'theano', 
+		'mayavi', 'numpy', 'h5py', 'cython', 'hdbscan']
+
+
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
