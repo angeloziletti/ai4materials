@@ -56,7 +56,10 @@ import sys
 # sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 autodoc_mock_imports = [
+    'atomic_data',
     'atomic_data.collections',
+    'builtins',
+    'yaml',
     'nomadcore',
     'nomadcore.local_meta_info',
     'condor',
