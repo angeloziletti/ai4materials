@@ -40,16 +40,6 @@ Once you have a copy of the source, you can install it with:
 .. _tarball: https://github.com/angeloziletti/ai4materials/tarball/master
 
 
-Using a pre-built docker image
--------------------------------
-
-If you prefer not to install `ai4materials`, I have created a docker image which already contains all the dependencies
-required to run ai4materials.
-You can obtained this docker image via Docker Hub with the following command:
-
-.. code-block:: console
-
-    $ docker pull ai4materials
 
 .. sectionauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
