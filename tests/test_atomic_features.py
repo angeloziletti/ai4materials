@@ -28,8 +28,8 @@ import tempfile
 # sys.path.insert(0, atomic_data_dir)
 
 from ase.spacegroup import crystal
-from ai4materials.descriptors.atomic_features import AtomicFeatures
-from ai4materials.descriptors.atomic_features import get_table_atomic_features
+# from ai4materials.descriptors.atomic_features import AtomicFeatures
+# from ai4materials.descriptors.atomic_features import get_table_atomic_features
 from ai4materials.utils.utils_config import set_configs
 from ai4materials.utils.utils_crystals import create_supercell
 import pandas as pd

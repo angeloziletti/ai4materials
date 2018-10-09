@@ -23,7 +23,7 @@ __date__ = "09/08/17"
 
 import ase
 from ase.spacegroup import crystal
-from ai4materials.descriptors.diffraction3d import DISH
+# from ai4materials.descriptors.diffraction3d import DISH
 from ai4materials.utils.utils_config import set_configs
 from ai4materials.utils.utils_crystals import create_supercell
 import numpy as np
@@ -33,7 +33,7 @@ import unittest
 import shutil
 
 
-# @unittest.skip("temporarily disabled")
+@unittest.skip("temporarily disabled")
 class TestDISH(unittest.TestCase):
     def setUp(self):
         # create a temporary directories

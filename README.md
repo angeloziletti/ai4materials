@@ -13,7 +13,7 @@ thus easing the traceability, reproducibility, and prototyping of new models.
 
 On the left panel, you can find a few examples that showcase what ai4materials can do.
 
-Extensive documentation can be found https://ai4materials.readthedocs.io/en/latest/
+Extensive documentation can be found here: https://ai4materials.readthedocs.io/en/latest/
 
-Code author: Angelo Ziletti (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de)
+Code author: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de)
 
