@@ -60,8 +60,6 @@ autodoc_mock_imports = [
     'atomic_data.collections',
     'builtins',
     'yaml',
-    'nomadcore',
-    'nomadcore.local_meta_info',
     'condor',
     'soap_model',
     'spglib',
