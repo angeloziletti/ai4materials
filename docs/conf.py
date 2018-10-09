@@ -63,6 +63,7 @@ autodoc_mock_imports = [
     'condor',
     'soap_model',
     'spglib',
+    'past',
     'pyshtools',
     'pyshtools.expand',
     'pyximport',
