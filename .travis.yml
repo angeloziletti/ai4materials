@@ -113,6 +113,7 @@ script:
   # UNITTESTS
 #  - python -m unittest -v condor.tests.test_all
 
+  - echo $TRAVIS_BUILD_DIR
   - cd $TRAVIS_BUILD_DIR
   - pip install -e .
   - mkdir $HOME/dependencies
