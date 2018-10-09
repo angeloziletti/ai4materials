@@ -105,28 +105,28 @@ script:
   - echo $LD_LIBRARY_PATH
   - echo $PYTHONPATH
   # TESTING IMPORTS
-  - python -c "import spimage; print(spimage.__file__)"
-  - python -c "import spsim; print(spsim.__file__)"
-  - python -c "import spimage_pybackend; print(spimage_pybackend.__file__)"
-  - python -c "import spsim_pybackend; print(spsim_pybackend.__file__)"
-  - python -c "import condor; print(condor.__file__)"
+#  - python -c "import spimage; print(spimage.__file__)"
+#  - python -c "import spsim; print(spsim.__file__)"
+#  - python -c "import spimage_pybackend; print(spimage_pybackend.__file__)"
+#  - python -c "import spsim_pybackend; print(spsim_pybackend.__file__)"
+#  - python -c "import condor; print(condor.__file__)"
   # UNITTESTS
-  - python -m unittest -v condor.tests.test_all
+#  - python -m unittest -v condor.tests.test_all
 
-#  - cd $HOME
-#  - pip install -e .
-#  - mkdir $HOME/dependencies
-#  - cd $HOME/dependencies
-#  - git clone https://gitlab.mpcdf.mpg.de/nomad-lab/python-common.git
-#  - cd python-common
-#  - pip install -r requirements.txt
-#  - pip install -e .
-#  - cd ../
-#
-#  - python --version
-#  - pip freeze
-#  - pip install pyflakes
-#  - cd $CI_PROJECT_DIR
-#  - nosetests -v --nocapture --logging-level=INFO --cover-package=ai4materials --with-coverage
-#  - pyflakes ai4materials
+  - cd $TRAVIS_BUILD_DIR
+  - pip install -e .
+  - mkdir $HOME/dependencies
+  - cd $HOME/dependencies
+  - git clone https://gitlab.mpcdf.mpg.de/nomad-lab/python-common.git
+  - cd python-common
+  - pip install -r requirements.txt
+  - pip install -e .
+  - cd ../
+
+  - python --version
+  - pip freeze
+  - pip install pyflakes
+  - cd $TRAVIS_BUILD_DIR
+  - nosetests -v --nocapture --logging-level=INFO --cover-package=ai4materials --with-coverage
+  - pyflakes ai4materials
 
