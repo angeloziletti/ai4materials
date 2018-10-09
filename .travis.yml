@@ -96,7 +96,9 @@ before_install:
 # Command to install dependencies
 install:
 # Install condor
-  - cd $HOME/build/FXIhub/condor
+  - cd $HOME
+  - git clone https://github.com/FXIhub/condor.git
+  - cd condor
   - python setup.py install --nfft-include-dir=$HOME/local/include --nfft-library-dir=$HOME/local/lib
 # command to run tests
 script:
@@ -110,5 +112,21 @@ script:
   - python -c "import condor; print(condor.__file__)"
   # UNITTESTS
   - python -m unittest -v condor.tests.test_all
-  # EXAMPLES
-  - cd $HOME/build/FXIhub/condor/; python .travis_examples.py
+
+#  - cd $HOME
+#  - pip install -e .
+#  - mkdir $HOME/dependencies
+#  - cd $HOME/dependencies
+#  - git clone https://gitlab.mpcdf.mpg.de/nomad-lab/python-common.git
+#  - cd python-common
+#  - pip install -r requirements.txt
+#  - pip install -e .
+#  - cd ../
+#
+#  - python --version
+#  - pip freeze
+#  - pip install pyflakes
+#  - cd $CI_PROJECT_DIR
+#  - nosetests -v --nocapture --logging-level=INFO --cover-package=ai4materials --with-coverage
+#  - pyflakes ai4materials
+

@@ -1,4 +1,5 @@
 [![Documentation Status](https://readthedocs.org/projects/ai4materials/badge/?version=latest)](https://ai4materials.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/angeloziletti/ai4materials.svg?branch=master)](https://travis-ci.org/angeloziletti/ai4materials)
 
 Welcome to ai4materials's README
 ========================================
