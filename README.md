@@ -1,5 +1,6 @@
 [![Documentation Status](https://readthedocs.org/projects/ai4materials/badge/?version=latest)](https://ai4materials.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/angeloziletti/ai4materials.svg?branch=master)](https://travis-ci.org/angeloziletti/ai4materials)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Welcome to ai4materials's README
 ========================================

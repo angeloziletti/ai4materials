@@ -73,3 +73,5 @@ _build
 _static
 _templates
 
+# egg files
+*.egg-info

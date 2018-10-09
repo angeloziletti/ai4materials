@@ -23,7 +23,7 @@ __date__ = "20/08/18"
 
 import json
 import logging
-from nomadcore.local_meta_info import loadJsonFile, InfoKindEl
+from ai4materials.external.local_meta_info import loadJsonFile, InfoKindEl
 import os
 import paramiko
 from stat import S_ISDIR

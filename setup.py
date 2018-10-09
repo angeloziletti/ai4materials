@@ -81,8 +81,8 @@ def main():
             'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas', 'bokeh==0.11.0',
             'enum34', 'pymatgen', 'keras==1.2.0', 'pillow>=2.7.0', 'mendeleev', 'keras-tqdm', 'weave', 
             'seaborn', 'paramiko', 'multiprocessing', 'scipy', 'nose>=1.0', 'sqlalchemy', 'theano==0.9.0',
-            'mayavi', 'numpy', 'h5py', 'cython>=0.19'],
-        #, 'hdbscan'],
+            'numpy', 'h5py', 'cython>=0.19'],
+        #, 'hdbscan', 'mayavi'],
 
         #setup_requires=['nomadcore', 'atomic_data'],
         # List additional groups of dependencies here (e.g. development
@@ -95,9 +95,8 @@ def main():
         },
         # https://mike.zwobble.org/2013/05/adding-git-or-hg-or-svn-dependencies-in-setup-py/
         # add atomic_data and nomadcore
-        #dependency_links=['https://gitlab.mpcdf.mpg.de/nomad-lab/python-common.git',
-        #                  'https://gitlab.mpcdf.mpg.de/nomad-lab/atomic-data.git',
-        #                  'https://github.com/FXIhub/condor.git'],
+        dependency_links=['https://gitlab.mpcdf.mpg.de/nomad-lab/atomic-data.git',
+                         'https://github.com/FXIhub/condor.git'],
 
         # If there are data files included in your packages that need to be
         # installed, specify them here.  If using Python 2.6 or less, then these

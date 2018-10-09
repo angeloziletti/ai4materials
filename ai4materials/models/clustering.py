@@ -129,6 +129,7 @@ def get_clusters(data, clustering):
     list_methods = [item[0] for item in inspect.getmembers(clustering, predicate=inspect.ismethod)]
 
     if 'fit_predict' in list_methods:
+        clustering_fit = clustering.fit(data)
         labels = clustering.fit_predict(data)
     elif 'fit' in list_methods and 'predict' in list_methods:
         clustering_fit = clustering.fit(data)

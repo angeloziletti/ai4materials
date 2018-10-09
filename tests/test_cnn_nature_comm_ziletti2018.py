@@ -26,8 +26,9 @@ from ai4materials.utils.utils_config import set_configs
 from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
 from ai4materials.dataprocessing.preprocessing import make_data_sets
 from ai4materials.models.cnn_architectures import cnn_nature_comm_ziletti2018
-from ai4materials.models.cnn_polycrystals import predict
-from ai4materials.models.cnn_polycrystals import train_neural_network
+from ai4materials.models.cnn_nature_comm_ziletti2018 import predict
+from ai4materials.models.cnn_nature_comm_ziletti2018 import train_neural_network
+from ai4materials.utils.utils_config import get_data_filename
 import numpy as np
 import tempfile
 import unittest
@@ -36,7 +37,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 import os
 
 
-# @unittest.skip("temporarily disabled")
+@unittest.skip("temporarily disabled")
 class TestCnnNatureCommZiletti2018(unittest.TestCase):
     def setUp(self):
         # create a temporary directories
