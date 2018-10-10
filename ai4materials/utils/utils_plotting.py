@@ -28,10 +28,11 @@ import logging
 import pandas as pd
 import os
 import matplotlib
-if os.environ.get('DISPLAY', '') == '':
-    print('no display found. Using non-interactive Agg backend')
-    matplotlib.use('Agg')
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
+os.system("export DISPLAY=:0")
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import numpy as np
 import os
 import matplotlib.cm as cm
