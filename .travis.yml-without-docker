@@ -1,8 +1,5 @@
 language: python
-
-sudo: required
-services:
-  - docker
+sudo: false
 
 virtualenv:
   system_site_packages: false
@@ -135,10 +132,4 @@ script:
   - nosetests -v --nocapture --logging-level=INFO --cover-package=ai4materials --with-coverage
 #  - pyflakes ai4materials
   - codecov
-
-after_success:
-  - docker --version  # document the version travis is using
-  - docker build -t ai4materials .
-  - docker tag ai4materials:latest ziletti/ai4materials:latest
-  - docker push ziletti/ai4materials:latest
 
