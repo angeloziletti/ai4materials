@@ -1,11 +1,16 @@
 language: python
 
-sudo: required
-services:
-  - docker
+sudo: false
+#sudo: required
+#services:
+#  - docker
 
 virtualenv:
   system_site_packages: false
+
+env:
+  global:
+  - REPO=ziletti/ai4materials
 
 cache:
   directories:
@@ -136,9 +141,10 @@ script:
 #  - pyflakes ai4materials
   - codecov
 
-after_success:
-  - docker --version  # document the version travis is using
-  - docker build -t ai4materials .
-  - docker tag ai4materials:latest ziletti/ai4materials:latest
-  - docker push ziletti/ai4materials:latest
+#after_success:
+#  - docker --version  # document the version travis is using
+#  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+#  - docker build -t ai4materials .
+#  - docker tag ai4materials:latest ziletti/ai4materials:latest
+#  - docker push ziletti/ai4materials:latest
 
