@@ -130,6 +130,6 @@ script:
   - pip install codecov
   - cd $TRAVIS_BUILD_DIR
   - nosetests -v --nocapture --logging-level=INFO --cover-package=ai4materials --with-coverage
-  - pyflakes ai4materials
+#  - pyflakes ai4materials
   - codecov
 

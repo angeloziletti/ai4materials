@@ -35,11 +35,13 @@ from keras.optimizers import Adam
 from keras.utils import np_utils
 from keras_tqdm import TQDMCallback, TQDMNotebookCallback
 from ai4materials.utils.utils_config import get_data_filename
+from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
 from ai4materials.utils.utils_neural_networks import load_model
 import os
 import logging
 import pandas as pd
 import numpy as np
+import urllib
 
 K.set_image_dim_ordering('th')
 
@@ -188,6 +190,7 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=7, results_
     """
 
     if model is None:
+        logger.info("Using the model from Ziletti et al. Nature Communications, vol. 9, pp. 2775 (2018)")
         model = load_nature_comm_ziletti2018_network()
 
     if results_file is None:
@@ -293,6 +296,54 @@ def load_nature_comm_ziletti2018_network():
     model = load_model(model_arch_file, model_weights_file)
 
     return model
+
+
+def load_datasets(dataset_folder):
+    """Download the pristine dataset and the dataset with 25% vacancies from Dataverse."""
+
+    train_set_name = 'pristine_dataset'
+    # the IDs to retrieve the data can be found at this page:
+    # https://dataverse.harvard.edu/api/datasets/export?exporter=dataverse_json&persistentId=doi%3A10.7910/DVN/ZDKBRF
+    url_dataset_info_pristine = "https://dataverse.harvard.edu/api/access/datafile/3238706?format=original"
+    url_x_pristine = "https://dataverse.harvard.edu/api/access/datafile/3238702?format=original"
+    url_y_pristine = "https://dataverse.harvard.edu/api/access/datafile/3238704?format=original"
+    path_to_x_pristine = os.path.join(dataset_folder, train_set_name + '_x.pkl')
+    path_to_y_pristine = os.path.join(dataset_folder, train_set_name + '_y.pkl')
+    path_to_summary_pristine = os.path.join(dataset_folder, train_set_name + '_summary.json')
+
+    logger.info("Downloading dataset of pristine structures from the Harvard Dataverse in {}.".format(dataset_folder))
+    logger.info("Size: ~500MB. This may take a few minutes.")
+    urllib.urlretrieve(url_x_pristine, path_to_x_pristine)
+    urllib.urlretrieve(url_y_pristine, path_to_y_pristine)
+    urllib.urlretrieve(url_dataset_info_pristine, path_to_summary_pristine)
+
+    test_set_name = 'vac25_dataset'
+    # the IDs to retrieve the data can be found at this page:
+    # https://dataverse.harvard.edu/api/datasets/export?exporter=dataverse_json&persistentId=doi%3A10.7910/DVN/ZDKBRF
+    url_dataset_info_vac25 = "https://dataverse.harvard.edu/api/access/datafile/3238706?format=original"
+    url_x_vac25 = "https://dataverse.harvard.edu/api/access/datafile/3238702?format=original"
+    # this is the same as the pristine labels because we assume that the defects we create do not change the class
+    url_y_vac25 = "https://dataverse.harvard.edu/api/access/datafile/3238704?format=original"
+    path_to_x_vac25 = os.path.join(dataset_folder, test_set_name + '_x.pkl')
+    path_to_y_vac25 = os.path.join(dataset_folder, test_set_name + '_y.pkl')
+    path_to_summary_vac25 = os.path.join(dataset_folder, test_set_name + '_summary.json')
+
+    logger.info("Downloading dataset of structures with 25% vacancies from the Harvard Dataverse in {}."
+                .format(dataset_folder))
+    logger.info("Size: ~500MB. This may take a few minutes.")
+    urllib.urlretrieve(url_dataset_info_vac25, path_to_summary_vac25)
+    urllib.urlretrieve(url_x_vac25, path_to_x_vac25)
+    urllib.urlretrieve(url_y_vac25, path_to_y_vac25)
+    logger.info("Download completed.")
+
+    # load datasets
+    x_pristine, y_pristine, dataset_info_pristine = load_dataset_from_file(path_to_x_pristine, path_to_y_pristine,
+                                                                           path_to_summary_pristine)
+
+    x_vac25, y_vac25, dataset_info_vac25 = load_dataset_from_file(path_to_x_vac25, path_to_y_vac25,
+                                                                  path_to_summary_vac25)
+
+    return x_pristine, y_pristine, dataset_info_pristine, x_vac25, y_vac25, dataset_info_vac25
 
 
 def reshape_images_to_theano(images):

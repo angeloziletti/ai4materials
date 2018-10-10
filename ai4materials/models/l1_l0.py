@@ -34,7 +34,7 @@ import itertools
 import scipy.stats
 from sklearn import linear_model
 from math import exp, sqrt
-import nomadcore.unit_conversion.unit_conversion as uc
+import ai4materials.utils.unit_conversion as uc
 logger = logging.getLogger('ai4materials')
 
 

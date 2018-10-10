@@ -171,9 +171,106 @@ Implementation details of how atomic features are automatically constructed can 
 :py:mod:`ai4materials.descriptors.atomic_features`. Implementation details of the LASSO+l0 method can be found at
 :py:mod:`ai4materials.wrappers.calc_model` and at :py:mod:`ai4materials.models.l1_l0`.
 
+
+
+Example classification: convolutional neural network for crystal-structure classification
+-----------------------------------------------------------------------------------------
+.. module:: ai4materials.models.cnn-nature-comm2018
+   :synopsis: Convolutional neural network for crystal-structure classification
+
+This example shows how to load a dataset of crystal structures (represented by the diffraction fingerprint [2]_), train a convolutional neural network on pristine (perfect) crystal structures, and use this neural network to predict the crystal class of highly defective crystal structures.
+This method - introduced in Ref. [2]_ - allows to correctly classify heavily defective crystal structures. In this particular case, even if 25% of the atoms were removed from each structure, the model still retains an accuracy of 100%.
+
+The code below performs following steps:
+
+* read the dataset from crystal-structure classification used in Ref. [2]_
+* train a convolutional neural network for crystal-structure classification using :py:mod:`ai4materials.models.cnn_nature_comm_ziletti2018.train_neural_network`
+* predict the class for each crystal structure using the neural network trained in in Ref. [2]_ using :py:mod:`ai4materials.models.cnn_nature_comm_ziletti2018.predict`
+
+.. testcode::
+
+    from functools import partial
+    from ai4materials.utils.utils_config import set_configs
+    from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
+    from ai4materials.models.cnn_architectures import cnn_nature_comm_ziletti2018
+    from ai4materials.models.cnn_nature_comm_ziletti2018 import load_datasets
+    from ai4materials.models.cnn_nature_comm_ziletti2018 import predict
+    from ai4materials.models.cnn_nature_comm_ziletti2018 import train_neural_network
+    from ai4materials.utils.utils_config import setup_logger
+    import numpy as np
+    import os
+
+    configs = set_configs()
+    logger = setup_logger(configs, level='DEBUG', display_configs=False)
+    dataset_folder = configs['io']['main_folder']
+
+    # =============================================================================
+    # Download the dataset from the online repository and load it
+    # =============================================================================
+
+    x_pristine, y_pristine, dataset_info_pristine, x_vac25, y_vac25, dataset_info_vac25 = load_datasets(dataset_folder)
+
+    train_set_name = 'pristine_dataset'
+    path_to_x_pristine = os.path.join(dataset_folder, train_set_name + '_x.pkl')
+    path_to_y_pristine = os.path.join(dataset_folder, train_set_name + '_y.pkl')
+    path_to_summary_pristine = os.path.join(dataset_folder, train_set_name + '_summary.json')
+
+    test_set_name = 'vac25_dataset'
+    path_to_x_vac25 = os.path.join(dataset_folder, test_set_name + '_x.pkl')
+    path_to_y_vac25 = os.path.join(dataset_folder, test_set_name + '_y.pkl')
+    path_to_summary_vac25 = os.path.join(dataset_folder, test_set_name + '_summary.json')
+
+    x_pristine, y_pristine, dataset_info_pristine = load_dataset_from_file(path_to_x_pristine, path_to_y_pristine,
+                                                                           path_to_summary_pristine)
+
+    x_vac25, y_vac25, dataset_info_vac25 = load_dataset_from_file(path_to_x_vac25, path_to_y_vac25,
+                                                                  path_to_summary_vac25)
+
+
+    # =============================================================================
+    # Train the convolutional neural network
+    # =============================================================================
+
+    # load the convolutional neural network architecture from Ziletti et al., Nature Communications 9, pp. 2775 (2018)
+    partial_model_architecture = partial(cnn_nature_comm_ziletti2018, conv2d_filters=[32, 32, 16, 16, 8, 8],
+                                         kernel_sizes=[3, 3, 3, 3, 3, 3], max_pool_strides=[2, 2],
+                                         hidden_layer_size=128)
+
+    # use x_train also for validation - this is only to run the test
+    results = train_neural_network(x_train=x_pristine, y_train=y_pristine, x_val=x_pristine, y_val=y_pristine,
+                                   configs=configs, partial_model_architecture=partial_model_architecture,
+                                   nb_epoch=1)
+
+    text_labels = np.asarray(dataset_info_vac25["data"][0]["text_labels"])[:100]
+    numerical_labels = np.asarray(dataset_info_vac25["data"][0]["numerical_labels"])[:100]
+
+    # =============================================================================
+    # Predict the crystal class of a material using the trained neural network
+    # =============================================================================
+
+    # load the convolutional neural network architecture from Ziletti et al., Nature Communications 9, pp. 2775 (2018)
+    # you can also use your own neural network to predict, passing it to the variable 'model'
+    results = predict(x_vac25, y_vac25, configs=configs, numerical_labels=numerical_labels,
+                      text_labels=text_labels, model=None)
+
+
+
+
+This is the confusion matrix obtained using the convolutional neural network to predict the class of structures with 25% of missing atoms:
+
+.. image:: cnn_nature_comm2018_confusion_matrix.png
+
+The model has an accuracy of 100%, even in the presence of defects (25% atoms missing in this case).
+The neural network's training and prediction is performed with Keras. Implementation details on the convolutional neural network used can be found at
+:py:mod:`ai4materials.models.cnn_nature_comm_ziletti2018`.
+
 .. [1] L. M. Ghiringhelli, J. Vybiral, S. V. Levchenko, C. Draxl, and M. Scheffler, “Big Data of Materials
    Science: Critical Role of the Descriptor,” Physical Review Letters, vol. 114, no. 10, p. 105503 .
    [`Link to article <https://link.aps.org/doi/10.1103/PhysRevLett.114.105503>`_]
+.. [2] A. Ziletti, D. Kumar, M. Scheffler, and L. M. Ghiringhelli, "Insightful classification of crystal structures
+   using deep learning," Nature Communications, vol. 9, pp. 2775, 2018.
+   [`Link to article <https://www.nature.com/articles/s41467-018-05169-6>`_]
+
 
 .. sectionauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 

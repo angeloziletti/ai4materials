@@ -137,9 +137,9 @@ if __name__ == "__main__":
                                # box_size=None,
                                # init_sliding_volume=(16., 16., 16.),
                                desc_file=desc_file, show_plot_lengths=False,
-                               desc_only=False,
+                               # desc_only=False,
                                calc_uncertainty=True,
                                mc_samples=2,
-                               desc_file_suffix_name='', nb_jobs=6, results_file=results_file,
+                               desc_file_suffix_name='', nb_jobs=6, results_file=results_file)
 
     sys.exit()

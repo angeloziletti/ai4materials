@@ -184,7 +184,7 @@ Implementation details of the three-dimensional diffraction fingerprint can be f
    [`Link to article <https://link.aps.org/doi/10.1103/PhysRevLett.114.105503>`_]
 .. [2] A. Ziletti, D. Kumar, M. Scheffler, and L. M. Ghiringhelli, "Insightful classification of crystal structures
    using deep learning," Nature Communications, vol. 9, pp. 2775, 2018.
-   [`Link to article <https://arxiv.org/abs/1709.02298>`_]
+   [`Link to article <https://www.nature.com/articles/s41467-018-05169-6>`_]
 .. [3] A. Ziletti, A. Leitherer, M. Scheffler, and L. M. Ghiringhelli, in preparation (2018)
 .. [4] K. T. Schuett, H. Glawe, F. Brockherde, A. Sanna, K. R. M\"uller, and E. K. U.Gross,
    "How to represent crystal structures for machine learning: Towards fast prediction of electronic properties,"
