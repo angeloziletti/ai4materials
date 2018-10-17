@@ -103,7 +103,7 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
 
     # overwrite configs (priority is given to the folders defined in the function)
     # if desc_folder and tmp_folder are None, then configs are not overwritten
-    configs = overwrite_configs(configs, desc_folder, tmp_folder)
+    configs = overwrite_configs(configs=configs, desc_folder=desc_folder, tmp_folder=tmp_folder)
 
     # define desc_folder and tmp_folder for convenience
     desc_folder = configs['io']['desc_folder']
