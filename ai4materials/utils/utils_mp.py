@@ -22,11 +22,13 @@ __maintainer__ = "Angelo Ziletti"
 __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
+from ai4materials.utils.utils_data_retrieval import write_summary_file
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import logging
 import multiprocessing
 import os
-from ai4materials.utils.utils_data_retrieval import write_summary_file
 import tarfile
+from tqdm import tqdm
 
 logger = logging.getLogger('ai4materials')
 
@@ -135,10 +137,6 @@ def collect_desc_folders(descriptor, desc_file, desc_folder, nb_jobs, tmp_folder
     return desc_file_master
 
 
-# def worker_apply_operations(arg):
-#     ase_atoms, operations_on_structure = arg
-#     return _apply_operations(ase_atoms, operations_on_structure)
-
 def dispatch_jobs(function_to_calc, data, nb_jobs, desc_folder, desc_file):
     """ Dispatch the calculation of `function_to_calc` to `nb_jobs` parallel processes.
 
@@ -170,72 +168,71 @@ def dispatch_jobs(function_to_calc, data, nb_jobs, desc_folder, desc_file):
     slices = split_list(data, nb_jobs)
     jobs = []
 
-    # https://stackoverflow.com/questions/15536295/python-multiprocessing-process-crashes-silently
-
     desc_file = os.path.normpath(os.path.join(desc_folder, desc_file))
 
-    # https://pymotw.com/3/multiprocessing/basics.html
+    for idx_slice, slice_ in enumerate(slices):
+        desc_file_i = desc_file + '_' + str(idx_slice) + '.tar.gz'
+        multiprocessing.log_to_stderr(logging.DEBUG)
+        job = multiprocessing.Process(target=function_to_calc, args=(slice_, desc_file_i, idx_slice))
+        jobs.append(job)
 
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=nb_jobs) as executor:
-    #     print("using concurrent features")
-    #     ase_atoms_list_with_op_nested = executor.map(worker_apply_operations,
-    #                                                  ((ase_atoms, operations_on_structure) for ase_atoms in
-    #                                                   ase_atoms_list))
-    #
+    for job in jobs:
+        job.start()
 
-
-    # for idx_slice, slice_ in enumerate(slices):
-    #     desc_file_i = desc_file + '_' + str(idx_slice) + '.tar.gz'
-    #     multiprocessing.log_to_stderr(logging.DEBUG)
-    #     job = multiprocessing.Process(target=function_to_calc, args=(slice_, desc_file_i, idx_slice))
-    #     jobs.append(job)
-    #
-    # for job in jobs:
-    #     job.start()
-    #
-    # for job in jobs:
-    #     job.join()
-
-    import time
-
-    # data_pairs = [[3, 5], [4, 3], [7, 3], [1, 6]]
-    #
-    # import numpy as np
-    # # define what to do with each data pair ( p=[3,5] ), example: calculate product
-    # def myfunc(p):
-    #     product_of_list = np.prod(p)
-    #     return product_of_list
-    #
-    # pool = multiprocessing.Pool(processes=4)
-    # result_list = pool.map(myfunc, data_pairs)
-    # print(result_list)
+    for job in jobs:
+        job.join()
 
 
-    # desc_file_i = desc_file + '_' + str(idx_slice) + '.tar.gz'
-    # job = multiprocessing.Process(target=function_to_calc, args=(slice_, desc_file_i, idx_slice))
-    # jobs.append(job)
-    #
+def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
+    """ A parallel version of the map function with a progress bar.
 
-    # import time
-    # import concurrent.futures
-    #
-    # def sleep_print_return(input):
-    #     print("{} started".format(input))
-    #     time.sleep(input % 3)
-    #     return input
-    #
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=None) as executor:
-    #     for result in executor.map(sleep_print_return, range(25)):
-    #         # do stuff
-    #         print("{} finished".format(result))
-    #         pass
+    Function taken from: http://danshiebler.com/2016-09-14-parallel-progress-bar/
 
+    Parameters:
 
+    array: array-like
+        An array to iterate over.
 
-        # for result in executor.map(sleep_print_return, range(25)):
-            # do stuff
-            # print
-            # "{} finished".format(result)
-            # pass
+    function: function
+        A python function to apply to the elements of array
+
+    n_jobs: int, default=16
+        The number of cores to use
+
+    use_kwargs: bool, default=False
+        Whether to consider the elements of array as dictionaries of keyword arguments to function
+
+    front_num: int, default=3
+        The number of iterations to run serially before kicking off the parallel job. Useful for catching bugs
+
+    Returns:
+        [function(array[0]), function(array[1]), ...]
+
+    """
+    # We run the first few iterations serially to catch bugs
+    if front_num > 0:
+        front = [function(**a) if use_kwargs else function(a) for a in array[:front_num]]
+    # If we set n_jobs to 1, just run a list comprehension. This is useful for benchmarking and debugging.
+    if n_jobs == 1:
+        return front + [function(**a) if use_kwargs else function(a) for a in tqdm(array[front_num:])]
+    # Assemble the workers
+    with ProcessPoolExecutor(max_workers=n_jobs) as pool:
+        # Pass the elements of array into function
+        if use_kwargs:
+            futures = [pool.submit(function, **a) for a in array[front_num:]]
+        else:
+            futures = [pool.submit(function, a) for a in array[front_num:]]
+        kwargs = {'total': len(futures), 'unit': 'it', 'unit_scale': True, 'leave': True}
+        # Print out the progress as tasks complete
+        for f in tqdm(as_completed(futures), **kwargs):
+            pass
+    out = []
+    # Get the results from the futures.
+    for i, future in tqdm(enumerate(futures)):
+        try:
+            out.append(future.result())
+        except Exception as e:
+            out.append(e)
+    return front + out
 
 
