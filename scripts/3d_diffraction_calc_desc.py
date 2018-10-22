@@ -208,7 +208,7 @@ if __name__ == "__main__":
     # =============================================================================
 
     for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:10]
+        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:100]
 
         print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
 

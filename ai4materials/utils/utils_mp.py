@@ -183,7 +183,7 @@ def dispatch_jobs(function_to_calc, data, nb_jobs, desc_folder, desc_file):
         job.join()
 
 
-def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
+def parallel_process(array, function_to_calculate, nb_jobs=1, use_kwargs=False, front_num=3):
     """ A parallel version of the map function with a progress bar.
 
     Function taken from: http://danshiebler.com/2016-09-14-parallel-progress-bar/
@@ -193,7 +193,7 @@ def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
     array: array-like
         An array to iterate over.
 
-    function: function
+    function_to_calculate: function
         A python function to apply to the elements of array
 
     n_jobs: int, default=16
@@ -211,21 +211,22 @@ def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
     """
     # We run the first few iterations serially to catch bugs
     if front_num > 0:
-        front = [function(**a) if use_kwargs else function(a) for a in array[:front_num]]
+        front = [function_to_calculate(**a) if use_kwargs else function_to_calculate(a) for a in array[:front_num]]
     # If we set n_jobs to 1, just run a list comprehension. This is useful for benchmarking and debugging.
-    if n_jobs == 1:
-        return front + [function(**a) if use_kwargs else function(a) for a in tqdm(array[front_num:])]
+    if nb_jobs == 1:
+        return front + [function_to_calculate(**a) if use_kwargs else function_to_calculate(a) for a in tqdm(array[front_num:])]
     # Assemble the workers
-    with ProcessPoolExecutor(max_workers=n_jobs) as pool:
+    with ProcessPoolExecutor(max_workers=nb_jobs) as pool:
         # Pass the elements of array into function
         if use_kwargs:
-            futures = [pool.submit(function, **a) for a in array[front_num:]]
+            futures = [pool.submit(function_to_calculate, **a) for a in array[front_num:]]
         else:
-            futures = [pool.submit(function, a) for a in array[front_num:]]
+            futures = [pool.submit(function_to_calculate, a) for a in array[front_num:]]
         kwargs = {'total': len(futures), 'unit': 'it', 'unit_scale': True, 'leave': True}
         # Print out the progress as tasks complete
         for f in tqdm(as_completed(futures), **kwargs):
             pass
+
     out = []
     # Get the results from the futures.
     for i, future in tqdm(enumerate(futures)):

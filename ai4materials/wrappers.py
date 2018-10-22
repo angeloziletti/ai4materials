@@ -129,89 +129,52 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
         for idx, ase_atoms in enumerate(ase_atoms_list_with_op):
             ase_atoms.info['label'] = str('struct-' + str(idx))
 
-    # def _calc_descriptor_mp(data_slice, desc_file_i, idx_slice):
-    #     _calc_descriptor(ase_atoms_list=data_slice, desc_file=desc_file_i, idx_slice=idx_slice, descriptor=descriptor,
-    #                      configs=configs, logger=logger, tmp_folder=tmp_folder, desc_folder=desc_folder,
-    #                      desc_info_file=desc_info_file, target_list=target_list, **kwargs)
-
     logger.info('Using {} processors'.format(nb_jobs))
-    # dispatch_jobs(_calc_descriptor_mp, ase_atoms_list_with_op, nb_jobs=nb_jobs, desc_folder=desc_folder,
-    #               desc_file=desc_file)
 
     # load descriptor metadata
     desc_metainfo = get_metadata_info()
     allowed_descriptors = desc_metainfo['descriptors']
 
-    logger.info("Calculating descriptor: {0}".format(descriptor.name))
-    # logger.debug("Using {0} cell".format(cell_type))
+    # add target to structures in the list
+    if target_list is not None:
+        for idx_atoms, ase_atoms in enumerate(ase_atoms_list_with_op):
+            ase_atoms.info['target'] = target_list[idx_atoms]
 
-    worker_calc_descriptor_partial = partial(new_calc_descriptor, descriptor=descriptor, configs=configs,
-                                                             idx_slice=0, desc_file=desc_file, desc_folder=desc_folder,
-                         desc_info_file=desc_info_file, tmp_folder=tmp_folder, target_list=target_list)
+    if descriptor.name in allowed_descriptors:
+        logger.info("Calculating descriptor: {0}".format(descriptor.name))
 
-    # concurrent.futures.ProcessPoolExecutor() as executor:
-    # result = executor.map(function, iterable)
+        worker_calc_descriptor = partial(calc_descriptor_one_structure, descriptor=descriptor,
+                                                 allowed_descriptors=allowed_descriptors, configs=configs,
+                                                 idx_slice=0, desc_file=desc_file, desc_folder=desc_folder,
+                                                 desc_info_file=desc_info_file, tmp_folder=tmp_folder,
+                                                 target_list=target_list,  **kwargs)
 
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    #     results = executor.map(worker_calc_descriptor_partial, ase_atoms_list_with_op)
+        structure_results = parallel_process(ase_atoms_list_with_op, worker_calc_descriptor, nb_jobs=nb_jobs)
 
+    else:
+        raise ValueError("Please provided a valid descriptor. Valid descriptors are {}".format(allowed_descriptors))
 
-
-
-
-
-    results = parallel_process(ase_atoms_list_with_op, worker_calc_descriptor_partial, n_jobs=4)
-
-    # print(len(results))
-
-    # for result in results:
-        # print(result.info)
     logger.info("Calculation done.")
 
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=nb_jobs) as executor:
-    #     ase_atoms_result = executor.map(worker_calc_descriptor, (ase_atoms_list_with_op, descriptor))
-    #     print(future.result())
 
-    # print(ase_atoms_result[0])
-    # print(ase_atoms_result[0].info['descriptor'])
+    logger.info('Writing descriptor information to file.')
 
-    # ase_atoms_result = []
-    # for idx_atoms, ase_atoms in enumerate(ase_atoms_list_with_op):
+    # for idx_atoms, ase_atoms in enumerate(structure_results):
     #     logger.info(idx_atoms)
-    #     # if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
-    #         # logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
-    #         #                                                                       len(ase_atoms_list)))
-    #     # add target list to structure
-    #     if target_list is not None:
-    #         ase_atoms.info['target'] = target_list[idx_atoms]
-    #
-    #     if descriptor.name in allowed_descriptors:
-    #         structure_result = descriptor.calculate(ase_atoms, **kwargs)
-    #         # descriptor.write(ase_atoms, tar=tar, op_id=0)
-    #         # write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
-    #
-    #         # we assume that the target value does not change with the application of the operations
-    #         # write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
-    #
-    #         ase_atoms_result.append(structure_result)
-    #
-    #     else:
-    #         raise ValueError("Please provided a valid descriptor. Valid descriptors are {}".format(allowed_descriptors))
+        # if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
+            # logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
+            #                                                                       len(ase_atoms_list)))
 
-    logger.debug('Writing descriptor information to file.')
+        # descriptor.write(ase_atoms, tar=tar, op_id=0)
+        # write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
 
-    # calc_descriptor_args = (ase_atoms_list, desc_file, descriptor, configs, logger, tmp_folder, desc_folder,
-    #                         desc_info_file, target_list)
+        # we assume that the target value does not change with the application of the operations
+        # write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
 
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=nb_jobs) as executor:
-    #     result_process = executor.map(worker_calc_descriptor, calc_descriptor_args)
 
     # desc_file_master = collect_desc_folders(descriptor=descriptor, desc_folder=desc_folder, nb_jobs=nb_jobs,
     #                                         tmp_folder=tmp_folder, desc_file=desc_file, remove=True)
 
-    # _calc_descriptor(descriptor, configs, ase_atoms_list_with_op, idx_slice=0, desc_file=desc_file,
-    #                  desc_folder=desc_folder, desc_info_file=desc_info_file, tmp_folder=tmp_folder,
-    #                  target_list=target_list, **kwargs)
 
     # # the cleaning of the tmp folder does not work if it is put here
     # clean_folder(tmp_folder)
@@ -222,90 +185,9 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
     #
     # return desc_file_master
 
-def new_calc_descriptor(ase_atoms, descriptor, configs, idx_slice=0, desc_file=None, desc_folder=None,
-                     desc_info_file=None, tmp_folder=None, target_list=None, cell_type=None, **kwargs):
-    if desc_file is None:
-        desc_file = 'descriptor.tar.gz'
 
-    if desc_info_file is None:
-        desc_info_file = os.path.abspath(os.path.normpath(os.path.join(desc_folder, 'desc_info.json.info')))
-
-    # if target_list is None:
-    #     target_list = [None] * len(ase_atoms_list)
-
-    desc_file = os.path.abspath(os.path.normpath(os.path.join(desc_folder, desc_file)))
-
-    # make the log file empty (do not erase it because otherwise
-    # we have problems with permission on the Docker image)
-    outfile_path = os.path.join(tmp_folder, 'output.log')
-    open(outfile_path, 'w+')
-
-    # # remove control file from a previous run
-    # old_control_files = [f for f in os.listdir(tmp_folder) if f.endswith('control.json')]
-    # for old_control_file in old_control_files:
-    #     file_path = os.path.join(desc_folder, old_control_file)
-    #     try:
-    #         if os.path.isfile(file_path):
-    #             os.remove(file_path)
-    #     except Exception as e:
-    #         logger.error(e)
-    #
-    # tar = tarfile.open(desc_file, 'w:gz')
-
-    # load descriptor metadata
-    desc_metainfo = get_metadata_info()
-    allowed_descriptors = desc_metainfo['descriptors']
-
-    logger.info("Calculating descriptor: {0}".format(descriptor.name))
-    logger.debug("Using {0} cell".format(cell_type))
-
-    ase_atoms_result = []
-
-    # for idx_atoms, ase_atoms in enumerate(ase_atoms_list):
-    #     if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
-    #         logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
-    #                                                                               len(ase_atoms_list)))
-    #     add target list to structure
-        # ase_atoms.info['target'] = target_list[idx_atoms]
-
-    if descriptor.name in allowed_descriptors:
-        structure_result = descriptor.calculate(ase_atoms, **kwargs)
-            # descriptor.write(ase_atoms, tar=tar, op_id=0)
-            # write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
-
-            # we assume that the target value does not change with the application of the operations
-            # write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
-
-            # ase_atoms_result.append(structure_result)
-
-        # else:
-        #     raise ValueError("Please provided a valid descriptor. Valid descriptors are {}".format(allowed_descriptors))
-
-    # logger.debug('Writing descriptor information to file.')
-
-    # write descriptor info to file for future reference
-    # descriptor.write_desc_info(desc_info_file, ase_atoms_result)
-
-    # tar.close()
-
-    # open the Archive and write summary file
-    # here we substitute the full path with the basename to be put in the tar archive
-    # TO DO: do it before, when the files are added to the tar
-    # write_summary_file(descriptor, desc_file, tmp_folder)
-
-    # logger.info('Descriptor calculation (process #{0}): done.'.format(idx_slice))
-
-    # filelist = []
-    #
-    # for file_ in filelist:
-    #     file_path = os.path.join(desc_folder, file_)
-    #     try:
-    #         if os.path.isfile(file_path):
-    #             os.remove(file_path)
-    #     except Exception as e:
-    #         logger.error(e)
-
-    return structure_result
+def calc_descriptor_one_structure(ase_atoms, descriptor, **kwargs):
+    return descriptor.calculate(ase_atoms, **kwargs)
 
 
 def _calc_descriptor(ase_atoms_list, descriptor, configs, idx_slice=0, desc_file=None, desc_folder=None,
@@ -609,13 +491,4 @@ def worker_apply_operations(arg):
     ase_atoms, operations_on_structure = arg
     return _apply_operations(ase_atoms, operations_on_structure)
 
-
-
-def worker_calc_descriptor(arg):
-    print(type(arg[0]))
-    print(type(arg[1]))
-    # print(arg[0])
-    # print(arg[1])
-    # ase_atoms, descriptor = arg
-    return arg
 
