@@ -183,7 +183,7 @@ def dispatch_jobs(function_to_calc, data, nb_jobs, desc_folder, desc_file):
         job.join()
 
 
-def parallel_process(array, function_to_calculate, nb_jobs=1, use_kwargs=False, front_num=3):
+def parallel_process(array, function_to_calculate, nb_jobs=1, use_kwargs=False, front_num=0):
     """ A parallel version of the map function with a progress bar.
 
     Function taken from: http://danshiebler.com/2016-09-14-parallel-progress-bar/
@@ -212,6 +212,8 @@ def parallel_process(array, function_to_calculate, nb_jobs=1, use_kwargs=False, 
     # We run the first few iterations serially to catch bugs
     if front_num > 0:
         front = [function_to_calculate(**a) if use_kwargs else function_to_calculate(a) for a in array[:front_num]]
+    else:
+        front = []
     # If we set n_jobs to 1, just run a list comprehension. This is useful for benchmarking and debugging.
     if nb_jobs == 1:
         return front + [function_to_calculate(**a) if use_kwargs else function_to_calculate(a) for a in tqdm(array[front_num:])]

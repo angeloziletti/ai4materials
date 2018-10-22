@@ -49,7 +49,7 @@ if __name__ == "__main__":
     from ai4materials.utils.utils_data_retrieval import read_ase_db
     from ai4materials.visualization.viewer import Viewer
     from ai4materials.utils.utils_data_retrieval import write_ase_db
-    from ai4materials.wrappers import calc_descriptor_new
+    from ai4materials.wrappers import calc_descriptor_in_memory
     from ai4materials.wrappers import calc_descriptor
     from ai4materials.wrappers import load_descriptor
     import numpy as np
@@ -104,8 +104,8 @@ if __name__ == "__main__":
     configs['io']['dataset_folder'] = dataset_folder
     configs['io']['desc_folder'] = desc_folder
 
-    # descriptor = DISH(configs=configs)
-    descriptor = Diffraction2D(configs=configs)
+    descriptor = DISH(configs=configs)
+    # descriptor = Diffraction2D(configs=configs)
 
     target_nb_atoms = 128
     nb_rotations = 1
@@ -209,13 +209,13 @@ if __name__ == "__main__":
     # =============================================================================
 
     for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:12]
+        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:4]
 
         print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
 
         for idx_rot in range(nb_rotations):
 
-            desc_file_path = calc_descriptor_new(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
+            desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
                                              tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
                                              # desc_file='try1.tar.gz',
                                              # desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0008.tar.gz'.format(db_proto[0],
@@ -226,7 +226,7 @@ if __name__ == "__main__":
                                              operations_on_structure=operations_on_structure_list[0], nb_jobs=-1)
                                              # operations_on_structure=None, nb_jobs=1)
 
-        print(desc_file_path)
+        # print(desc_file_path)
 
     sys.exit()
 

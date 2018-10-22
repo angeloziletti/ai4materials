@@ -52,7 +52,7 @@ import logging
 logger = logging.getLogger('ai4materials')
 
 
-def calc_descriptor_new(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=None, desc_folder=None,
+def calc_descriptor_in_memory(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=None, desc_folder=None,
                         desc_info_file=None, target_list=None, operations_on_structure=None, nb_jobs=-1, **kwargs):
     """ Calculates the descriptor for a list of atomic structures.
 
@@ -192,11 +192,17 @@ def calc_descriptor_new(descriptor, configs, desc_file, ase_atoms_list, tmp_fold
 
     tar.close()
 
-    # # the cleaning of the tmp folder does not work if it is put here
-    #  clean_folder(tmp_folder)
-    #  clean_folder(desc_folder, endings_to_delete=(  # ".png", ".npy", "_target.json", "_aims.in", "_info.pkl", "_coord.in", "_ase_atoms.json"))
-    #  # logger.info('Descriptor file: {}'.format(desc_file_master))  #  # return desc_file_master
+    desc_file_master = write_summary_file(descriptor, desc_file, tmp_folder,
+                                          desc_file_master=desc_file + '.tar.gz', clean_tmp=False)
 
+    clean_folder(tmp_folder)
+    clean_folder(desc_folder,
+                 endings_to_delete=(".png", ".npy", "_target.json", "_aims.in", "_info.pkl", "_coord.in",
+                                    "_ase_atoms.json"))
+
+    logger.info('Descriptor file: {}'.format(desc_file_master))
+
+    return desc_file_master
 
 
 def calc_descriptor_one_structure(ase_atoms, descriptor, **kwargs):
