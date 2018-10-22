@@ -103,8 +103,8 @@ if __name__ == "__main__":
     configs['io']['dataset_folder'] = dataset_folder
     configs['io']['desc_folder'] = desc_folder
 
-    descriptor = DISH(configs=configs)
-    # descriptor = Diffraction2D(configs=configs)
+    # descriptor = DISH(configs=configs)
+    descriptor = Diffraction2D(configs=configs)
 
     target_nb_atoms = 128
     nb_rotations = 1
@@ -114,7 +114,7 @@ if __name__ == "__main__":
                                                             target_nb_atoms=target_nb_atoms, random_rotation=True,
                                                             random_rotation_before=True,
                                                             cell_type='standard_no_symmetries',
-                                                            optimal_supercell=True)), (create_vacancies,
+                                                            optimal_supercell=False)), (create_vacancies,
                                                                                        dict(target_vacancy_ratio=0.01,
                                                                                             create_replicas_by='nb_atoms',
                                                                                             min_nb_atoms=32,
@@ -175,10 +175,10 @@ if __name__ == "__main__":
     # =============================================================================
     # Read prototype data from files
     # =============================================================================
-    proto_names = ['A_hP2_194_c', 'A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
+    # proto_names = ['A_hP2_194_c', 'A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
     # proto_names = ['A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
     # proto_names = ['A_cI2_229_a']
-    # proto_names = ['A_cP1_221_a']
+    proto_names = ['A_cP1_221_a']
 
     data_folders = [os.path.join(prototypes_basedir, proto_name) for proto_name in proto_names]
     ase_db_files = [os.path.join(db_files_prototypes_basedir, proto_name) + '.db' for proto_name in proto_names]
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     # =============================================================================
 
     for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:1]
+        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:10]
 
         print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
 
@@ -222,7 +222,7 @@ if __name__ == "__main__":
                                              desc_file='{0}_try.tar.gz'.format(
                                                  db_proto[0]),
                                              format_geometry='`aims',
-                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=1)
+                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=-1)
                                              # operations_on_structure=None, nb_jobs=1)
 
         print(desc_file_path)

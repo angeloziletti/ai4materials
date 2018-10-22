@@ -135,6 +135,10 @@ def collect_desc_folders(descriptor, desc_file, desc_folder, nb_jobs, tmp_folder
     return desc_file_master
 
 
+# def worker_apply_operations(arg):
+#     ase_atoms, operations_on_structure = arg
+#     return _apply_operations(ase_atoms, operations_on_structure)
+
 def dispatch_jobs(function_to_calc, data, nb_jobs, desc_folder, desc_file):
     """ Dispatch the calculation of `function_to_calc` to `nb_jobs` parallel processes.
 
@@ -166,15 +170,72 @@ def dispatch_jobs(function_to_calc, data, nb_jobs, desc_folder, desc_file):
     slices = split_list(data, nb_jobs)
     jobs = []
 
+    # https://stackoverflow.com/questions/15536295/python-multiprocessing-process-crashes-silently
+
     desc_file = os.path.normpath(os.path.join(desc_folder, desc_file))
 
-    for idx_slice, slice_ in enumerate(slices):
-        desc_file_i = desc_file + '_' + str(idx_slice) + '.tar.gz'
-        job = multiprocessing.Process(target=function_to_calc, args=(slice_, desc_file_i, idx_slice))
-        jobs.append(job)
+    # https://pymotw.com/3/multiprocessing/basics.html
 
-    for job in jobs:
-        job.start()
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=nb_jobs) as executor:
+    #     print("using concurrent features")
+    #     ase_atoms_list_with_op_nested = executor.map(worker_apply_operations,
+    #                                                  ((ase_atoms, operations_on_structure) for ase_atoms in
+    #                                                   ase_atoms_list))
+    #
 
-    for job in jobs:
-        job.join()
+
+    # for idx_slice, slice_ in enumerate(slices):
+    #     desc_file_i = desc_file + '_' + str(idx_slice) + '.tar.gz'
+    #     multiprocessing.log_to_stderr(logging.DEBUG)
+    #     job = multiprocessing.Process(target=function_to_calc, args=(slice_, desc_file_i, idx_slice))
+    #     jobs.append(job)
+    #
+    # for job in jobs:
+    #     job.start()
+    #
+    # for job in jobs:
+    #     job.join()
+
+    import time
+
+    # data_pairs = [[3, 5], [4, 3], [7, 3], [1, 6]]
+    #
+    # import numpy as np
+    # # define what to do with each data pair ( p=[3,5] ), example: calculate product
+    # def myfunc(p):
+    #     product_of_list = np.prod(p)
+    #     return product_of_list
+    #
+    # pool = multiprocessing.Pool(processes=4)
+    # result_list = pool.map(myfunc, data_pairs)
+    # print(result_list)
+
+
+    # desc_file_i = desc_file + '_' + str(idx_slice) + '.tar.gz'
+    # job = multiprocessing.Process(target=function_to_calc, args=(slice_, desc_file_i, idx_slice))
+    # jobs.append(job)
+    #
+
+    # import time
+    # import concurrent.futures
+    #
+    # def sleep_print_return(input):
+    #     print("{} started".format(input))
+    #     time.sleep(input % 3)
+    #     return input
+    #
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=None) as executor:
+    #     for result in executor.map(sleep_print_return, range(25)):
+    #         # do stuff
+    #         print("{} finished".format(result))
+    #         pass
+
+
+
+        # for result in executor.map(sleep_print_return, range(25)):
+            # do stuff
+            # print
+            # "{} finished".format(result)
+            # pass
+
+

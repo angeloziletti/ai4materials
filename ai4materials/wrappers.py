@@ -43,7 +43,10 @@ from ai4materials.utils.utils_config import get_metadata_info
 from ai4materials.utils.utils_data_retrieval import write_ase_db_file
 from ai4materials.utils.utils_data_retrieval import write_target_values
 from ai4materials.utils.utils_data_retrieval import write_summary_file
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from functools import partial
 import logging
+from tqdm import tqdm
 
 logger = logging.getLogger('ai4materials')
 
@@ -109,12 +112,11 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
     desc_folder = configs['io']['desc_folder']
     tmp_folder = configs['io']['tmp_folder']
 
-    pool = multiprocessing.Pool(processes=nb_jobs)
-    ase_atoms_list_with_op_nested = pool.map(worker_apply_operations,
-                                             ((ase_atoms, operations_on_structure) for ase_atoms in ase_atoms_list))
+    with ProcessPoolExecutor(max_workers=nb_jobs) as executor:
+        ase_atoms_list_with_op_nested = executor.map(worker_apply_operations,
+                                                     ((ase_atoms, operations_on_structure) for ase_atoms in
+                                                      ase_atoms_list))
     ase_atoms_list_with_op = [item for sublist in ase_atoms_list_with_op_nested for item in sublist]
-    pool.close()
-    pool.join()
 
     # check if all elements in the ase list have labels (needed for traceability later)
     label_present = [True if 'label' in ase_atoms.info.keys() else False for ase_atoms in ase_atoms_list_with_op]
@@ -127,32 +129,228 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
         for idx, ase_atoms in enumerate(ase_atoms_list_with_op):
             ase_atoms.info['label'] = str('struct-' + str(idx))
 
-    def _calc_descriptor_mp(data_slice, desc_file_i, idx_slice):
-        _calc_descriptor(ase_atoms_list=data_slice, desc_file=desc_file_i, idx_slice=idx_slice, descriptor=descriptor,
-                         configs=configs, logger=logger, tmp_folder=tmp_folder, desc_folder=desc_folder,
-                         desc_info_file=desc_info_file, target_list=target_list, **kwargs)
+    # def _calc_descriptor_mp(data_slice, desc_file_i, idx_slice):
+    #     _calc_descriptor(ase_atoms_list=data_slice, desc_file=desc_file_i, idx_slice=idx_slice, descriptor=descriptor,
+    #                      configs=configs, logger=logger, tmp_folder=tmp_folder, desc_folder=desc_folder,
+    #                      desc_info_file=desc_info_file, target_list=target_list, **kwargs)
 
     logger.info('Using {} processors'.format(nb_jobs))
-    dispatch_jobs(_calc_descriptor_mp, ase_atoms_list_with_op, nb_jobs=nb_jobs, desc_folder=desc_folder,
-                  desc_file=desc_file)
+    # dispatch_jobs(_calc_descriptor_mp, ase_atoms_list_with_op, nb_jobs=nb_jobs, desc_folder=desc_folder,
+    #               desc_file=desc_file)
 
-    desc_file_master = collect_desc_folders(descriptor=descriptor, desc_folder=desc_folder, nb_jobs=nb_jobs,
-                                            tmp_folder=tmp_folder, desc_file=desc_file, remove=True)
+    # load descriptor metadata
+    desc_metainfo = get_metadata_info()
+    allowed_descriptors = desc_metainfo['descriptors']
 
-    # the cleaning of the tmp folder does not work if it is put here
-    clean_folder(tmp_folder)
-    clean_folder(desc_folder, endings_to_delete=(".png", ".npy", "_target.json", "_aims.in", "_info.pkl",
-                                                 "_coord.in", "_ase_atoms.json"))
+    logger.info("Calculating descriptor: {0}".format(descriptor.name))
+    # logger.debug("Using {0} cell".format(cell_type))
 
-    logger.info('Descriptor file: {}'.format(desc_file_master))
+    worker_calc_descriptor_partial = partial(new_calc_descriptor, descriptor=descriptor, configs=configs,
+                                                             idx_slice=0, desc_file=desc_file, desc_folder=desc_folder,
+                         desc_info_file=desc_info_file, tmp_folder=tmp_folder, target_list=target_list)
 
-    return desc_file_master
+    # concurrent.futures.ProcessPoolExecutor() as executor:
+    # result = executor.map(function, iterable)
+
+    # with concurrent.futures.ProcessPoolExecutor() as executor:
+    #     results = executor.map(worker_calc_descriptor_partial, ase_atoms_list_with_op)
 
 
-def _calc_descriptor(descriptor, configs, ase_atoms_list, idx_slice=0, desc_file=None,
-                     desc_folder=None, desc_info_file=None, tmp_folder=None, target_list=None,
-                     cell_type=None, **kwargs):
 
+
+    def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
+        """
+            Function taken from: http://danshiebler.com/2016-09-14-parallel-progress-bar/
+
+            A parallel version of the map function with a progress bar.
+
+            Args:
+                array (array-like): An array to iterate over.
+                function (function): A python function to apply to the elements of array
+                n_jobs (int, default=16): The number of cores to use
+                use_kwargs (boolean, default=False): Whether to consider the elements of array as dictionaries of
+                    keyword arguments to function
+                front_num (int, default=3): The number of iterations to run serially before kicking off the parallel job.
+                    Useful for catching bugs
+            Returns:
+                [function(array[0]), function(array[1]), ...]
+        """
+        # We run the first few iterations serially to catch bugs
+        if front_num > 0:
+            front = [function(**a) if use_kwargs else function(a) for a in array[:front_num]]
+        # If we set n_jobs to 1, just run a list comprehension. This is useful for benchmarking and debugging.
+        if n_jobs == 1:
+            return front + [function(**a) if use_kwargs else function(a) for a in tqdm(array[front_num:])]
+        # Assemble the workers
+        with ProcessPoolExecutor(max_workers=n_jobs) as pool:
+            # Pass the elements of array into function
+            if use_kwargs:
+                futures = [pool.submit(function, **a) for a in array[front_num:]]
+            else:
+                futures = [pool.submit(function, a) for a in array[front_num:]]
+            kwargs = {'total': len(futures), 'unit': 'it', 'unit_scale': True, 'leave': True}
+            # Print out the progress as tasks complete
+            for f in tqdm(as_completed(futures), **kwargs):
+                pass
+        out = []
+        # Get the results from the futures.
+        for i, future in tqdm(enumerate(futures)):
+            try:
+                out.append(future.result())
+            except Exception as e:
+                out.append(e)
+        return front + out
+
+    results = parallel_process(ase_atoms_list_with_op, worker_calc_descriptor_partial, n_jobs=4)
+
+    # print(len(results))
+
+    # for result in results:
+        # print(result.info)
+    logger.info("Calculation done.")
+
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=nb_jobs) as executor:
+    #     ase_atoms_result = executor.map(worker_calc_descriptor, (ase_atoms_list_with_op, descriptor))
+    #     print(future.result())
+
+    # print(ase_atoms_result[0])
+    # print(ase_atoms_result[0].info['descriptor'])
+
+    # ase_atoms_result = []
+    # for idx_atoms, ase_atoms in enumerate(ase_atoms_list_with_op):
+    #     logger.info(idx_atoms)
+    #     # if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
+    #         # logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
+    #         #                                                                       len(ase_atoms_list)))
+    #     # add target list to structure
+    #     if target_list is not None:
+    #         ase_atoms.info['target'] = target_list[idx_atoms]
+    #
+    #     if descriptor.name in allowed_descriptors:
+    #         structure_result = descriptor.calculate(ase_atoms, **kwargs)
+    #         # descriptor.write(ase_atoms, tar=tar, op_id=0)
+    #         # write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
+    #
+    #         # we assume that the target value does not change with the application of the operations
+    #         # write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
+    #
+    #         ase_atoms_result.append(structure_result)
+    #
+    #     else:
+    #         raise ValueError("Please provided a valid descriptor. Valid descriptors are {}".format(allowed_descriptors))
+
+    logger.debug('Writing descriptor information to file.')
+
+    # calc_descriptor_args = (ase_atoms_list, desc_file, descriptor, configs, logger, tmp_folder, desc_folder,
+    #                         desc_info_file, target_list)
+
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=nb_jobs) as executor:
+    #     result_process = executor.map(worker_calc_descriptor, calc_descriptor_args)
+
+    # desc_file_master = collect_desc_folders(descriptor=descriptor, desc_folder=desc_folder, nb_jobs=nb_jobs,
+    #                                         tmp_folder=tmp_folder, desc_file=desc_file, remove=True)
+
+    # _calc_descriptor(descriptor, configs, ase_atoms_list_with_op, idx_slice=0, desc_file=desc_file,
+    #                  desc_folder=desc_folder, desc_info_file=desc_info_file, tmp_folder=tmp_folder,
+    #                  target_list=target_list, **kwargs)
+
+    # # the cleaning of the tmp folder does not work if it is put here
+    # clean_folder(tmp_folder)
+    # clean_folder(desc_folder, endings_to_delete=(
+    # ".png", ".npy", "_target.json", "_aims.in", "_info.pkl", "_coord.in", "_ase_atoms.json"))
+    #
+    # logger.info('Descriptor file: {}'.format(desc_file_master))
+    #
+    # return desc_file_master
+
+def new_calc_descriptor(ase_atoms, descriptor, configs, idx_slice=0, desc_file=None, desc_folder=None,
+                     desc_info_file=None, tmp_folder=None, target_list=None, cell_type=None, **kwargs):
+    if desc_file is None:
+        desc_file = 'descriptor.tar.gz'
+
+    if desc_info_file is None:
+        desc_info_file = os.path.abspath(os.path.normpath(os.path.join(desc_folder, 'desc_info.json.info')))
+
+    # if target_list is None:
+    #     target_list = [None] * len(ase_atoms_list)
+
+    desc_file = os.path.abspath(os.path.normpath(os.path.join(desc_folder, desc_file)))
+
+    # make the log file empty (do not erase it because otherwise
+    # we have problems with permission on the Docker image)
+    outfile_path = os.path.join(tmp_folder, 'output.log')
+    open(outfile_path, 'w+')
+
+    # # remove control file from a previous run
+    # old_control_files = [f for f in os.listdir(tmp_folder) if f.endswith('control.json')]
+    # for old_control_file in old_control_files:
+    #     file_path = os.path.join(desc_folder, old_control_file)
+    #     try:
+    #         if os.path.isfile(file_path):
+    #             os.remove(file_path)
+    #     except Exception as e:
+    #         logger.error(e)
+    #
+    # tar = tarfile.open(desc_file, 'w:gz')
+
+    # load descriptor metadata
+    desc_metainfo = get_metadata_info()
+    allowed_descriptors = desc_metainfo['descriptors']
+
+    logger.info("Calculating descriptor: {0}".format(descriptor.name))
+    logger.debug("Using {0} cell".format(cell_type))
+
+    ase_atoms_result = []
+
+    # for idx_atoms, ase_atoms in enumerate(ase_atoms_list):
+    #     if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
+    #         logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
+    #                                                                               len(ase_atoms_list)))
+    #     add target list to structure
+        # ase_atoms.info['target'] = target_list[idx_atoms]
+
+    if descriptor.name in allowed_descriptors:
+        structure_result = descriptor.calculate(ase_atoms, **kwargs)
+            # descriptor.write(ase_atoms, tar=tar, op_id=0)
+            # write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
+
+            # we assume that the target value does not change with the application of the operations
+            # write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
+
+            # ase_atoms_result.append(structure_result)
+
+        # else:
+        #     raise ValueError("Please provided a valid descriptor. Valid descriptors are {}".format(allowed_descriptors))
+
+    # logger.debug('Writing descriptor information to file.')
+
+    # write descriptor info to file for future reference
+    # descriptor.write_desc_info(desc_info_file, ase_atoms_result)
+
+    # tar.close()
+
+    # open the Archive and write summary file
+    # here we substitute the full path with the basename to be put in the tar archive
+    # TO DO: do it before, when the files are added to the tar
+    # write_summary_file(descriptor, desc_file, tmp_folder)
+
+    # logger.info('Descriptor calculation (process #{0}): done.'.format(idx_slice))
+
+    # filelist = []
+    #
+    # for file_ in filelist:
+    #     file_path = os.path.join(desc_folder, file_)
+    #     try:
+    #         if os.path.isfile(file_path):
+    #             os.remove(file_path)
+    #     except Exception as e:
+    #         logger.error(e)
+
+    return structure_result
+
+
+def _calc_descriptor(ase_atoms_list, descriptor, configs, idx_slice=0, desc_file=None, desc_folder=None,
+                     desc_info_file=None, tmp_folder=None, target_list=None, cell_type=None, **kwargs):
     if desc_file is None:
         desc_file = 'descriptor.tar.gz'
 
@@ -194,6 +392,8 @@ def _calc_descriptor(descriptor, configs, ase_atoms_list, idx_slice=0, desc_file
         if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
             logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
                                                                                   len(ase_atoms_list)))
+        # add target list to structure
+        ase_atoms.info['target'] = target_list[idx_atoms]
 
         if descriptor.name in allowed_descriptors:
             structure_result = descriptor.calculate(ase_atoms, **kwargs)
@@ -257,10 +457,9 @@ def load_descriptor(desc_files, configs):
     return target_list, structure_list
 
 
-def calc_model(method, tmp_folder, results_folder,
-               combine_features_with_ops=True, cols_to_drop=None,
-               df_features=None, target=None, energy_unit=None, length_unit=None, allowed_operations=None,
-               derived_features=None, max_dim=None, sis_control=None, control_file=None, lookup_file=None):
+def calc_model(method, tmp_folder, results_folder, combine_features_with_ops=True, cols_to_drop=None, df_features=None,
+               target=None, energy_unit=None, length_unit=None, allowed_operations=None, derived_features=None,
+               max_dim=None, sis_control=None, control_file=None, lookup_file=None):
     """ Calculates model.
 
     """
@@ -340,8 +539,8 @@ def calc_model(method, tmp_folder, results_folder,
             for idx_dim in range(max_dim):
                 # define paths for file writing
                 path_to_csv = os.path.join(results_folder, str(method) + '_dim' + str(idx_dim) + '.csv')
-                path_to_csv_viewer = os.path.join(results_folder, str(method) + '_dim' + str(idx_dim) +
-                                                  '_for_viewer.csv')
+                path_to_csv_viewer = os.path.join(results_folder,
+                                                  str(method) + '_dim' + str(idx_dim) + '_for_viewer.csv')
 
                 df_dim = df_desc[idx_dim]
                 # add y_pred y_true (i.e. target) to dataframe
@@ -350,7 +549,7 @@ def calc_model(method, tmp_folder, results_folder,
                 df_result = pd.concat([df_dim, df_true_pred], axis=1, join='inner')
 
                 # extract only the coordinates for the viewer and rename them
-                coord_cols = range(idx_dim+1)
+                coord_cols = range(idx_dim + 1)
                 df_result_viewer = df_dim[df_dim.columns[coord_cols]]
                 df_result_viewer.columns = ['coord_' + str(i) for i in coord_cols]
                 df_result_viewer = pd.concat([df_result_viewer, df_true_pred], axis=1, join='inner')
@@ -446,6 +645,18 @@ def _apply_operations(ase_atoms, operations_on_structure=None):
 
     return ase_atoms_list_op
 
+
 def worker_apply_operations(arg):
     ase_atoms, operations_on_structure = arg
     return _apply_operations(ase_atoms, operations_on_structure)
+
+
+
+def worker_calc_descriptor(arg):
+    print(type(arg[0]))
+    print(type(arg[1]))
+    # print(arg[0])
+    # print(arg[1])
+    # ase_atoms, descriptor = arg
+    return arg
+
