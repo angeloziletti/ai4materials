@@ -77,6 +77,8 @@ class Descriptor(object):
         ] }""")
             f.flush()
 
+        return desc_info_file
+
     def params(self):
         return self.__dict__
 

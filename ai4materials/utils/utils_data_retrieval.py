@@ -831,7 +831,39 @@ def get_paths_from_filter_dict(filter_dict, accepted_keys=None, verbose=True):
     return filters_jsons
 
 
-def write_target_values(structure, configs, op_nb, tar=None, filename_suffix='_target.json', target=None,
+def write_desc_info_file(descriptor, desc_info_file, tar, ase_atoms):
+    """Write a file with information regarding the descriptor used in the calculation.
+
+    This is done to ensure that the user can trace back which descriptor was used.
+
+    Parameters:
+
+    descriptor: :py:mod:`ai4materials.descriptors.base_descriptor.Descriptor` object
+        Descriptor to calculate.
+
+    desc_info_file: string, optional (default=`None`)
+        File where information about the descriptor are written to disk.
+
+    tar: tarfile object
+        This is an object obtain as follows: tar = tarfile.open(desc_file, 'w:gz')
+
+    ase_atoms: list of ``ase.Atoms`` objects
+            Atomic structures.
+
+    """
+    desc_info_file = descriptor.write_desc_info(desc_info_file, ase_atoms)
+
+    tar.add(desc_info_file)
+
+    # remove the desc_info_file since it has been already added to the tar file
+    try:
+        if os.path.isfile(desc_info_file):
+            os.unlink(desc_info_file)
+    except Exception as e:
+        logger.warning(e)
+
+
+def write_target_values(structure, configs, op_nb, tar=None, filename_suffix='_target.json',
                         calc_spgroup=True, symprec=[1e-03, 1e-06]):
     """Write target values. One file for each frame.
     The target works only if one frame is considered. Please check.
@@ -852,6 +884,10 @@ def write_target_values(structure, configs, op_nb, tar=None, filename_suffix='_t
     target_filename = os.path.abspath(os.path.normpath(
         os.path.join(desc_folder, structure.info['label'] + '_' + 'op' + str(op_nb) + filename_suffix)))
 
+    # check if target is present
+    if 'target' not in structure.info.keys():
+        structure.info['target'] = None
+
     # calculate the actual spacegroup of the structure
     # after the transformations were applied
     spacegroup_analyzer_actual = {}
@@ -866,7 +902,7 @@ def write_target_values(structure, configs, op_nb, tar=None, filename_suffix='_t
 
     result = {"checksum": structure.info['label'], "ase_db_file": structure.info['ase_db_filename'],
               "chemical_formula": structure.get_chemical_formula(), "cell": structure.get_cell().tolist(),
-              "filename": target_filename, "target": target}
+              "filename": target_filename, "target": structure.info['target']}
 
     # write the spacegroup number obtained before applying the
     # specified transformations

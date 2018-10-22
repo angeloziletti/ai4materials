@@ -33,6 +33,7 @@ import multiprocessing
 from ai4materials.utils.utils_mp import dispatch_jobs
 from ai4materials.utils.utils_mp import collect_desc_folders
 from ai4materials.utils.utils_data_retrieval import clean_folder
+from ai4materials.utils.utils_data_retrieval import write_desc_info_file
 from ai4materials.utils.utils_config import overwrite_configs
 from ai4materials.utils.utils_config import read_nomad_metainfo
 from ai4materials.utils.utils_crystals import modify_crystal
@@ -51,8 +52,8 @@ import logging
 logger = logging.getLogger('ai4materials')
 
 
-def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=None, desc_folder=None,
-                    desc_info_file=None, target_list=None, operations_on_structure=None, nb_jobs=-1, **kwargs):
+def calc_descriptor_new(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=None, desc_folder=None,
+                        desc_info_file=None, target_list=None, operations_on_structure=None, nb_jobs=-1, **kwargs):
     """ Calculates the descriptor for a list of atomic structures.
 
     Starting from a list of ASE structures, calculates for each file the descriptor
@@ -101,6 +102,28 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
 
     """
 
+    if desc_info_file is None:
+        desc_info_file = os.path.abspath(os.path.normpath(os.path.join(desc_folder, 'desc_info.json.info')))
+
+    desc_file = os.path.abspath(os.path.normpath(os.path.join(desc_folder, desc_file)))
+
+    # make the log file empty (do not erase it because otherwise
+    # we have problems with permission on the Docker image)
+    outfile_path = os.path.join(tmp_folder, 'output.log')
+    open(outfile_path, 'w+')
+
+    # remove control file from a previous run
+    old_control_files = [f for f in os.listdir(tmp_folder) if f.endswith('control.json')]
+    for old_control_file in old_control_files:
+        file_path = os.path.join(desc_folder, old_control_file)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            logger.error(e)
+
+    tar = tarfile.open(desc_file, 'w:gz')
+
     if nb_jobs == -1:
         nb_jobs = min(len(ase_atoms_list), multiprocessing.cpu_count())
 
@@ -144,46 +167,36 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
         logger.info("Calculating descriptor: {0}".format(descriptor.name))
 
         worker_calc_descriptor = partial(calc_descriptor_one_structure, descriptor=descriptor,
-                                                 allowed_descriptors=allowed_descriptors, configs=configs,
-                                                 idx_slice=0, desc_file=desc_file, desc_folder=desc_folder,
-                                                 desc_info_file=desc_info_file, tmp_folder=tmp_folder,
-                                                 target_list=target_list,  **kwargs)
+                                         allowed_descriptors=allowed_descriptors, configs=configs, idx_slice=0,
+                                         desc_file=desc_file, desc_folder=desc_folder, desc_info_file=desc_info_file,
+                                         tmp_folder=tmp_folder, target_list=target_list, **kwargs)
 
-        structure_results = parallel_process(ase_atoms_list_with_op, worker_calc_descriptor, nb_jobs=nb_jobs)
+        ase_atoms_results = parallel_process(ase_atoms_list_with_op, worker_calc_descriptor, nb_jobs=nb_jobs)
 
     else:
         raise ValueError("Please provided a valid descriptor. Valid descriptors are {}".format(allowed_descriptors))
 
     logger.info("Calculation done.")
 
-
     logger.info('Writing descriptor information to file.')
 
-    # for idx_atoms, ase_atoms in enumerate(structure_results):
-    #     logger.info(idx_atoms)
-        # if idx_atoms % (int(len(ase_atoms_list) / 10) + 1) == 0:
-            # logger.info("Calculating descriptor (process # {0}):  {1}/{2}".format(idx_slice, idx_atoms + 1,
-            #                                                                       len(ase_atoms_list)))
-
-        # descriptor.write(ase_atoms, tar=tar, op_id=0)
-        # write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
+    for idx_atoms, ase_atoms in enumerate(ase_atoms_results):
+        descriptor.write(ase_atoms, tar=tar, op_id=0)
+        write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
 
         # we assume that the target value does not change with the application of the operations
-        # write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
+        write_target_values(ase_atoms, configs, op_nb=0, tar=tar)
 
+    # write descriptor info to file for future reference
+    write_desc_info_file(descriptor, desc_info_file, tar, ase_atoms_results)
 
-    # desc_file_master = collect_desc_folders(descriptor=descriptor, desc_folder=desc_folder, nb_jobs=nb_jobs,
-    #                                         tmp_folder=tmp_folder, desc_file=desc_file, remove=True)
-
+    tar.close()
 
     # # the cleaning of the tmp folder does not work if it is put here
-    # clean_folder(tmp_folder)
-    # clean_folder(desc_folder, endings_to_delete=(
-    # ".png", ".npy", "_target.json", "_aims.in", "_info.pkl", "_coord.in", "_ase_atoms.json"))
-    #
-    # logger.info('Descriptor file: {}'.format(desc_file_master))
-    #
-    # return desc_file_master
+    #  clean_folder(tmp_folder)
+    #  clean_folder(desc_folder, endings_to_delete=(  # ".png", ".npy", "_target.json", "_aims.in", "_info.pkl", "_coord.in", "_ase_atoms.json"))
+    #  # logger.info('Descriptor file: {}'.format(desc_file_master))  #  # return desc_file_master
+
 
 
 def calc_descriptor_one_structure(ase_atoms, descriptor, **kwargs):
@@ -492,3 +505,103 @@ def worker_apply_operations(arg):
     return _apply_operations(ase_atoms, operations_on_structure)
 
 
+def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=None, desc_folder=None,
+                    desc_info_file=None, target_list=None, operations_on_structure=None, nb_jobs=-1, **kwargs):
+    """ Calculates the descriptor for a list of atomic structures.
+
+    Starting from a list of ASE structures, calculates for each file the descriptor
+    specified by ``descriptor``, and stores the results in the compressed archive
+    desc_file in the directory `desc_folder`.
+    It uses multiprocessing.Pool to parallelize the calculation.
+
+    Parameters:
+
+    descriptor: :py:mod:`ai4materials.descriptors.base_descriptor.Descriptor` object
+        Descriptor to calculate.
+
+    configs: dict
+        Contains configuration information such as folders for input and output (e.g. desc_folder, tmp_folder),
+        logging level, and metadata location. See also :py:mod:`ai4materials.utils.utils_config.set_configs`.
+
+    ase_atoms_list: list of ``ase.Atoms`` objects
+        Atomic structures.
+
+    desc_file: string
+        Name of the compressed archive where the file containing the descriptors are written.
+
+    desc_folder: string, optional (default=`None`)
+        Folder where the desc_file is written. If not specified, the desc_folder in read from
+        ``configs['io']['desc_folder']``.
+
+    tmp_folder: string, optional (default=`None`)
+        Folder where the desc_file is written. If not specified, the desc_folder in read from
+        ``configs['io']['tmp_folder']``.
+
+    desc_info_file: string, optional (default=`None`)
+        File where information about the descriptor are written to disk.
+
+    target_list: list, optional (default=`None`)
+        List of target values. These values are saved to disk when the descriptor is calculated, and they can loaded
+        for subsequent analysis.
+
+    operations_on_structure: list of objects
+        List of operations to be applied to the atomic structures before calculating the descriptor.
+
+    nb_jobs: int, optional (default=-1)
+        Number of processors to use in the calculation of the descriptor.
+        If set to -1, all available processors will be used.
+
+
+    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+
+    """
+
+    if nb_jobs == -1:
+        nb_jobs = min(len(ase_atoms_list), multiprocessing.cpu_count())
+
+    # overwrite configs (priority is given to the folders defined in the function)
+    # if desc_folder and tmp_folder are None, then configs are not overwritten
+    configs = overwrite_configs(configs=configs, desc_folder=desc_folder, tmp_folder=tmp_folder)
+
+    # define desc_folder and tmp_folder for convenience
+    desc_folder = configs['io']['desc_folder']
+    tmp_folder = configs['io']['tmp_folder']
+
+    pool = multiprocessing.Pool(processes=nb_jobs)
+    ase_atoms_list_with_op_nested = pool.map(worker_apply_operations,
+                                             ((ase_atoms, operations_on_structure) for ase_atoms in ase_atoms_list))
+    ase_atoms_list_with_op = [item for sublist in ase_atoms_list_with_op_nested for item in sublist]
+    pool.close()
+    pool.join()
+
+    # check if all elements in the ase list have labels (needed for traceability later)
+    label_present = [True if 'label' in ase_atoms.info.keys() else False for ase_atoms in ase_atoms_list_with_op]
+    if not np.all(label_present):
+        logger.info("Some structures in the list do not have labels. Adding or substituting labels.")
+        logger.info("Default labels given by the order in the list (1st structure: label=struct-1)")
+        logger.info("To avoid this add a label to each ASE structure using ase_atoms.info['label']='your_label'")
+
+        # substitute and add default labels
+        for idx, ase_atoms in enumerate(ase_atoms_list_with_op):
+            ase_atoms.info['label'] = str('struct-' + str(idx))
+
+    def _calc_descriptor_mp(data_slice, desc_file_i, idx_slice):
+        _calc_descriptor(ase_atoms_list=data_slice, desc_file=desc_file_i, idx_slice=idx_slice, descriptor=descriptor,
+                         configs=configs, logger=logger, tmp_folder=tmp_folder, desc_folder=desc_folder,
+                         desc_info_file=desc_info_file, target_list=target_list, **kwargs)
+
+    logger.info('Using {} processors'.format(nb_jobs))
+    dispatch_jobs(_calc_descriptor_mp, ase_atoms_list_with_op, nb_jobs=nb_jobs, desc_folder=desc_folder,
+                  desc_file=desc_file)
+
+    desc_file_master = collect_desc_folders(descriptor=descriptor, desc_folder=desc_folder, nb_jobs=nb_jobs,
+                                            tmp_folder=tmp_folder, desc_file=desc_file, remove=True)
+
+    # the cleaning of the tmp folder does not work if it is put here
+    clean_folder(tmp_folder)
+    clean_folder(desc_folder, endings_to_delete=(
+    ".png", ".npy", "_target.json", "_aims.in", "_info.pkl", "_coord.in", "_ase_atoms.json"))
+
+    logger.info('Descriptor file: {}'.format(desc_file_master))
+
+    return desc_file_master
