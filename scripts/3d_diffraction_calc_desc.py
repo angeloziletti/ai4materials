@@ -209,7 +209,7 @@ if __name__ == "__main__":
     # =============================================================================
 
     for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:4]
+        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:1]
 
         print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
 
@@ -223,7 +223,7 @@ if __name__ == "__main__":
                                              desc_file='{0}_try.tar.gz'.format(
                                                  db_proto[0]),
                                              format_geometry='`aims',
-                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=-1)
+                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=1)
                                              # operations_on_structure=None, nb_jobs=1)
 
         # print(desc_file_path)

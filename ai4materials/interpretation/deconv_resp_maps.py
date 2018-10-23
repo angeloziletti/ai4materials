@@ -32,10 +32,10 @@ import numpy as np
 import os
 import matplotlib
 # Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
-os.system("export DISPLAY=:0")
+# matplotlib.use('Agg')
+# os.system("export DISPLAY=:0")
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+# plt.switch_backend('agg')
 import matplotlib.cm as cm
 from matplotlib import gridspec
 from ai4materials.utils.utils_plotting import make_multiple_image_plot

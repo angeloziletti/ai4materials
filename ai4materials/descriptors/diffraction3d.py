@@ -26,7 +26,7 @@ import condor
 import logging
 import os
 import matplotlib
-# force matplotlib to not use any Xwindows backend - needed for gitlab continous integration
+# force matplotlib to not use any Xwindows backend - needed for github continous integration
 matplotlib.use('Agg')
 os.system("export DISPLAY=:0")
 import matplotlib.pyplot as plt
@@ -230,7 +230,7 @@ class DISH(Descriptor):
         self.max_r = self.nx_fft / 2.0
 
     def calculate(self, structure, min_nb_atoms=20, plot_3d=False, plot_slices=False, plot_slices_sph_coords=False,
-                  **kwargs):
+                  save_diff_intensity=True, **kwargs):
         """Calculate the descriptor for the given ASE structure.
 
         Parameters:
@@ -325,6 +325,9 @@ class DISH(Descriptor):
             power_spect_cut = power_spect[20:108, 20:108, 20:108]
             # zoom by two times using spline interpolation
             power_spect = ndimage.zoom(power_spect_cut, (2, 2, 2))
+
+            if save_diff_intensity:
+               np.save('/home/ziletti/Documents/calc_nomadml/rot_inv_3d/power_spect.npy', power_spect)
 
             # power_spect.shape = 176, 176, 176
             if plot_3d:
