@@ -25,6 +25,7 @@ __date__ = "23/09/18"
 import keras
 import keras.backend as K
 K.set_image_dim_ordering('th')
+from ai4materials.models.cnn_nature_comm_ziletti2018 import reshape_images_to_theano
 from keras.callbacks import CSVLogger
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import EarlyStopping
@@ -44,88 +45,93 @@ import numpy as np
 logger = logging.getLogger('ai4materials')
 
 
-def train_neural_network(data_set, configs, batch_size, nb_classes, nb_epoch, img_channels,
-                    partial_model_architecture, normalize=False, checkpoint_dir=None, checkpoint_filename=None,
-                    training_log_file='training.log', early_stopping=False):
-    filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, checkpoint_filename)))
+def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_architecture, batch_size=32, nb_epoch=5,
+                         normalize=True, checkpoint_dir=None, neural_network_name='my_neural_network',
+                         training_log_file='training.log', early_stopping=False):
+    """Train a neural network to classify crystal structures represented as two-dimensional diffraction fingerprints.
+
+    This model was introduced in [1]_.
+
+    x_train: np.array, [batch, width, height, channels]
+
+
+    .. [1] A. Ziletti, A. Leitherer, M. Scheffler, and L. M. Ghiringhelli,
+        “Crystal-structure identification via Bayesian deep learning: towards superhuman performance”,
+        in preparation (2018)
+
+    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+    """
+
+    if checkpoint_dir is None:
+        checkpoint_dir = configs['io']['results_folder']
+
+    filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, neural_network_name)))
 
     training_log_file_path = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, training_log_file)))
 
-    x_train = data_set.train.images
-    y_train = data_set.train.labels
-    x_val = data_set.val.images
-    y_val = data_set.val.labels
-    x_test = data_set.test.images
-    y_test = data_set.test.labels
+    # reshape to follow the image conventions
+    # - TensorFlow backend: [batch, width, height, channels]
+    # - Theano backend: [batch, channels, width, height]
+    x_train = reshape_images_to_theano(x_train)
+    x_val = reshape_images_to_theano(x_val)
 
-    # image conventions
-    # - TensorFlow: [batch, width, height, channels]
-    # - Theano: [batch, channels, width, height]
+    assert x_train.shape[1] == x_val.shape[1]
+    assert x_train.shape[2] == x_val.shape[2]
+    assert x_train.shape[3] == x_val.shape[3]
 
-    # the 1st dimension is the batch (nb of images)
-    input_dims = (x_train.shape[1], x_train.shape[2])
-
-    if len(input_dims) == 2:
-        # add channels
-        if keras.backend.image_dim_ordering() == 'th':
-            x_train = np.reshape(x_train, (x_train.shape[0], -1, x_train.shape[1], x_train.shape[2]))
-            x_val = np.reshape(x_val, (x_val.shape[0], -1, x_val.shape[1], x_val.shape[2]))
-            x_test = np.reshape(x_test, (x_test.shape[0], -1, x_test.shape[1], x_test.shape[2]))
-        elif keras.backend.image_dim_ordering() == 'tf':
-            raise NotImplementedError('Tensorflow backend is not supported.')
-        else:
-            raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
-    else:
-        raise Exception("Wrong number of dimensions.")
+    img_channels = x_train.shape[1]
+    img_width = x_train.shape[2]
+    img_height = x_train.shape[3]
 
     logger.info('Loading datasets.')
-
     logger.debug('x_train shape: {0}'.format(x_train.shape))
     logger.debug('y_train shape: {0}'.format(y_train.shape))
     logger.debug('x_val shape: {0}'.format(x_val.shape))
     logger.debug('y_val shape: {0}'.format(y_val.shape))
-    logger.debug('x_test shape: {0}'.format(x_test.shape))
-    logger.debug('y_test shape: {0}'.format(y_test.shape))
     logger.debug('Training samples: {0}'.format(x_train.shape[0]))
     logger.debug('Validation samples: {0}'.format(x_val.shape[0]))
-    logger.debug('Test samples: {0}'.format(x_test.shape[0]))
+    logger.debug("Img channels: {}".format(x_train.shape[1]))
+    logger.debug("Img width: {}".format(x_train.shape[2]))
+    logger.debug("Img height: {}".format(x_train.shape[3]))
 
     x_train = x_train.astype('float32')
     x_val = x_val.astype('float32')
-    x_test = x_test.astype('float32')
 
     # normalize each image separately
     if normalize:
         for idx in range(x_train.shape[0]):
             x_train[idx, :, :, :] = (x_train[idx, :, :, :] - np.amin(x_train[idx, :, :, :])) / (
-                np.amax(x_train[idx, :, :, :]) - np.amin(x_train[idx, :, :, :]))
+                    np.amax(x_train[idx, :, :, :]) - np.amin(x_train[idx, :, :, :]))
         for idx in range(x_val.shape[0]):
             x_val[idx, :, :, :] = (x_val[idx, :, :, :] - np.amin(x_val[idx, :, :, :])) / (
-                np.amax(x_val[idx, :, :, :]) - np.amin(x_val[idx, :, :, :]))
-        for idx in range(x_test.shape[0]):
-            x_test[idx, :, :, :] = (x_test[idx, :, :, :] - np.amin(x_test[idx, :, :, :])) / (
-                np.amax(x_test[idx, :, :, :]) - np.amin(x_test[idx, :, :, :]))
+                    np.amax(x_val[idx, :, :, :]) - np.amin(x_val[idx, :, :, :]))
 
     # check if the image is already normalized
     logger.info(
         'Maximum value in x_train for the 1st image (to check normalization): {0}'.format(np.amax(x_train[0, :, :, :])))
     logger.info(
         'Maximum value in x_val for the 1st image (to check normalization): {0}'.format(np.amax(x_val[0, :, :, :])))
-    logger.info(
-        'Maximum value in x_test for the 1st image (to check normalization): {0}'.format(np.amax(x_test[0, :, :, :])))
 
     # convert class vectors to binary class matrices
+    nb_classes = len(set(y_train))
+    nb_classes_val = len(set(y_val))
+
+    if nb_classes_val != nb_classes:
+        raise ValueError("Different number of unique classes in training and validation set: {} vs {}."
+                         "Training set unique classes: {}"
+                         "Validation set unique classes: {}".format(nb_classes, nb_classes_val, set(y_train),
+                                                                    set(y_val)))
+
     y_train = np_utils.to_categorical(y_train, nb_classes)
     y_val = np_utils.to_categorical(y_val, nb_classes)
-    y_test = np_utils.to_categorical(y_test, nb_classes)
 
     logger.info('Loading and formatting of data completed.')
 
     # return the Keras model
-    model = partial_model_architecture(n_rows=input_dims[0], n_columns=input_dims[1], img_channels=img_channels,
+    model = partial_model_architecture(n_rows=img_width, n_columns=img_height, img_channels=img_channels,
                                        nb_classes=nb_classes)
 
-    logger.info("{}".format(model.summary()))
+    model.summary()
     # serialize model to JSON
     model_json = model.to_json()
     with open(filename_no_ext + ".json", "w") as json_file:
@@ -147,24 +153,16 @@ def train_neural_network(data_set, configs, batch_size, nb_classes, nb_epoch, im
     if early_stopping:
         EarlyStopping(monitor='val_loss', min_delta=0.001, patience=1, verbose=0, mode='auto')
 
-    # adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
-    # sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-    # rmsprop = RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
-    # adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
-    adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, decay=0.0)
+    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, decay=0.0)
 
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=adam,
-                  metrics=['accuracy'])
-
-    logger.info("Using test set instead of validation set")
-    model.fit(x_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch,
-              validation_data=(x_test, y_test), shuffle=True, verbose=0, callbacks=callbacks)
+    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
+    model.fit(x_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, validation_data=(x_val, y_val), shuffle=True,
+              verbose=0, callbacks=callbacks)
 
     # serialize weights to HDF5
-    # model.save(filename_no_ext + ".h5")
+    model.save(filename_no_ext + ".h5")
     logger.info("Model saved to disk.")
-    logger.debug("Filename: {0}".format(filename_no_ext))
+    logger.info("Filename: {0}".format(filename_no_ext))
     del model
 
 

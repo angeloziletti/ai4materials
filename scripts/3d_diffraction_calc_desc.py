@@ -115,7 +115,7 @@ if __name__ == "__main__":
                                                             target_nb_atoms=target_nb_atoms, random_rotation=True,
                                                             random_rotation_before=True,
                                                             cell_type='standard_no_symmetries',
-                                                            optimal_supercell=False)), (create_vacancies,
+                                                            optimal_supercell=True)), (create_vacancies,
                                                                                        dict(target_vacancy_ratio=0.01,
                                                                                             create_replicas_by='nb_atoms',
                                                                                             min_nb_atoms=32,
@@ -142,7 +142,7 @@ if __name__ == "__main__":
                                                                                             random_rotation_before=True,
                                                                                             cell_type='standard_no_symmetries',
                                                                                             optimal_supercell=True)), 
-					(random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.008,
+					(random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.002,
                                                                     create_replicas_by='nb_atoms', min_nb_atoms=32,
                                                                     target_nb_atoms=128, random_rotation=True,
                                                                     random_rotation_before=True,
@@ -179,7 +179,8 @@ if __name__ == "__main__":
     # proto_names = ['A_hP2_194_c', 'A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
     # proto_names = ['A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
     # proto_names = ['A_cI2_229_a']
-    proto_names = ['A_cP1_221_a']
+    proto_names = ['A_cF8_227_a']
+    # proto_names = ['A_cP1_221_a']
 
     data_folders = [os.path.join(prototypes_basedir, proto_name) for proto_name in proto_names]
     ase_db_files = [os.path.join(db_files_prototypes_basedir, proto_name) + '.db' for proto_name in proto_names]
@@ -209,7 +210,7 @@ if __name__ == "__main__":
     # =============================================================================
 
     for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:1]
+        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:]
 
         print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
 
@@ -218,12 +219,12 @@ if __name__ == "__main__":
             desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
                                              tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
                                              # desc_file='try1.tar.gz',
-                                             # desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0008.tar.gz'.format(db_proto[0],
-                                             #                                                  target_nb_atoms, idx_rot),
-                                             desc_file='{0}_try.tar.gz'.format(
-                                                 db_proto[0]),
-                                             format_geometry='`aims',
-                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=1)
+                                             desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0002.tar.gz'.format(db_proto[0],
+                                                                                              target_nb_atoms, idx_rot),
+                                             # desc_file='{0}_try.tar.gz'.format(
+                                             #     db_proto[0]),
+                                             format_geometry='aims',
+                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=6)
                                              # operations_on_structure=None, nb_jobs=1)
 
         # print(desc_file_path)

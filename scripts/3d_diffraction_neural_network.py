@@ -30,7 +30,7 @@ if __name__ == "__main__":
     sys.path.insert(0, atomic_data_dir)
 
     from ase.spacegroup import get_spacegroup
-    from ai4materials.descriptors.diffraction3d import Diffraction3D
+    from ai4materials.descriptors.diffraction3d import DISH
     from ai4materials.descriptors.diffraction2d import Diffraction2D
     from ai4materials.utils.utils_config import set_configs
     from ai4materials.utils.utils_config import setup_logger
@@ -53,8 +53,7 @@ if __name__ == "__main__":
     from ai4materials.wrappers import load_descriptor
     import numpy as np
     from ai4materials.models.cnn_architectures import model_cnn_rot_inv, model_fully_conv
-    from ai4materials.models.cnn_nature_comm_ziletti2018 import predict, train_neural_network
-    from ai4materials.models.cnn_polycrystals import predict
+    from ai4materials.models.cnn_polycrystals import predict, train_neural_network
     from argparse import ArgumentParser
     from functools import partial
     from datetime import datetime
@@ -103,7 +102,7 @@ if __name__ == "__main__":
 
     configs['io']['dataset_folder'] = dataset_folder
 
-    descriptor = Diffraction3D(configs=configs)
+    descriptor = DISH(configs=configs)
     # descriptor = Diffraction2D(configs=configs)
 
     target_nb_atoms = 128
@@ -217,7 +216,7 @@ if __name__ == "__main__":
     #                                                         tmp_folder=configs['io']['tmp_folder'],
     #                                                         notes="Dataset with 5 rotations.")
 
-    train_set_name = 'hcp-bcc-sc-diam-fcc-pristine'
+    train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_x.pkl')))
     path_to_y_train = os.path.abspath(
@@ -225,10 +224,7 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    test_set_name = 'hcp-bcc-sc-diam-fcc-vac25'
-    # test_set_name = 'hcp-bcc-sc-diam-fcc-disp002'
-    # test_set_name = 'hcp-bcc-sc-diam-fcc-disp001'
-    # test_set_name = 'hcp-bcc-sc-diam-fcc-vac25-disp002'
+    test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-2%'
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
     path_to_y_test = os.path.abspath(
@@ -245,8 +241,8 @@ if __name__ == "__main__":
     params_cnn = {"nb_classes": dataset_info_train["data"][0]["nb_classes"],
                   "classes": dataset_info_train["data"][0]["classes"],
                   # "checkpoint_filename": 'try_' + str(now.isoformat()),
-                  # "checkpoint_filename": 'enc_dec_no_batch_norm',
-                  "checkpoint_filename": 'fully_conv_acc100',
+                  "checkpoint_filename": 'enc_dec_no_batch_norm',
+                  # "checkpoint_filename": 'fully_conv_acc100',
                   # "checkpoint_filename": 'rot_inv_kernel_15',
                   "batch_size": 32, "img_channels": 1}
 
@@ -277,18 +273,21 @@ if __name__ == "__main__":
     # best for disp002 - best so far
     # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 32, 16, 16, 8, 8],
     #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
-    #
-    partial_model_architecture = partial(model_fully_conv, conv2d_filters=[32, 16, 8, 8, 16, 32, 128],
-                                         kernel_sizes=[3, 3, 3, 3, 3])
+
+    partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 16, 8, 8, 16, 32],
+                                     kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.1)
+
+    # partial_model_architecture = partial(model_fully_conv, conv2d_filters=[32, 16, 8, 8, 16, 32, 128],
+    #                                      kernel_sizes=[3, 3, 3, 3, 3])
 
     data_set_predict = make_data_sets(x_train_val=x_test, y_train_val=y_test, split_train_val=False, test_size=0.1,
                                       x_test=x_test, y_test=y_test)
-    #
-    # train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
-    #                      partial_model_architecture=partial_model_architecture,
-    #                      batch_size=params_cnn["batch_size"], checkpoint_dir=checkpoint_dir,
-    #                      neural_network_name=params_cnn["checkpoint_filename"],
-    #                      nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
+
+    train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
+                         partial_model_architecture=partial_model_architecture,
+                         batch_size=params_cnn["batch_size"], checkpoint_dir=checkpoint_dir,
+                         neural_network_name=params_cnn["checkpoint_filename"],
+                         nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
 
     target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict(data_set_predict,
                                                                                             params_cnn["nb_classes"],
