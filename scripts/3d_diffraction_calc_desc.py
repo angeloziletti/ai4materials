@@ -108,78 +108,41 @@ if __name__ == "__main__":
     # descriptor = Diffraction2D(configs=configs)
 
     target_nb_atoms = 128
-    nb_rotations = 1
+    nb_rotations = 5
 
     # define operations on structures
     operations_on_structure_list = [(create_supercell, dict(create_replicas_by='nb_atoms', min_nb_atoms=32,
                                                             target_nb_atoms=target_nb_atoms, random_rotation=True,
                                                             random_rotation_before=True,
                                                             cell_type='standard_no_symmetries',
-                                                            optimal_supercell=True)), (create_vacancies,
-                                                                                       dict(target_vacancy_ratio=0.01,
-                                                                                            create_replicas_by='nb_atoms',
-                                                                                            min_nb_atoms=32,
-                                                                                            target_nb_atoms=128,
-                                                                                            random_rotation=True,
-                                                                                            random_rotation_before=True,
-                                                                                            cell_type='standard_no_symmetries',
-                                                                                            optimal_supercell=True)),
-(create_vacancies,
-                                                                                       dict(target_vacancy_ratio=0.02,
-                                                                                            create_replicas_by='nb_atoms',
-                                                                                            min_nb_atoms=32,
-                                                                                            target_nb_atoms=128,
-                                                                                            random_rotation=True,
-                                                                                            random_rotation_before=True,
-                                                                                            cell_type='standard_no_symmetries',
-                                                                                            optimal_supercell=True)),
-(create_vacancies,
-                                                                                       dict(target_vacancy_ratio=0.05,
-                                                                                            create_replicas_by='nb_atoms',
-                                                                                            min_nb_atoms=32,
-                                                                                            target_nb_atoms=128,
-                                                                                            random_rotation=True,
-                                                                                            random_rotation_before=True,
-                                                                                            cell_type='standard_no_symmetries',
-                                                                                            optimal_supercell=True)), 
-					(random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.002,
-                                                                    create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                                    target_nb_atoms=128, random_rotation=True,
-                                                                    random_rotation_before=True,
-                                                                    cell_type='standard_no_symmetries',
-                                                                    optimal_supercell=True)),
-                                        (random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.016,
-                                                                    create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                                    target_nb_atoms=128, random_rotation=True,
-                                                                    random_rotation_before=True,
-                                                                    cell_type='standard_no_symmetries',
-                                                                    optimal_supercell=True)),
-                                        (random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.045,
-                                                                    create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                                    target_nb_atoms=128, random_rotation=True,
-                                                                    random_rotation_before=True,
-                                                                    cell_type='standard_no_symmetries',
-                                                                    optimal_supercell=True)),
-                                       (random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.050,
-                                                                    create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                                    target_nb_atoms=128, random_rotation=True,
-                                                                    random_rotation_before=True,
-                                                                    cell_type='standard_no_symmetries',
-                                                                    optimal_supercell=True)),
-                                    (random_displace_atoms, dict(noise_distribution='uniform_scaled', displacement_scaled=0.075,
-                                                                 create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                                 target_nb_atoms=128, random_rotation=True,
-                                                                 random_rotation_before=True, cell_type='standard_no_symmetries',
-                                                                 optimal_supercell=True))
-                                    ]
+                                                            optimal_supercell=True)),
+                                    (create_vacancies,
+                                    dict(target_vacancy_ratio=0.50, create_replicas_by='nb_atoms', min_nb_atoms=32,
+                                         target_nb_atoms=128, random_rotation=True, random_rotation_before=True,
+                                         cell_type='standard_no_symmetries', optimal_supercell=True)), (
+                                    random_displace_atoms,
+                                    dict(noise_distribution='uniform_scaled', displacement_scaled=0.005,
+                                         create_replicas_by='nb_atoms', min_nb_atoms=32, target_nb_atoms=128,
+                                         random_rotation=True, random_rotation_before=True,
+                                         cell_type='standard_no_symmetries', optimal_supercell=True)), (
+                                        random_displace_atoms,
+                                        dict(noise_distribution='uniform_scaled', displacement_scaled=0.01,
+                                             create_replicas_by='nb_atoms', min_nb_atoms=32, target_nb_atoms=128,
+                                             random_rotation=True, random_rotation_before=True,
+                                             cell_type='standard_no_symmetries', optimal_supercell=True)), (
+                                        random_displace_atoms,
+                                        dict(noise_distribution='uniform_scaled', displacement_scaled=0.02,
+                                             create_replicas_by='nb_atoms', min_nb_atoms=32, target_nb_atoms=128,
+                                             random_rotation=True, random_rotation_before=True,
+                                             cell_type='standard_no_symmetries', optimal_supercell=True))]
 
     # =============================================================================
     # Read prototype data from files
     # =============================================================================
-    # proto_names = ['A_hP2_194_c', 'A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
+    proto_names = ['A_hP2_194_c', 'A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
     # proto_names = ['A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
     # proto_names = ['A_cI2_229_a']
-    proto_names = ['A_cF8_227_a']
+    # proto_names = ['A_cF8_227_a']
     # proto_names = ['A_cP1_221_a']
 
     data_folders = [os.path.join(prototypes_basedir, proto_name) for proto_name in proto_names]
@@ -210,89 +173,64 @@ if __name__ == "__main__":
     # =============================================================================
 
     for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:]
+        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:6]
 
         print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
 
         for idx_rot in range(nb_rotations):
+            desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
+                                                       ase_atoms_list=ase_atoms_list,
+                                                       tmp_folder=configs['io']['tmp_folder'],
+                                                       desc_folder=configs['io']['desc_folder'],
+                                                       # desc_file='try1.tar.gz',
+                                                       desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp05.tar.gz'.format(
+                                                           db_proto[0], target_nb_atoms, idx_rot),
+                                                       # desc_file='{0}_try.tar.gz'.format(
+                                                       #     db_proto[0]),
+                                                       format_geometry='aims',
+                                                       operations_on_structure=operations_on_structure_list[2],
+                                                       nb_jobs=-1)  # operations_on_structure=None, nb_jobs=1)
 
-            desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                             tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
-                                             # desc_file='try1.tar.gz',
-                                             desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0002.tar.gz'.format(db_proto[0],
-                                                                                              target_nb_atoms, idx_rot),
-                                             # desc_file='{0}_try.tar.gz'.format(
-                                             #     db_proto[0]),
-                                             format_geometry='aims',
-                                             operations_on_structure=operations_on_structure_list[0], nb_jobs=6)
-                                             # operations_on_structure=None, nb_jobs=1)
+        for idx_db, db_proto in enumerate(db_protos):
+            ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:6]
 
+            print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
+
+            for idx_rot in range(nb_rotations):
+                desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
+                                                           ase_atoms_list=ase_atoms_list,
+                                                           tmp_folder=configs['io']['tmp_folder'],
+                                                           desc_folder=configs['io']['desc_folder'],
+                                                           # desc_file='try1.tar.gz',
+                                                           desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp1.tar.gz'.format(
+                                                               db_proto[0], target_nb_atoms, idx_rot),
+                                                           # desc_file='{0}_try.tar.gz'.format(
+                                                           #     db_proto[0]),
+                                                           format_geometry='aims',
+                                                           operations_on_structure=operations_on_structure_list[3],
+                                                           nb_jobs=-1)  # operations_on_structure=None, nb_jobs=1)
+
+        for idx_db, db_proto in enumerate(db_protos):
+            ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])[:6]
+
+            print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
+
+            for idx_rot in range(nb_rotations):
+                desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
+                                                           ase_atoms_list=ase_atoms_list,
+                                                           tmp_folder=configs['io']['tmp_folder'],
+                                                           desc_folder=configs['io']['desc_folder'],
+                                                           # desc_file='try1.tar.gz',
+                                                           desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp2.tar.gz'.format(
+                                                               db_proto[0], target_nb_atoms, idx_rot),
+                                                           # desc_file='{0}_try.tar.gz'.format(
+                                                           #     db_proto[0]),
+                                                           format_geometry='aims',
+                                                           operations_on_structure=operations_on_structure_list[4],
+                                                           nb_jobs=-1)  # operations_on_structure=None, nb_jobs=1)
         # print(desc_file_path)
 
     sys.exit()
-
-    for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])
-
-        print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
-
-        for idx_rot in range(nb_rotations):
-
-            desc_file_path = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                             tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
-                                             desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0016.tar.gz'.format(db_proto[0],
-                                                                                              target_nb_atoms, idx_rot),
-                                             format_geometry='aims',
-                                             operations_on_structure=operations_on_structure_list[5], nb_jobs=6)
-        print(desc_file_path)
-
-
-    for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])
-
-        print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
-
-        for idx_rot in range(nb_rotations):
-
-            desc_file_path = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                             tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
-                                             desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0045.tar.gz'.format(db_proto[0],
-                                                                                              target_nb_atoms, idx_rot),
-                                             format_geometry='aims',
-                                             operations_on_structure=operations_on_structure_list[6], nb_jobs=6)
-        print(desc_file_path)
-
-
-    for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])
-
-        print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
-
-        for idx_rot in range(nb_rotations):
-
-            desc_file_path = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                             tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
-                                             desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0050.tar.gz'.format(db_proto[0],
-                                                                                              target_nb_atoms, idx_rot),
-                                             format_geometry='aims',
-                                             operations_on_structure=operations_on_structure_list[7], nb_jobs=6)
-        print(desc_file_path)
-
-    for idx_db, db_proto in enumerate(db_protos):
-        ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])
-
-        print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
-
-        for idx_rot in range(nb_rotations):
-
-            desc_file_path = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                             tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'],
-                                             desc_file='{0}_target_nb_atoms{1}_rotid{2}_disp0075.tar.gz'.format(db_proto[0],
-                                                                                              target_nb_atoms, idx_rot),
-                                             format_geometry='aims',
-                                             operations_on_structure=operations_on_structure_list[8], nb_jobs=6)
-        print(desc_file_path)
-
 
 
     sys.exit()
@@ -382,14 +320,13 @@ if __name__ == "__main__":
     #                                      kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
 
     partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 16, 8, 8, 16, 32],
-                                     kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.25)
+                                         kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.25)
 
     # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[8, 8, 8, 8, 8, 8],
     #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
 
     # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[8, 8, 8, 8, 8, 8],
     #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
-
 
     # best for disp002 - best so far
     # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 32, 16, 16, 8, 8],
@@ -407,24 +344,11 @@ if __name__ == "__main__":
     #                 nb_epoch=5, training_log_file=training_log_file, early_stopping=False,
     #                 normalize=True)
 
-    target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict_cnn_keras(data_set_predict,
-                                                                                            params_cnn["nb_classes"],
-                                                                                            configs=configs,
-                                                                                            batch_size=params_cnn[
-                                                                                                "batch_size"],
-                                                                                            checkpoint_dir=checkpoint_dir,
-                                                                                            checkpoint_filename=
-                                                                                            params_cnn[
-                                                                                                "checkpoint_filename"],
-                                                                                            show_model_acc=True,
-                                                                                            predict_probabilities=True,
-                                                                                            plot_conf_matrix=True,
-                                                                                            conf_matrix_file=conf_matrix_file,
-                                                                                            numerical_labels=numerical_labels,
-                                                                                            text_labels=text_labels,
-                                                                                            results_file=results_file,
-                                                                                            normalize=True)
-
+    target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict_cnn_keras(
+        data_set_predict, params_cnn["nb_classes"], configs=configs, batch_size=params_cnn["batch_size"],
+        checkpoint_dir=checkpoint_dir, checkpoint_filename=params_cnn["checkpoint_filename"], show_model_acc=True,
+        predict_probabilities=True, plot_conf_matrix=True, conf_matrix_file=conf_matrix_file,
+        numerical_labels=numerical_labels, text_labels=text_labels, results_file=results_file, normalize=True)
 
     ase_db_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/db_ase/pristine.db'
 
@@ -437,8 +361,7 @@ if __name__ == "__main__":
     y = np.random.rand(n_structs)
     target = target_pred_class[:10]
 
-    file_html_link, file_html_name = viewer.plot_with_structures(x=x, y=y, target=target,
-                                                                 ase_atoms_list=ase_atoms_list,
+    file_html_link, file_html_name = viewer.plot_with_structures(x=x, y=y, target=target, ase_atoms_list=ase_atoms_list,
                                                                  is_classification=True, target_replicas=(1, 1, 1),
                                                                  tmp_folder=configs['io']['tmp_folder'])
 
@@ -447,11 +370,9 @@ if __name__ == "__main__":
 
     sys.exit()
 
-    model_weights_file = os.path.join(checkpoint_dir, '{0}.h5'.format(
-        params_cnn['checkpoint_filename']))
+    model_weights_file = os.path.join(checkpoint_dir, '{0}.h5'.format(params_cnn['checkpoint_filename']))
 
-    model_arch_file = os.path.join(checkpoint_dir, '{0}.json'.format(
-        params_cnn['checkpoint_filename']))
+    model_arch_file = os.path.join(checkpoint_dir, '{0}.json'.format(params_cnn['checkpoint_filename']))
 
     x_train, y_train, dataset_info_train = load_dataset_from_file(path_to_x=path_to_x_train, path_to_y=path_to_y_train,
                                                                   path_to_summary=path_to_summary_train)
@@ -474,6 +395,6 @@ if __name__ == "__main__":
     for idx_cl in range(nb_classes):
         images = images_classes[idx_cl][:nb_imgs, :, :].reshape(nb_imgs, x_train.shape[1], x_train.shape[2], 1)
         plot_att_response_maps(images, model_arch_file=model_arch_file, model_weights_file=model_weights_file,
-                               cmap=cm.viridis,
-                               figure_dir=figure_dir+'_class'+str(idx_cl), nb_conv_layers=6, nb_top_feat_maps=4, layer_nb='all',
-                               plot_all_filters=True, plot_filter_sum=True, plot_summary=True)
+                               cmap=cm.viridis, figure_dir=figure_dir + '_class' + str(idx_cl), nb_conv_layers=6,
+                               nb_top_feat_maps=4, layer_nb='all', plot_all_filters=True, plot_filter_sum=True,
+                               plot_summary=True)

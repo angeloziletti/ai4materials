@@ -261,8 +261,7 @@ def _calc_descriptor(ase_atoms_list, descriptor, configs, idx_slice=0, desc_file
             write_ase_db_file(ase_atoms, configs, tar=tar, op_nb=0)
 
             # we assume that the target value does not change with the application of the operations
-            write_target_values(ase_atoms, configs, op_nb=0, tar=tar, target=target_list[idx_atoms])
-
+            write_target_values(ase_atoms, configs, op_nb=0, tar=tar)
             ase_atoms_result.append(structure_result)
 
         else:

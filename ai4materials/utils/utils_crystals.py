@@ -1069,7 +1069,7 @@ def random_displace_atoms(atoms, noise_distribution, displacement=None, displace
             scale_factor = get_nn_distance(atoms)
             displacement = displacement_scaled * scale_factor
             noise = np.random.uniform(low=-displacement, high=displacement, size=(len(atoms), 3))
-            logger.debug("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
+            logger.info("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
         else:
             raise NotImplementedError("The noise distribution chosen is not implemented.")
 
@@ -1327,7 +1327,7 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
             if scale_factor is not None:
                 if min_scale_factor < scale_factor < max_scale_factor:
                     logger.debug("Cut off of {0} was successful".format(cutoff))
-                    logger.info("Scale factor: {}".format(scale_factor))
+                    logger.debug("Scale factor: {}".format(scale_factor))
                     logger.debug(
                         "Scale factor with extrinsic scaling: {} Angstrom".format(
                             scale_factor * extrinsic_scale_factor))
