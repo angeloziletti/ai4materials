@@ -141,7 +141,7 @@ def get_spacegroup(atoms, symprec=None, angle_tolerance=-1.0):
     spacegroup_nbs = []
     for key, value in space_group_analyzer.items():
         spacegroup_nb = value.get_space_group_number()
-        atoms.info['spacegroup_nb'][str(key)] = spacegroup_nb
+        atoms.info['spacegroup_nb_'+str(key)] = spacegroup_nb
         spacegroup_nbs.append(spacegroup_nb)
 
     return spacegroup_nbs
