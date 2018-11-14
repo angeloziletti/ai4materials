@@ -21,6 +21,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 
+
+##################
+# run with
+# conda activate ovito
+# ~/apps/ovito-3.0.0-dev284-x86_64/bin/ovitos benchmarking_ovito.py
+####################
+
 def read_ase_db(db_path):
     """From the path to an ASE database file, return a list of ASE atom object contained in it.
 
@@ -83,14 +90,20 @@ def plot_confusion_matrix(cm, classes,
 #node = import_file(filepath, columns=["Particle Type", "Position.X", "Position.Y", "Position.Z"])
 
 ase_db_dataset_dir = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/db_ase'
-ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_pristine' + '.db')
+# ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_pristine' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-0.1%' + '.db')
+# ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-0.2%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-0.6%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-1%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-2%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-4%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-5%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-8%' + '.db')
+# ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-10%' + '.db')
+# ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-12%' + '.db')
+# ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-20%' + '.db')
+ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-30%' + '.db')
+# ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_displacement-50%' + '.db')
 
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_vacancies-1%' + '.db')
 # ase_db = os.path.join(ase_db_dataset_dir, 'hcp-sc-fcc-diam-bcc_vacancies-2%' + '.db')
@@ -110,23 +123,23 @@ for idx, atoms in enumerate(ase_atoms_list):
     if idx % 1000 == 0:
         print(idx)
 
-    if str(atoms.info['target']) == '227':
-    # if str(atoms.info['target']) == '227' or str(atoms.info['target']) == '221':
+    # if str(atoms.info['target']) == '227':
+    if str(atoms.info['target']) == '227' or str(atoms.info['target']) == '221':
         pass
     # if False:
     #     pass
     else:
-        atoms = atoms*(2, 2, 2)
+        # atoms = atoms*(2, 2, 2)
         data = ase_to_ovito(atoms)
         node = Pipeline(source=StaticSource(data=data))
 
-        # Create bonds.
-        # node.modifiers.append(BondAngleAnalysisModifier())
-        #node.modifiers.append(AcklandJonesModifier())
 
-        node.modifiers.append(PolyhedralTemplateMatchingModifier(rmsd_cutoff=0.0))
-        # node.modifiers.append(CommonNeighborAnalysisModifier(mode=CommonNeighborAnalysisModifier.Mode.AdaptiveCutoff))
         # node.modifiers.append(CommonNeighborAnalysisModifier(mode=CommonNeighborAnalysisModifier.Mode.FixedCutoff))
+        # node.modifiers.append(CommonNeighborAnalysisModifier(mode=CommonNeighborAnalysisModifier.Mode.AdaptiveCutoff))
+        node.modifiers.append(AcklandJonesModifier())
+
+        # node.modifiers.append(BondAngleAnalysisModifier())
+        # node.modifiers.append(PolyhedralTemplateMatchingModifier(rmsd_cutoff=0.0))
 
         # Let OVITO's data pipeline do the heavy work.
         node.compute()
@@ -189,8 +202,8 @@ print(cnf_matrix)
 # y_pred Counter({'194': 583828, '229': 116999, '225': 115152, 'None': 968})
 ack_jones_classes = ['194', '229', '225', 'None']
 
-plot_confusion_matrix(cnf_matrix, classes=ack_jones_classes,
-                      normalize=False, title='Confusion matrix, without normalization')
+# plot_confusion_matrix(cnf_matrix, classes=ack_jones_classes,
+#                       normalize=False, title='Confusion matrix, without normalization')
 # Loop over particles and print their CNA indices.
 #for idx_particle, particle_index in enumerate(range(node.output.number_of_particles)):
     #pass

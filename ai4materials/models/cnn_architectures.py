@@ -23,7 +23,7 @@ __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
 import os
-os.environ["KERAS_BACKEND"] = "theano"
+import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -36,55 +36,104 @@ from keras.layers import Convolution2D
 from keras.layers import MaxPooling2D
 from keras.layers import MaxPooling3D
 from keras.layers import GlobalAveragePooling2D
+from keras.layers import LeakyReLU
+from keras.optimizers import Adam
 import logging
 
 logger = logging.getLogger('ai4materials')
 
 
-def model_fully_conv(conv2d_filters, kernel_sizes, n_rows, n_columns, img_channels, nb_classes):
-    model = Sequential()
-    model.add(Conv2D(conv2d_filters[0], kernel_sizes[0], kernel_sizes[0], name='convolution2d_1', activation='relu',
-                     border_mode='same', init='orthogonal', bias=True,
-                     input_shape=(img_channels, n_rows, n_columns)))
-    # model.add(BatchNormalization(axis=1, momentum=0.99, epsilon=0.001))
-    # model.add(Dropout(0.25, name='dropout_1'))
+def cnn_architecture_polycrystals_no_maxpool(learning_rate, conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,
+                      img_channels, nb_classes, dropout, plot_the_model=False, model_name='cnn_polycrystals'):
+    """Deep convolutional neural network model for crystal structure recognition.
 
-    model.add(Conv2D(conv2d_filters[1], kernel_sizes[1], kernel_sizes[1], name='convolution2d_2', activation='relu',
-                     border_mode='same', init='orthogonal', bias=True))
-    # model.add(BatchNormalization(axis=1, momentum=0.99, epsilon=0.001))
-    # model.add(Dropout(0.25, name='dropout_2'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='maxpooling2d_1'))
+    This neural network architecture was used to classify crystal structures - represented by the three-dimensional
+    diffraction fingerprint - in Ref. [1]_.
 
-    model.add(Conv2D(conv2d_filters[2], kernel_sizes[2], kernel_sizes[2], name='convolution2d_3', activation='relu',
-                     border_mode='same', init='orthogonal', bias=True))
-    # model.add(BatchNormalization(axis=1, momentum=0.99, epsilon=0.001))
-    # model.add(Dropout(0.25, name='dropout_3'))
 
-    model.add(Conv2D(conv2d_filters[3], kernel_sizes[3], kernel_sizes[3], name='convolution2d_4', activation='relu',
-                     border_mode='same', init='orthogonal', bias=True))
-    # model.add(BatchNormalization(axis=1, momentum=0.99, epsilon=0.001))
-    # model.add(Dropout(0.25, name='dropout_4'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='maxpooling2d_2'))
+    .. [1] A. Ziletti et al.,
+        “Automatic structure identification in polycrystals via Bayesian deep learning”,
+        in preparation (2018)
 
-    model.add(Conv2D(conv2d_filters[4], kernel_sizes[4], kernel_sizes[4], name='convolution2d_5', activation='relu',
-                     border_mode='same', init='orthogonal', bias=True))
-    # model.add(BatchNormalization(axis=1, momentum=0.99, epsilon=0.001))
+    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+    """
 
-    model.add(Conv2D(conv2d_filters[5], kernel_sizes[4], kernel_sizes[4], name='convolution2d_6', activation='relu',
-                     border_mode='same', init='orthogonal', bias=True))
+    n_conv2d = 6
 
-    # 1x1 convolution
-    model.add(Conv2D(conv2d_filters[6], 1, 1, name='convolution2d_7', activation='relu', border_mode='same',
-                     init='orthogonal', bias=True))
+    if not len(conv2d_filters) == n_conv2d:
+        raise Exception(
+            "Wrong number of filters. Give a list of {0} numbers.".format(n_conv2d))
+    if not len(kernel_sizes) == n_conv2d:
+        raise Exception(
+            "Wrong number of kernel sizes. Give a list of {0} numbers.".format(n_conv2d))
 
-    model.add(BatchNormalization(axis=1, momentum=0.99, epsilon=0.001))
-    model.add(Dropout(0.10, name='dropout_1'))
+    input_shape = (n_rows, n_columns, img_channels)
+    inputs = keras.Input(shape=input_shape)
 
-    model.add(GlobalAveragePooling2D(dim_ordering='default'))
-    model.add(Dense(nb_classes, name='dense_1'))
-    model.add(Activation('softmax', name='activation_1'))
+    x = Convolution2D(filters=conv2d_filters[0], kernel_size=kernel_sizes[0], name='convolution2d_1',
+               border_mode='same', init='orthogonal', bias=True)(inputs)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[1], kernel_size=kernel_sizes[1], name='convolution2d_2',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[1], kernel_size=kernel_sizes[1], strides=(2,2), name='convolution2d_down1',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[2], kernel_size=kernel_sizes[2], name='convolution2d_3',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[3], kernel_size=kernel_sizes[3], name='convolution2d_4',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[3], kernel_size=kernel_sizes[3], strides=(2,2), name='convolution2d_down2',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[4], kernel_size=kernel_sizes[4], name='convolution2d_5',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    x = Convolution2D(filters=conv2d_filters[5], kernel_size=kernel_sizes[5], name='convolution2d_6',
+               border_mode='same', init='orthogonal', bias=True)(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.1)(x)
+    x = keras.layers.Dropout(dropout)(x, training=True)
+
+    # fully convolutional
+    x = GlobalAveragePooling2D(dim_ordering='default')(x)
+    x = Dense(nb_classes, name='dense_2')(x)
+    outputs = Activation('softmax', name='activation_1')(x)
+
+    model = keras.Model(inputs, outputs)
+
+    model.summary()
+    # compile model
+    adam = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, decay=0.0)
+
+    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['categorical_accuracy'])
 
     return model
+
+
 
 
 def model_cnn_rot_inv(conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,

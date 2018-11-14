@@ -130,7 +130,10 @@ def get_classification_map(polycrystal_file, descriptor, desc_metadata, configs,
 
         for idx_class in range(predictive_mean_sorted.shape[1]):
 
-            prob_prediction_class = predictive_mean_sorted[:, idx_class].reshape(z_max, y_max, x_max)
+            if z_max == 1:
+                prob_prediction_class = predictive_mean_sorted[:, idx_class].reshape(y_max, x_max)
+            else:
+                prob_prediction_class = predictive_mean_sorted[:, idx_class].reshape(z_max, y_max, x_max)
 
             plot_prediction_heatmaps(prob_prediction_class,
                                      title='Probability', class_name=str(idx_class), prefix='prob',
@@ -155,7 +158,11 @@ def get_classification_map(polycrystal_file, descriptor, desc_metadata, configs,
                 columns=['strided_pattern_positions_z', 'strided_pattern_positions_y', 'strided_pattern_positions_x'])
 
             for key in uncertainty.keys():
-                uncertainty_prediction = uncertainty_sorted[key].values.reshape(z_max, y_max, x_max)
+                if z_max == 1:
+                    # make two-dimensional plot
+                    uncertainty_prediction = uncertainty_sorted[key].values.reshape(y_max, x_max)
+                else:
+                    uncertainty_prediction = uncertainty_sorted[key].values.reshape(z_max, y_max, x_max)
 
                 # for idx_uncertainty in range(predictive_mean_sorted.shape[1]):
                 plot_prediction_heatmaps(uncertainty_prediction,

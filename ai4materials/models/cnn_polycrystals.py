@@ -23,8 +23,10 @@ __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
 import keras
-import keras.backend as K
-K.set_image_dim_ordering('th')
+from keras import backend as K
+K.set_image_data_format("channels_last")
+
+# K.set_image_dim_ordering('tf')
 from ai4materials.models.cnn_nature_comm_ziletti2018 import reshape_images_to_theano
 from keras.callbacks import CSVLogger
 from keras.callbacks import ModelCheckpoint
@@ -36,6 +38,7 @@ from scipy import stats
 from keras.optimizers import SGD, Adam, Nadam, RMSprop
 from keras.utils import np_utils
 from keras.models import model_from_json
+from keras.models import load_model
 from keras_tqdm import TQDMCallback, TQDMNotebookCallback
 import sys
 import os
@@ -73,8 +76,8 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
     # reshape to follow the image conventions
     # - TensorFlow backend: [batch, width, height, channels]
     # - Theano backend: [batch, channels, width, height]
-    x_train = reshape_images_to_theano(x_train)
-    x_val = reshape_images_to_theano(x_val)
+    # x_train = reshape_images_to_theano(x_train)
+    # x_val = reshape_images_to_theano(x_val)
 
     assert x_train.shape[1] == x_val.shape[1]
     assert x_train.shape[2] == x_val.shape[2]
@@ -214,16 +217,19 @@ def predict(data_set, nb_classes, configs, results_file, numerical_labels, text_
     model_arch_file = filename_no_ext + ".json"
     model_weights_file = filename_no_ext + ".h5"
 
-    with open(model_arch_file, 'r') as arch_file:
-        arch_json = arch_file.read()
+    # with open(model_arch_file, 'r') as arch_file:
+    #     arch_json = arch_file.read()
+    #
+    # model = model_from_json(arch_json)
+    # logger.debug('Loading model weights.')
+    # model.load_weights(model_weights_file)
+    # logger.info('Model loaded correctly.')
 
-    model = model_from_json(arch_json)
-    logger.debug('Loading model weights.')
-    model.load_weights(model_weights_file)
-    logger.info('Model loaded correctly.')
+    model = load_model(filename_no_ext)
+    model.summary()
 
-    adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, decay=0.0)
-    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
+    # adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, decay=0.0)
+    # model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
 
     # load the data
     x_test = data_set.test.images
@@ -268,7 +274,11 @@ def predict(data_set, nb_classes, configs, results_file, numerical_labels, text_
         prob_predictions, uncertainty = predict_with_uncertainty(x_test, model, n_iter=mc_samples)
 
     # predicting the labels of the test set
-    y_pred = model.predict_classes(x_test, batch_size=batch_size, verbose=verbose)
+    y_prob = model.predict(x_test, batch_size=batch_size, verbose=verbose)
+    y_pred = y_prob.argmax(axis=-1)
+
+    # if model is sequential
+    # y_pred = model.predict_classes(x_test, batch_size=batch_size, verbose=verbose)
 
     conf_matrix = confusion_matrix(np.argmax(y_test, axis=1), y_pred)
     np.set_printoptions(precision=2)
@@ -337,9 +347,6 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
 
     """
 
-    # for some model with dropout ...
-    f = K.function([model.layers[0].input, K.learning_phase()], [model.layers[-1].output])
-
     logger.info("Calculating classification uncertainty.")
 
     labels = []
@@ -348,8 +355,9 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
         if (idx_iter % (int(n_iter) / 10 + 1)) == 0:
             logger.info("Performing forward pass: {0}/{1}".format(idx_iter + 1, n_iter))
 
-        result = f((data, 1))[0]
-        label = np.argmax(result, axis=1)
+        result = model.predict(data)
+        label = result.argmax(axis=-1)
+
         labels.append(label)
         results.append(result)
 
@@ -386,15 +394,18 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
 
 def reshape_images(images):
     input_dims = (images.shape[1], images.shape[2])
-    # works only for Keras 1.
     if len(input_dims) == 2:
+        # enforce Tensorflow convention
+        images = np.reshape(images, (images.shape[0], images.shape[1], images.shape[2], -1))
         # add channels
-        if keras.backend.image_dim_ordering() == 'th':
-            images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))
-        elif keras.backend.image_dim_ordering() == 'tf':
-            raise NotImplementedError('Tensorflow backend is not supported.')
-        else:
-            raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
+        # if K.image_data_format() == 'channels_first':
+        #     logger.info("Image ordering: channels first (Theano convention)")
+        #     images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))
+        # elif K.image_data_format() == 'channels_last':
+        #     logger.info("Image ordering: channels last (Tensorflow convention)")
+            # raise NotImplementedError('Tensorflow backend is not supported.')
+        # else:
+        #     raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
     else:
         raise Exception("Wrong number of dimensions.")
 

@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
 
     from ase.spacegroup import get_spacegroup
-    from ai4materials.descriptors.diffraction3d import Diffraction3D
+    from ai4materials.descriptors.diffraction3d import DISH
     from ai4materials.utils.utils_config import set_configs
     from ai4materials.utils.utils_config import setup_logger
     from ai4materials.utils.utils_crystals import create_supercell
@@ -48,7 +48,6 @@ if __name__ == "__main__":
     from ai4materials.wrappers import calc_descriptor
     from ai4materials.wrappers import load_descriptor
     import numpy as np
-    from ai4materials.models.cnn_architectures import model_cnn_rot_inv, model_fully_conv
     from argparse import ArgumentParser
     from functools import partial
     from datetime import datetime
@@ -79,11 +78,11 @@ if __name__ == "__main__":
 
     # read config file
     configs = set_configs(main_folder=main_folder)
-    logger = setup_logger(configs, level='INFO', display_configs=False)
+    logger = setup_logger(configs, level='DEBUG', display_configs=False)
 
     # setup folder and files
     dataset_folder = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'datasets')))
-    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models')))
+    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/unbalanced_small_nn')))
     figure_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'attentive_resp_maps')))
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
     results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
@@ -98,10 +97,11 @@ if __name__ == "__main__":
     configs['io']['dataset_folder'] = dataset_folder
 
     structure_files = []
-    structure_files.append(os.path.join(main_folder, 'structures_for_paper/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz'))
-    structure_files.append(os.path.join(main_folder, 'structures_for_paper/inclusions/Fe_bcc_Si_fcc_final.xyz'))
+    structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/inclusions/Fe_bcc_Si_fcc_final.xyz'))
 
-    descriptor = Diffraction3D(configs=configs)
+    descriptor = DISH(configs=configs)
 
     operations_on_structure_list = [
         (create_supercell, dict(create_replicas_by='user-defined', target_replicas=[1, 1, 1], random_rotation=False)), (
@@ -115,8 +115,8 @@ if __name__ == "__main__":
     # Descriptor calculation
     # =============================================================================
     # stride_size = [0.5, 0.5, 20.0]
-    stride_size = [20.0, 20.0, 20.0]
-    box_sizes = [10.0, 10.0, 10.0, 10.0]
+    stride_size = [6.0, 6.0, 20.0]
+    box_sizes = [15.0, 15.0, 15.0, 15.0]
     padding_ratios = [(0.5, 0.5, 0.0), (0.5, 0.5, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)]
 
     # desc_file = None
@@ -126,20 +126,32 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac70.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac80.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac90.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz_stride_1.0_1.0_1.0_box_size_10.0_.tar.gz')
 
-    desc_file = os.path.join(main_folder, 'desc_folder/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz_stride_1.0_1.0_1.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_1.0_1.0_20.0_box_size_14.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/others/Al_3_disl_vac10.xyz_stride_3.0_3.0_40.0_box_size_15.0_pristine.tar.gz')
+
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
+    desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
 
     for idx, structure_file in enumerate(structure_files):
-        get_classification_map(structure_file, descriptor, 'diffraction_3d_sh_spectrum', configs,
+        get_classification_map(polycrystal_file=structure_file, descriptor=descriptor,
+                               desc_metadata='diffraction_3d_sh_spectrum', configs=configs,
+                               checkpoint_dir=checkpoint_dir, checkpoint_filename='model_unbalanced_small_nn.h5',
                                desc_only=False,
                                operations_on_structure=operations_on_structure_list[0], stride_size=stride_size,
                                box_size=box_sizes[idx],
+                               train_set_name='hcp-sc-fcc-diam-bcc_pristine',
                                # box_size=None,
                                # init_sliding_volume=(16., 16., 16.),
-                               desc_file=desc_file, show_plot_lengths=False,
+                               desc_file=desc_file,
+                               show_plot_lengths=False,
                                # desc_only=False,
                                calc_uncertainty=True,
                                mc_samples=2,
-                               desc_file_suffix_name='', nb_jobs=6, results_file=results_file)
+                               desc_file_suffix_name='', nb_jobs=6, conf_matrix_file='confusion_matrix',
+                               results_file=results_file)
+
+
 
     sys.exit()
