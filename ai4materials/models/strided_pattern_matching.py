@@ -375,10 +375,10 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
         # plt.close()  # pl.dump(fig,file(filename+'.pickle','w'))
 
     if class_name != '':
-        plt.savefig(os.path.join(main_folder, '{0}_class{1}.png'.format(str(prefix), str(class_name))), format='png',
+        plt.savefig(os.path.join(main_folder, '{0}_class{1}.eps'.format(str(prefix), str(class_name))), format='eps',
                     dpi=1000)
     else:
-        plt.savefig(os.path.join(main_folder, '{0}_{1}.png'.format(str(prefix), str(suffix))), format='png', dpi=1000)
+        plt.savefig(os.path.join(main_folder, '{0}_{1}.eps'.format(str(prefix), str(suffix))), format='eps', dpi=1000)
 
     plt.close()
 

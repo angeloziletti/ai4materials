@@ -1074,8 +1074,6 @@ def random_displace_atoms(atoms, noise_distribution, displacement=None, displace
             raise NotImplementedError("The noise distribution chosen is not implemented.")
 
         atoms.set_positions(atoms.get_positions() + noise)
-        # wrap atomic positions inside unit cell
-        atoms.wrap()
 
     else:
         logger.warning('Structure with no atoms. Continuing.')
