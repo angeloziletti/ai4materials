@@ -807,9 +807,6 @@ def create_supercell(atoms, create_replicas_by='nb_atoms', min_nb_atoms=None, ta
         logger.debug("Structure rotated randomly by:")
         logger.debug("{}° around x-axis; {}° around y-axis; {}° around z-axis".format(alpha, beta, gamma))
 
-    # wraps atoms back to the cell
-    atoms.wrap()
-
     return atoms
 
 
