@@ -25,8 +25,6 @@ if __name__ == "__main__":
     import sys
     import os.path
 
-
-
     from ase.spacegroup import get_spacegroup
     from ai4materials.descriptors.diffraction3d import DISH
     from ai4materials.utils.utils_config import set_configs
@@ -47,6 +45,7 @@ if __name__ == "__main__":
     from ai4materials.utils.utils_data_retrieval import write_ase_db
     from ai4materials.wrappers import calc_descriptor
     from ai4materials.wrappers import load_descriptor
+    from ai4materials.models.strided_pattern_matching import make_strided_pattern_matching_dataset
     import numpy as np
     from argparse import ArgumentParser
     from functools import partial
@@ -107,9 +106,10 @@ if __name__ == "__main__":
         (create_supercell, dict(create_replicas_by='user-defined', target_replicas=[1, 1, 1], random_rotation=False)), (
             create_vacancies, dict(target_vacancy_ratio=0.20, create_replicas_by='user-defined', cell_type=None,
                                    target_replicas=[1, 1, 1], random_rotation=False, optimal_supercell=False)), (
-        random_displace_atoms,
-        dict(displacement_scaled=0.01, create_replicas_by='user-defined', cell_type=None, target_replicas=[1, 1, 1],
-             noise_distribution='uniform_scaled', target_nb_atoms=128, random_rotation=False, optimal_supercell=False))]
+            random_displace_atoms,
+            dict(displacement_scaled=0.01, create_replicas_by='user-defined', cell_type=None, target_replicas=[1, 1, 1],
+                 noise_distribution='uniform_scaled', target_nb_atoms=128, random_rotation=False,
+                 optimal_supercell=False))]
 
     # =============================================================================
     # Descriptor calculation
@@ -131,30 +131,33 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/others/Al_3_disl_vac10.xyz_stride_3.0_3.0_40.0_box_size_15.0_pristine.tar.gz')
 
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
+    desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
 
-    desc_file = os.path.join(main_folder, 'desc_folder/edge_dislocation/Al_edge_vac20.xyz_stride_1.0_1.0_20.0_box_size_18.1_.tar.gz')
+    # desc_file = os.path.join(main_folder,
+                             # 'desc_folder/edge_dislocation/Al_edge_vac20.xyz_stride_1.0_1.0_20.0_box_size_18.1_.tar.gz')
 
     for idx, structure_file in enumerate(structure_files):
-        get_classification_map(polycrystal_file=structure_file, descriptor=descriptor,
-                               desc_metadata='diffraction_3d_sh_spectrum', configs=configs,
-                               checkpoint_dir=checkpoint_dir, checkpoint_filename='model_try_best.h5',
-                               desc_only=False,
-                               operations_on_structure=operations_on_structure_list[0], stride_size=stride_size,
-                               box_size=box_sizes[idx],
-                               train_set_name='hcp-sc-fcc-diam-bcc_pristine',
-                               # box_size=None,
-                               # init_sliding_volume=(16., 16., 16.),
-                               desc_file=desc_file,
-                               show_plot_lengths=False,
-                               # desc_only=False,
-                               calc_uncertainty=True,
-                               mc_samples=20,
-                               desc_file_suffix_name='', nb_jobs=6, conf_matrix_file=conf_matrix_file,
-                               results_file=results_file)
+        path_to_x_test, path_to_y_test, path_to_summary_test = make_strided_pattern_matching_dataset(
+            polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
+            configs=configs, operations_on_structure=None, stride_size=(4., 4., 4.), box_size=12.0,
+            init_sliding_volume=(14., 14., 14.), desc_file=desc_file, desc_only=False, show_plot_lengths=True,
+            desc_file_suffix_name='_pristine', nb_jobs=-1, padding_ratio=None)
 
-
+        # get_classification_map(polycrystal_file=structure_file, descriptor=descriptor,
+        #                        desc_metadata='diffraction_3d_sh_spectrum', configs=configs,
+        #                        checkpoint_dir=checkpoint_dir, checkpoint_filename='model_try_best.h5',
+        #                        desc_only=False,  #
+        #  operations_on_structure=operations_on_structure_list[0], stride_size=stride_size,  #
+        #               box_size=box_sizes[idx],  #
+        #          train_set_name='hcp-sc-fcc-diam-bcc_pristine',  #
+        #  box_size=None,  #                        # init_sliding_volume=(16., 16., 16.),  #
+        #                      desc_file=desc_file,  #
+        #    show_plot_lengths=False,  #
+        #  desc_only=False,  #                        calc_uncertainty=True,  #
+        #         mc_samples=20,  #
+        #   desc_file_suffix_name='', nb_jobs=6, conf_matrix_file=conf_matrix_file,  #
+        #                  results_file=results_file)
 
     sys.exit()
