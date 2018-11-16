@@ -139,10 +139,6 @@ def get_classification_map(polycrystal_file, descriptor, desc_metadata, configs,
                                      title='Probability', class_name=str(idx_class), prefix='prob',
                                      main_folder=configs['io']['main_folder'], cmap='viridis',
                                      interpolation=interpolation)
-            # mlab.close(all=True)
-            # plt.contour3(prob_prediction_class)
-            #(prob_prediction_class)
-            # make three-dimensional plot
 
         if calc_uncertainty:
             df_uncertainty = pd.DataFrame()

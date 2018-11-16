@@ -134,8 +134,6 @@ def cnn_architecture_polycrystals_no_maxpool(learning_rate, conv2d_filters, kern
     return model
 
 
-
-
 def model_cnn_rot_inv(conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,
                       img_channels, nb_classes, dropout):
     """Deep convolutional neural network model for crystal structure recognition.

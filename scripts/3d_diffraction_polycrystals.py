@@ -81,7 +81,7 @@ if __name__ == "__main__":
     logger = setup_logger(configs, level='DEBUG', display_configs=False)
 
     # setup folder and files
-    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/balanced_small_nn')))
+    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/try_best')))
     dataset_folder = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'datasets')))
     figure_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'attentive_resp_maps')))
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
@@ -128,18 +128,19 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac90.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz_stride_1.0_1.0_1.0_box_size_10.0_.tar.gz')
 
-    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_1.0_1.0_20.0_box_size_14.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/others/Al_3_disl_vac10.xyz_stride_3.0_3.0_40.0_box_size_15.0_pristine.tar.gz')
 
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
-    desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
 
+    desc_file = os.path.join(main_folder, 'desc_folder/edge_dislocation/Al_edge_vac20.xyz_stride_1.0_1.0_20.0_box_size_18.1_.tar.gz')
 
     for idx, structure_file in enumerate(structure_files):
         get_classification_map(polycrystal_file=structure_file, descriptor=descriptor,
                                desc_metadata='diffraction_3d_sh_spectrum', configs=configs,
-                               checkpoint_dir=checkpoint_dir, checkpoint_filename='model_balanced_small_nn.h5',
+                               checkpoint_dir=checkpoint_dir, checkpoint_filename='model_try_best.h5',
                                desc_only=False,
                                operations_on_structure=operations_on_structure_list[0], stride_size=stride_size,
                                box_size=box_sizes[idx],
@@ -150,7 +151,7 @@ if __name__ == "__main__":
                                show_plot_lengths=False,
                                # desc_only=False,
                                calc_uncertainty=True,
-                               mc_samples=50,
+                               mc_samples=20,
                                desc_file_suffix_name='', nb_jobs=6, conf_matrix_file=conf_matrix_file,
                                results_file=results_file)
 
