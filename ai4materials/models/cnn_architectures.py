@@ -43,13 +43,12 @@ import logging
 logger = logging.getLogger('ai4materials')
 
 
-def cnn_architecture_polycrystals_no_maxpool(learning_rate, conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,
-                      img_channels, nb_classes, dropout, plot_the_model=False, model_name='cnn_polycrystals'):
+def cnn_architecture_polycrystals(learning_rate, conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,
+                                  nb_classes, dropout, img_channels=1):
     """Deep convolutional neural network model for crystal structure recognition.
 
     This neural network architecture was used to classify crystal structures - represented by the three-dimensional
     diffraction fingerprint - in Ref. [1]_.
-
 
     .. [1] A. Ziletti et al.,
         “Automatic structure identification in polycrystals via Bayesian deep learning”,
@@ -61,71 +60,53 @@ def cnn_architecture_polycrystals_no_maxpool(learning_rate, conv2d_filters, kern
     n_conv2d = 6
 
     if not len(conv2d_filters) == n_conv2d:
-        raise Exception(
-            "Wrong number of filters. Give a list of {0} numbers.".format(n_conv2d))
+        raise Exception("Wrong number of filters. Give a list of {0} numbers.".format(n_conv2d))
     if not len(kernel_sizes) == n_conv2d:
-        raise Exception(
-            "Wrong number of kernel sizes. Give a list of {0} numbers.".format(n_conv2d))
+        raise Exception("Wrong number of kernel sizes. Give a list of {0} numbers.".format(n_conv2d))
 
     input_shape = (n_rows, n_columns, img_channels)
     inputs = keras.Input(shape=input_shape)
 
     x = Convolution2D(filters=conv2d_filters[0], kernel_size=kernel_sizes[0], name='convolution2d_1',
-               border_mode='same', init='orthogonal', bias=True)(inputs)
-    x = BatchNormalization()(x)
+                      border_mode='same', init='orthogonal', bias=True)(inputs)
     x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
 
     x = Convolution2D(filters=conv2d_filters[1], kernel_size=kernel_sizes[1], name='convolution2d_2',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
+                      border_mode='same', init='orthogonal', bias=True)(x)
     x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
 
-    x = Convolution2D(filters=conv2d_filters[1], kernel_size=kernel_sizes[1], strides=(2,2), name='convolution2d_down1',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
-    x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
+    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='maxpooling2d_1')(x)
 
-    x = Convolution2D(filters=conv2d_filters[2], kernel_size=kernel_sizes[2], name='convolution2d_3',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
+    x = Convolution2D(filters=conv2d_filters[2], kernel_size=kernel_sizes[3], name='convolution2d_3',
+                      border_mode='same', init='orthogonal', bias=True)(x)
     x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
 
     x = Convolution2D(filters=conv2d_filters[3], kernel_size=kernel_sizes[3], name='convolution2d_4',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
+                      border_mode='same', init='orthogonal', bias=True)(x)
     x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
 
-    x = Convolution2D(filters=conv2d_filters[3], kernel_size=kernel_sizes[3], strides=(2,2), name='convolution2d_down2',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
-    x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
+    x = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='maxpooling2d_2')(x)
 
     x = Convolution2D(filters=conv2d_filters[4], kernel_size=kernel_sizes[4], name='convolution2d_5',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
+                      border_mode='same', init='orthogonal', bias=True)(x)
     x = LeakyReLU(alpha=0.1)(x)
-    x = keras.layers.Dropout(dropout)(x, training=True)
 
     x = Convolution2D(filters=conv2d_filters[5], kernel_size=kernel_sizes[5], name='convolution2d_6',
-               border_mode='same', init='orthogonal', bias=True)(x)
-    x = BatchNormalization()(x)
+                      border_mode='same', init='orthogonal', bias=True)(x)
     x = LeakyReLU(alpha=0.1)(x)
+
+    x = Flatten(name='flatten_1')(x)
+    x = BatchNormalization()(x)
+    x = Dense(hidden_layer_size, name='dense_1', activation='relu', bias=True)(x)
     x = keras.layers.Dropout(dropout)(x, training=True)
 
-    # fully convolutional
-    x = GlobalAveragePooling2D(dim_ordering='default')(x)
     x = Dense(nb_classes, name='dense_2')(x)
     outputs = Activation('softmax', name='activation_1')(x)
 
     model = keras.Model(inputs, outputs)
 
     model.summary()
+
     # compile model
     adam = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, decay=0.0)
 
@@ -134,64 +115,8 @@ def cnn_architecture_polycrystals_no_maxpool(learning_rate, conv2d_filters, kern
     return model
 
 
-def model_cnn_rot_inv(conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,
-                      img_channels, nb_classes, dropout):
-    """Deep convolutional neural network model for crystal structure recognition.
-
-    This neural network architecture was used to classify crystal structures - represented by the three-dimensional
-    diffraction fingerprint - in Ref. [1]_.
-
-
-    .. [1] A. Ziletti et al.,
-        “Automatic structure identification in polycrystals via Bayesian deep learning”,
-        in preparation (2018)
-
-    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
-    """
-
-    n_conv2d = 6
-
-    if not len(conv2d_filters) == n_conv2d:
-        raise Exception(
-            "Wrong number of filters. Give a list of {0} numbers.".format(n_conv2d))
-    if not len(kernel_sizes) == n_conv2d:
-        raise Exception(
-            "Wrong number of kernel sizes. Give a list of {0} numbers.".format(n_conv2d))
-
-    model = Sequential()
-    model.add(
-        Conv2D(conv2d_filters[0], kernel_sizes[0], kernel_sizes[0], name='convolution2d_1', activation='relu',
-               border_mode='same', init='orthogonal', bias=True, input_shape=(img_channels, n_rows, n_columns)))
-    model.add(
-        Conv2D(conv2d_filters[1], kernel_sizes[1], kernel_sizes[1], name='convolution2d_2', activation='relu',
-               border_mode='same', init='orthogonal', bias=True))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='maxpooling2d_1'))
-    model.add(
-        Conv2D(conv2d_filters[2], kernel_sizes[2], kernel_sizes[2], name='convolution2d_3', activation='relu',
-               border_mode='same', init='orthogonal', bias=True))
-    model.add(
-        Conv2D(conv2d_filters[3], kernel_sizes[3], kernel_sizes[3], name='convolution2d_4', activation='relu',
-               border_mode='same', init='orthogonal', bias=True))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), name='maxpooling2d_2'))
-    model.add(
-        Conv2D(conv2d_filters[4], kernel_sizes[4], kernel_sizes[4], name='convolution2d_5', activation='relu',
-               border_mode='same', init='orthogonal', bias=True))
-    model.add(
-        Conv2D(conv2d_filters[5], kernel_sizes[5], kernel_sizes[5], name='convolution2d_6', activation='relu',
-               border_mode='same', init='orthogonal', bias=True))
-
-    model.add(Flatten(name='flatten_1'))
-    # model.add(BatchNormalization())
-    model.add(Dense(hidden_layer_size, name='dense_1', activation='relu', bias=True))
-    model.add(Dropout(dropout, name='dropout_1'))
-    model.add(Dense(nb_classes, name='dense_2'))
-    model.add(Activation('softmax', name='activation_1'))
-
-    return model
-
-
-def cnn_nature_comm_ziletti2018(conv2d_filters, kernel_sizes, max_pool_strides, hidden_layer_size, n_rows,
-                                n_columns, img_channels, nb_classes):
+def cnn_nature_comm_ziletti2018(conv2d_filters, kernel_sizes, max_pool_strides, hidden_layer_size, n_rows, n_columns,
+                                img_channels, nb_classes):
     """Deep convolutional neural network model for crystal structure recognition.
 
     This neural network architecture was used to classify crystal structures - represented by the two-dimensional
@@ -208,14 +133,11 @@ def cnn_nature_comm_ziletti2018(conv2d_filters, kernel_sizes, max_pool_strides, 
     n_conv_2d = 6
     n_pool = 2
     if not len(conv2d_filters) == n_conv_2d:
-        raise Exception(
-            "Wrong number of filters. Give a list of {0} numbers.".format(n_conv_2d))
+        raise Exception("Wrong number of filters. Give a list of {0} numbers.".format(n_conv_2d))
     if not len(kernel_sizes) == n_conv_2d:
-        raise Exception(
-            "Wrong number of kernel sizes. Give a list of {0} numbers.".format(n_conv_2d))
+        raise Exception("Wrong number of kernel sizes. Give a list of {0} numbers.".format(n_conv_2d))
     if not len(max_pool_strides) == n_pool:
-        raise Exception(
-            "Wrong number of max pool strides. Give a list of {0} numbers.".format(n_pool))
+        raise Exception("Wrong number of max pool strides. Give a list of {0} numbers.".format(n_pool))
 
     model = Sequential()
     model.add(
