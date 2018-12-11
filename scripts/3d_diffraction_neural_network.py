@@ -31,12 +31,12 @@ if __name__ == "__main__":
 
     from ase.spacegroup import get_spacegroup
     from ai4materials.descriptors.diffraction3d import DISH
-    from ai4materials.descriptors.diffraction2d import Diffraction2D
     from ai4materials.utils.utils_config import set_configs
     from ai4materials.utils.utils_config import setup_logger
     from ai4materials.utils.utils_crystals import create_supercell
     from ai4materials.utils.utils_crystals import create_vacancies
     from ai4materials.utils.utils_crystals import random_displace_atoms
+    from keras.models import load_model
     from ai4materials.visualization.viewer import Viewer
     import matplotlib.cm as cm
     from ai4materials.utils.utils_data_retrieval import clean_folder
@@ -46,13 +46,14 @@ if __name__ == "__main__":
     from ai4materials.interpretation.deconv_resp_maps import plot_att_response_maps
     from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
     from ai4materials.dataprocessing.preprocessing import make_data_sets
+    from ai4materials.models.cnn_polycrystals import predict_new, predict
     from ai4materials.utils.utils_data_retrieval import read_ase_db
     from ai4materials.visualization.viewer import Viewer
     from ai4materials.utils.utils_data_retrieval import write_ase_db
     from ai4materials.wrappers import calc_descriptor
     from ai4materials.wrappers import load_descriptor
     import numpy as np
-    from ai4materials.models.cnn_architectures import model_cnn_rot_inv, model_fully_conv
+    from ai4materials.models.cnn_architectures import model_cnn_rot_inv
     from ai4materials.models.cnn_polycrystals import predict, train_neural_network
     from argparse import ArgumentParser
     from functools import partial
@@ -283,29 +284,28 @@ if __name__ == "__main__":
     data_set_predict = make_data_sets(x_train_val=x_test, y_train_val=y_test, split_train_val=False, test_size=0.1,
                                       x_test=x_test, y_test=y_test)
 
-    train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
-                         partial_model_architecture=partial_model_architecture,
-                         batch_size=params_cnn["batch_size"], checkpoint_dir=checkpoint_dir,
-                         neural_network_name=params_cnn["checkpoint_filename"],
-                         nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
+    # train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
+    #                      partial_model_architecture=partial_model_architecture,
+    #                      batch_size=params_cnn["batch_size"], checkpoint_dir=checkpoint_dir,
+    #                      neural_network_name=params_cnn["checkpoint_filename"],
+    #                      nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
 
-    target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict(data_set_predict,
-                                                                                            params_cnn["nb_classes"],
-                                                                                            configs=configs,
-                                                                                            batch_size=params_cnn[
-                                                                                                "batch_size"],
-                                                                                            checkpoint_dir=checkpoint_dir,
-                                                                                            checkpoint_filename=
-                                                                                            params_cnn[
-                                                                                                "checkpoint_filename"],
-                                                                                            show_model_acc=True,
-                                                                                            predict_probabilities=True,
-                                                                                            plot_conf_matrix=True,
-                                                                                            conf_matrix_file=conf_matrix_file,
-                                                                                            numerical_labels=numerical_labels,
-                                                                                            text_labels=text_labels,
-                                                                                            results_file=results_file,
-                                                                                            normalize=True)
+    path_to_saved_model = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/saved_models/enc_dec_drop12.5/model.h5'
+    model = load_model(path_to_saved_model)
+    model.summary()
+
+    # load the data
+    x_test = data_set_predict.train.images
+    y_test = data_set_predict.train.labels
+
+    # def predict_new(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None, model=None,
+    #                 batch_size=32, show_model_acc=True, conf_matrix_file=None, verbose=1):
+
+    target_pred_class, target_pred_probs, prob_predictions, \
+    conf_matrix, uncertainty = predict_new(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels,
+                                           text_labels=text_labels, nb_classes=params_cnn["nb_classes"], model=model,
+                                           batch_size=params_cnn["batch_size"], show_model_acc=True,
+                                           conf_matrix_file=conf_matrix_file, results_file=results_file)
 
     sys.exit()
 

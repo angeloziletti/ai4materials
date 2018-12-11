@@ -34,7 +34,10 @@ from ai4materials.dataprocessing.preprocessing import prepare_dataset
 from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
 from ai4materials.dataprocessing.preprocessing import make_data_sets
 from ai4materials.models.cnn_polycrystals import predict
+from ai4materials.models.cnn_polycrystals import predict_new
+from keras.models import load_model
 import pandas as pd
+import six.moves.cPickle as pickle
 
 logger = logging.getLogger('ai4materials')
 
@@ -74,13 +77,34 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
                                                                                desc_folder=configs['io']['desc_folder'],
                                                                                tmp_folder=configs['io']['tmp_folder'])
 
+        # get the number of strides in each directions in order to reshape properly
+        strided_pattern_pos = []
+        for structure in structure_list:
+            strided_pattern_pos.append(structure.info['strided_pattern_positions'])
+
+        strided_pattern_pos = np.asarray(strided_pattern_pos)
+
+        path_to_strided_pattern_pos = os.path.abspath(os.path.normpath(os.path.join(configs['io'][
+                                                                                   'dataset_folder'],
+                                                                                    '{0}_strided_pattern_pos.pkl'.format(
+                                                                                        dataset_name))))
+
+        # write to file
+        with open(path_to_strided_pattern_pos, 'wb') as output:
+            pickle.dump(strided_pattern_pos, output, pickle.HIGHEST_PROTOCOL)
+            logger.info("Writing strided pattern positions to {0}".format(path_to_strided_pattern_pos))
+
         logger.info("Dataset created at {}".format(configs['io']['dataset_folder']))
+        logger.info("Strided pattern positions saved at {}".format(configs['io']['dataset_folder']))
 
-    return path_to_x_test, path_to_y_test, path_to_summary_test
+    return path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos
 
 
-def get_classification_map(configs, calc_uncertainty=True, mc_samples=10, interpolation='none', results_file=None,
-                           conf_matrix_file=None, train_set_name='hcp-bcc-sc-diam-fcc-pristine', cmap_uncertainty='hot',
+def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos,
+                           checkpoint_dir, checkpoint_filename,
+                           mc_samples=100, interpolation='none', results_file=None, calc_uncertainty=True,
+                           conf_matrix_file=None, train_set_name='hcp-bcc-sc-diam-fcc-pristine',
+                           cmap_uncertainty='hot',
                            interpolation_uncertainty='none'):
 
     path_to_x_train = os.path.join(configs['io']['dataset_folder'], train_set_name + '_x.pkl')
@@ -93,22 +117,32 @@ def get_classification_map(configs, calc_uncertainty=True, mc_samples=10, interp
     x_test, y_test, dataset_info_test = load_dataset_from_file(path_to_x=path_to_x_test, path_to_y=path_to_y_test,
                                                                path_to_summary=path_to_summary_test)
 
+    with open(path_to_strided_pattern_pos, 'rb') as input_spm_pos:
+        strided_pattern_pos = pickle.load(input_spm_pos)
+
+    logger.debug('Strided_pattern_positions-shape: {0}'.format(strided_pattern_pos.shape))
+
     params_cnn = {"nb_classes": dataset_info_train["data"][0]["nb_classes"],
                   "classes": dataset_info_train["data"][0]["classes"], "batch_size": 32, "img_channels": 1}
 
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
 
-    data_set_predict = make_data_sets(x_train_val=x_test, y_train_val=y_test, split_train_val=False, test_size=0.1,
-                                      x_test=x_test, y_test=y_test)
+    # data_set_predict = make_data_sets(x_train_val=x_test, y_train_val=y_test, split_train_val=False, test_size=0.1,
+    #                                   x_test=x_test, y_test=y_test)
 
-    target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict(data_set_predict,
-                                                                                               params_cnn["nb_classes"],
+    filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, checkpoint_filename)))
+
+    model = load_model(filename_no_ext)
+    # results = predict(x_test, y_test, model=model, configs=configs, numerical_labels=numerical_labels,
+    #                   text_labels=text_labels)
+
+    # print(results.keys())
+    target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict(x_test, y_test, model=model,
                                                                                                configs=configs,
+                                                                                               nb_classes=5,
                                                                                                batch_size=params_cnn[
                                                                                                    "batch_size"],
-                                                                                               checkpoint_dir=checkpoint_dir,
-                                                                                               checkpoint_filename=checkpoint_filename,
                                                                                                show_model_acc=False,
                                                                                                mc_samples=mc_samples,
                                                                                                predict_probabilities=True,
@@ -121,12 +155,7 @@ def get_classification_map(configs, calc_uncertainty=True, mc_samples=10, interp
 
     predictive_mean = prob_predictions
 
-    # get the number of strides in each directions in order to reshape properly
-    strided_pattern_positions = []
-    for structure in structure_list:
-        strided_pattern_positions.append(structure.info['strided_pattern_positions'])
-
-    class_plot_pos = np.asarray(strided_pattern_positions)
+    class_plot_pos = np.asarray(strided_pattern_pos)
     (z_max, y_max, x_max) = np.amax(class_plot_pos, axis=0) + 1
 
     # make a dataframe to order the prob_predictions

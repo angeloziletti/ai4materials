@@ -201,11 +201,91 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
     del model
 
 
-def predict(data_set, nb_classes, configs, results_file, numerical_labels, text_labels, checkpoint_dir=None,
-                      checkpoint_filename=None, batch_size=1, show_model_acc=True, mc_samples=1,
+def predict_new(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None,
+                model=None, batch_size=32, show_model_acc=True, conf_matrix_file=None, verbose=1):
+
+    if results_file is None:
+        results_file = configs['io']['results_file']
+
+    if conf_matrix_file is None:
+        conf_matrix_file = configs['io']['conf_matrix_file']
+
+    # convert class vectors to binary class matrices - one-hot encoding
+    y = np_utils.to_categorical(y, nb_classes)
+
+    # reshaping it according to Theano rule
+    # Theano backend uses (nb_sample, channels, height, width)
+    x = reshape_images(x)
+    x = x.astype('float32')
+
+    logger.info('Loading test dataset for prediction.')
+    logger.debug('x_test shape: {0}'.format(x.shape))
+    logger.debug('Test samples: {0}'.format(x.shape[0]))
+    logger.info('Loading and formatting of data completed.')
+
+    if configs['runtime']['log_level_general'] == "DEBUG":
+        model.summary()
+
+    logger.info('Predicting...')
+
+    # compiling and calculating the score of the model again
+    score = model.evaluate(x, y, batch_size=batch_size, verbose=verbose)
+
+    if show_model_acc:
+        logger.info('Model score: {0} {1}%'.format(model.metrics_names[1], score[1] * 100))
+
+    prob_predictions = model.predict(x, batch_size=batch_size, verbose=verbose)
+
+    # predicting the labels of the test set
+    y_prob = model.predict(x, batch_size=batch_size, verbose=verbose)
+    y_pred = y_prob.argmax(axis=-1)
+
+    conf_matrix = confusion_matrix(np.argmax(y, axis=1), y_pred)
+    np.set_printoptions(precision=2)
+    logger.info('Confusion matrix, without normalization: ')
+    logger.info(conf_matrix)
+
+    target_pred_class = np.argmax(prob_predictions, axis=1).tolist()
+    # predictions are an (n, m) array where
+    # n: # of samples, m: # of classes
+    # create dataframe with results
+    df_cols = ['target_pred_class']
+    for idx in range(prob_predictions.shape[1]):
+        df_cols.append('prob_predictions_' + str(idx))
+    df_cols.append('num_labels')
+    df_cols.append('class_labels')
+
+    # make a dataframe with the results and write it to file
+    df_results = pd.DataFrame(np.column_stack((target_pred_class, prob_predictions, numerical_labels, text_labels)),
+                              columns=df_cols)
+    df_results.to_csv(results_file, index=False)
+    logger.info("Predictions written to: {}".format(results_file))
+
+    text_labels = text_labels.tolist()
+    unique_class_labels = sorted(list(set(text_labels)))
+
+    plot_confusion_matrix(conf_matrix, conf_matrix_file=conf_matrix_file, classes=unique_class_labels, normalize=False,
+                          title='Confusion matrix')
+    logger.info("Confusion matrix written to {}.".format(conf_matrix_file))
+
+    # transform it in a list of n strings to be used by the viewer
+    string_probs = [str(['p' + str(i) + ':{0:.4f} '.format(item[i]) for i in range(nb_classes)]) for item in
+                    prob_predictions]
+
+    # insert new line if string too long
+    # for item in target_pred_probs:
+    #    item = insert_newlines(item, every=10)
+
+    results = dict(target_pred_class=target_pred_class, prob_predictions=prob_predictions, confusion_matrix=conf_matrix,
+                   string_probs=string_probs)
+
+    return results
+
+
+def predict(x, y, model, configs, numerical_labels, text_labels,  nb_classes, results_file, batch_size=32,
+            show_model_acc=True, mc_samples=1,
                       predict_probabilities=True, plot_conf_matrix=True, conf_matrix_file=None, normalize=False,
                       verbose=1):
-    filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, checkpoint_filename)))
 
     if verbose is None:
         if configs['runtime']['log_level_general'] == "DEBUG":
@@ -213,47 +293,21 @@ def predict(data_set, nb_classes, configs, results_file, numerical_labels, text_
         else:
             verbose = 0
 
-    # loading saved model
-    model_arch_file = filename_no_ext + ".json"
-    model_weights_file = filename_no_ext + ".h5"
-
-    # with open(model_arch_file, 'r') as arch_file:
-    #     arch_json = arch_file.read()
-    #
-    # model = model_from_json(arch_json)
-    # logger.debug('Loading model weights.')
-    # model.load_weights(model_weights_file)
-    # logger.info('Model loaded correctly.')
-
-    model = load_model(filename_no_ext)
-    model.summary()
-
-    # adam = Adam(lr=0.0003, beta_1=0.9, beta_2=0.999, decay=0.0)
-    # model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
-
-    # load the data
-    x_test = data_set.test.images
-    y_test = data_set.test.labels
-
     # convert class vectors to binary class matrices
-    y_test = np_utils.to_categorical(y_test, nb_classes)
+    y = np_utils.to_categorical(y, nb_classes)
 
-    # data_format = keras.backend.image_data_format()
-    # reshaping it according to Theano rule
-    # Theano backend uses (nb_sample, channels, height, width)
-
-    x_test = reshape_images(x_test)
+    x = reshape_images(x)
 
     logger.info('Loading test dataset for prediction.')
 
-    logger.debug('x_test shape: {0}'.format(x_test.shape))
-    logger.debug('Test samples: {0}'.format(x_test.shape[0]))
+    logger.debug('x_test shape: {0}'.format(x.shape))
+    logger.debug('Test samples: {0}'.format(x.shape[0]))
 
-    x_test = x_test.astype('float32')
+    x = x.astype('float32')
 
     # normalize each image separately
     if normalize:
-        x_test = normalize_images(x_test)
+        x = normalize_images(x)
 
     # convert class vectors to binary class matrices
     # y_test = np_utils.to_categorical(y_test, nb_classes)
@@ -265,22 +319,22 @@ def predict(data_set, nb_classes, configs, results_file, numerical_labels, text_
     logger.info('Predicting...')
 
     # compiling and calculating the score of the model again
-    score = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=verbose)
+    score = model.evaluate(x, y, batch_size=batch_size, verbose=verbose)
 
     if show_model_acc:
         logger.info('Model score: {0} {1}%'.format(model.metrics_names[1], score[1] * 100))
 
     if predict_probabilities:
-        prob_predictions, uncertainty = predict_with_uncertainty(x_test, model, n_iter=mc_samples)
+        prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)
 
     # predicting the labels of the test set
-    y_prob = model.predict(x_test, batch_size=batch_size, verbose=verbose)
+    y_prob = model.predict(x, batch_size=batch_size, verbose=verbose)
     y_pred = y_prob.argmax(axis=-1)
 
     # if model is sequential
     # y_pred = model.predict_classes(x_test, batch_size=batch_size, verbose=verbose)
 
-    conf_matrix = confusion_matrix(np.argmax(y_test, axis=1), y_pred)
+    conf_matrix = confusion_matrix(np.argmax(y, axis=1), y_pred)
     np.set_printoptions(precision=2)
     logger.info('Confusion matrix, without normalization: ')
     logger.info(conf_matrix)

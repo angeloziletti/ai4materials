@@ -62,21 +62,21 @@ if __name__ == "__main__":
     configs['io']['dataset_folder'] = dataset_folder
 
     structure_files = []
-    structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly.xyz'))
+    structure_files.append(os.path.join(main_folder, 'structures_for_paper/edge_dislocation/small_edge_dislocation.xyz'))
 
     for structure_file in structure_files:
         atoms = ase.io.read(structure_file, index=0, format='xyz')
 
-        atoms_mod = random_displace_atoms(atoms, displacement_scaled=0.04, create_replicas_by='user-defined',
-                                          cell_type=None, target_replicas=[1, 1, 1],
-                                          noise_distribution='uniform_scaled', target_nb_atoms=128,
-                                          random_rotation=False, optimal_supercell=False)
+        # atoms_mod = random_displace_atoms(atoms, displacement_scaled=0.01, create_replicas_by='user-defined',
+        #                                   cell_type=None, target_replicas=[1, 1, 1],
+        #                                   noise_distribution='uniform_scaled', target_nb_atoms=128,
+        #                                   random_rotation=False, optimal_supercell=False)
 
-        atoms_mod2 = create_vacancies(atoms_mod, target_vacancy_ratio=0.50, create_replicas_by='user-defined',
+        atoms_mod2 = create_vacancies(atoms, target_vacancy_ratio=0.05, create_replicas_by='user-defined',
                                           cell_type=None, target_replicas=[1, 1, 1],
                                           random_rotation=False, optimal_supercell=False)
 
         structure_name, file_extension = os.path.splitext(structure_file)
 
-        ase.io.write(structure_name + '_disp04_vac50.xyz', atoms_mod2, format='xyz', parallel=True)
+        ase.io.write(structure_name + '_vac5.xyz', atoms_mod2, format='xyz', parallel=True)
 

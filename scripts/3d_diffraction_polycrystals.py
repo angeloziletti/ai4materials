@@ -77,10 +77,10 @@ if __name__ == "__main__":
 
     # read config file
     configs = set_configs(main_folder=main_folder)
-    logger = setup_logger(configs, level='DEBUG', display_configs=False)
+    logger = setup_logger(configs, level='INFO', display_configs=False)
 
     # setup folder and files
-    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/try_best')))
+    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/enc_dec_drop12.5')))
     dataset_folder = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'datasets')))
     figure_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'attentive_resp_maps')))
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
@@ -96,14 +96,21 @@ if __name__ == "__main__":
     configs['io']['dataset_folder'] = dataset_folder
 
     structure_files = []
-    structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/fcc_crystal_twinning.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/stacking_fault/Al_SF_large.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly_disp01_vac20.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly_disp04_vac50.xyz'))
     # structure_files.append(os.path.join(main_folder, 'structures_for_paper/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz'))
-    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/inclusions/Fe_bcc_Si_fcc_final.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/edge_dislocation/Al_edge.xyz'))
+    structure_files.append(os.path.join(main_folder, 'structures_for_paper/edge_dislocation/small_edge_dislocation.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/edge_dislocation/Al_edge_vac20.xyz'))
 
     descriptor = DISH(configs=configs)
 
     operations_on_structure_list = [
-        (create_supercell, dict(create_replicas_by='user-defined', target_replicas=[1, 1, 1], random_rotation=False)), (
+        (create_supercell, dict(create_replicas_by='user-defined', target_replicas=[1, 1, 1], random_rotation=False)),
+        (
             create_vacancies, dict(target_vacancy_ratio=0.20, create_replicas_by='user-defined', cell_type=None,
                                    target_replicas=[1, 1, 1], random_rotation=False, optimal_supercell=False)), (
             random_displace_atoms,
@@ -128,22 +135,64 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac90.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz_stride_1.0_1.0_1.0_box_size_10.0_.tar.gz')
 
+    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_1.0_1.0_20.0_box_size_14.0_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/others/Al_3_disl_vac10.xyz_stride_3.0_3.0_40.0_box_size_15.0_pristine.tar.gz')
 
-    desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large_vac50.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
+
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_vac20.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_disp01.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_3.0_3.0_20.0_box_size_15.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp01_vac20.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_6.0_6.0_20.0_box_size_15.1.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp2_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp1_vac20.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
 
     # desc_file = os.path.join(main_folder,
-                             # 'desc_folder/edge_dislocation/Al_edge_vac20.xyz_stride_1.0_1.0_20.0_box_size_18.1_.tar.gz')
+    #                          'desc_folder/edge_dislocation/Al_edge_vac20.xyz_stride_1.0_1.0_20.0_box_size_18.1_.tar.gz')
+    # desc_file = os.path.join(main_folder,
+    #                          'desc_folder/edge_dislocation/Al_edge.xyz_stride_1.0_1.0_20.0_box_size_18.1.tar.gz')
+
+    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+    desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_disp1_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
 
     for idx, structure_file in enumerate(structure_files):
-        path_to_x_test, path_to_y_test, path_to_summary_test = make_strided_pattern_matching_dataset(
+        path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos = make_strided_pattern_matching_dataset(
             polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
-            configs=configs, operations_on_structure=None, stride_size=(4., 4., 4.), box_size=12.0,
+            configs=configs, operations_on_structure=None, stride_size=(1., 1., 20.), box_size=10.,
             init_sliding_volume=(14., 14., 14.), desc_file=desc_file, desc_only=False, show_plot_lengths=True,
-            desc_file_suffix_name='_pristine', nb_jobs=-1, padding_ratio=None)
+            desc_file_suffix_name='', nb_jobs=6, padding_ratio=None)
+
+        # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_x.pkl'
+        # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_y.pkl'
+        # path_to_summary_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_summary.json'
+        # path_to_strided_pattern_pos = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_strided_pattern_pos.pkl'
+
+        # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_x.pkl'
+        # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_y.pkl'
+        # path_to_summary_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_summary.json'
+        # path_to_strided_pattern_pos = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_strided_pattern_pos.pkl'
+
+        # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_edge.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_x.pkl'
+        # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_edge.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_y.pkl'
+        # path_to_summary_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_edge.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_summary.json'
+        # path_to_strided_pattern_pos = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_edge.xyz_stride_4.0_4.0_4.0_box_size_12.0__pristine.tar.gz_strided_pattern_pos.pkl'
+
+        get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summary_test,
+                                   path_to_strided_pattern_pos, checkpoint_dir, checkpoint_filename='model.h5',
+                                   mc_samples=100,
+                                   interpolation='none', results_file=None, calc_uncertainty=True,
+                                   conf_matrix_file=conf_matrix_file, train_set_name='hcp-sc-fcc-diam-bcc_pristine',
+                                   cmap_uncertainty='hot', interpolation_uncertainty='none')
 
         # get_classification_map(polycrystal_file=structure_file, descriptor=descriptor,
         #                        desc_metadata='diffraction_3d_sh_spectrum', configs=configs,
