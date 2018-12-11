@@ -204,7 +204,7 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
 
 
 def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None, model=None, batch_size=32,
-            conf_matrix_file=None, verbose=1, with_uncertainty=True, mc_samples=5):
+            conf_matrix_file=None, verbose=1, with_uncertainty=True, mc_samples=50):
     uncertainty = None
 
     if results_file is None:
@@ -232,8 +232,10 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_
     logger.info('Predicting...')
 
     if with_uncertainty:
+        logger.info("Using multiple passed to have principles probability and uncertainty estimates")
         prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)
     else:
+        logger.info("Using only a single pass. No uncertainty estimation.")
         prob_predictions = model.predict(x, batch_size=batch_size, verbose=verbose)
 
     # get the argmax to have the class label from the probabilities
@@ -325,11 +327,15 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
         variation_ratio = np.transpose(1. - mode_count.mean(axis=0) / float(n_iter))
 
         # predictive entropy
+        # clip values to 1e-12 to avoid divergency in the log
+        prediction = np.clip(prediction, a_min=1e-12, a_max=None, out=prediction)
         log_p_class = np.log2(prediction)
         entropy_all_iteration = - np.multiply(prediction, log_p_class)
         predictive_entropy = np.sum(entropy_all_iteration, axis=1)
 
         # mutual information
+        # clip values to 1e-12 to avoid divergency in the log
+        results = np.clip(results, a_min=1e-12, a_max=None, out=results)
         p_log_p_all = np.multiply(np.log2(results), results)
         exp_p_omega = np.sum(np.sum(p_log_p_all, axis=0), axis=1)
         mutual_information = predictive_entropy + 1. / float(n_iter) * exp_p_omega
@@ -348,7 +354,14 @@ def reshape_images(images):
     if len(input_dims) == 2:
         # enforce Tensorflow convention
         images = np.reshape(images, (images.shape[0], images.shape[1], images.shape[2],
-                                     -1))  # add channels  # if K.image_data_format() == 'channels_first':  #     logger.info("Image ordering: channels first (Theano convention)")  #     images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))  # elif K.image_data_format() == 'channels_last':  #     logger.info("Image ordering: channels last (Tensorflow convention)")  # raise NotImplementedError('Tensorflow backend is not supported.')  # else:  #     raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
+                                     -1))  # add channels  # if K.image_data_format() == 'channels_first':
+        #     logger.info("Image ordering: channels first (Theano convention)")
+        #     images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))
+        # elif K.image_data_format() == 'channels_last':
+        #     logger.info("Image ordering: channels last (Tensorflow convention)")
+        # raise NotImplementedError('Tensorflow backend is not supported.')
+        # else:
+        #     raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
     else:
         raise Exception("Wrong number of dimensions.")
 

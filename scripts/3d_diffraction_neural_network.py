@@ -69,7 +69,6 @@ if __name__ == "__main__":
     dataset_folder = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'datasets')))
     checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models')))
     figure_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'attentive_resp_maps')))
-    conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
     results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
     lookup_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'lookup.dat')))
     control_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'control.json')))
@@ -90,7 +89,8 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-8%'
+    # test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-8%'
+    test_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
     path_to_y_test = os.path.abspath(
@@ -123,6 +123,8 @@ if __name__ == "__main__":
     # load trained neural network from hdf5 file
     path_to_saved_model = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/saved_models/enc_dec_drop12.5/model.h5'
     model = load_model(path_to_saved_model)
+
+    conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
     results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
