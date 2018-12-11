@@ -46,7 +46,6 @@ if __name__ == "__main__":
     from ai4materials.interpretation.deconv_resp_maps import plot_att_response_maps
     from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
     from ai4materials.dataprocessing.preprocessing import make_data_sets
-    from ai4materials.models.cnn_polycrystals import predict_new, predict
     from ai4materials.utils.utils_data_retrieval import read_ase_db
     from ai4materials.visualization.viewer import Viewer
     from ai4materials.utils.utils_data_retrieval import write_ase_db
@@ -298,7 +297,7 @@ if __name__ == "__main__":
     x_test = data_set_predict.train.images
     y_test = data_set_predict.train.labels
 
-    results = predict_new(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels,
+    results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels,
                                            text_labels=text_labels, nb_classes=params_cnn["nb_classes"], model=model,
                                            batch_size=params_cnn["batch_size"],
                                            conf_matrix_file=conf_matrix_file, results_file=results_file)
