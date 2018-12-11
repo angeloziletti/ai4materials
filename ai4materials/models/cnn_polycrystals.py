@@ -45,6 +45,7 @@ import os
 import logging
 import pandas as pd
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 logger = logging.getLogger('ai4materials')
 
@@ -202,7 +203,10 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
 
 
 def predict_new(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None,
-                model=None, batch_size=32, show_model_acc=True, conf_matrix_file=None, verbose=1):
+                model=None, batch_size=32, conf_matrix_file=None, verbose=1,
+                with_uncertainty=True, mc_samples=5):
+
+    uncertainty = None
 
     if results_file is None:
         results_file = configs['io']['results_file']
@@ -228,17 +232,14 @@ def predict_new(x, y, configs, numerical_labels, text_labels, nb_classes=5, resu
 
     logger.info('Predicting...')
 
-    # compiling and calculating the score of the model again
-    score = model.evaluate(x, y, batch_size=batch_size, verbose=verbose)
+    if with_uncertainty:
+        prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)
+    else:
+        prob_predictions = model.predict(x, batch_size=batch_size, verbose=verbose)
 
-    if show_model_acc:
-        logger.info('Model score: {0} {1}%'.format(model.metrics_names[1], score[1] * 100))
-
-    prob_predictions = model.predict(x, batch_size=batch_size, verbose=verbose)
-
-    # predicting the labels of the test set
-    y_prob = model.predict(x, batch_size=batch_size, verbose=verbose)
-    y_pred = y_prob.argmax(axis=-1)
+    # get the argmax to have the class label from the probabilities
+    y_pred = prob_predictions.argmax(axis=-1)
+    logger.info("Accuracy: {}%".format(accuracy_score(np.argmax(y, axis=1), y_pred)*100.))
 
     conf_matrix = confusion_matrix(np.argmax(y, axis=1), y_pred)
     np.set_printoptions(precision=2)
@@ -277,7 +278,7 @@ def predict_new(x, y, configs, numerical_labels, text_labels, nb_classes=5, resu
     #    item = insert_newlines(item, every=10)
 
     results = dict(target_pred_class=target_pred_class, prob_predictions=prob_predictions, confusion_matrix=conf_matrix,
-                   string_probs=string_probs)
+                   string_probs=string_probs, uncertainty=uncertainty)
 
     return results
 

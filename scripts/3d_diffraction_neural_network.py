@@ -298,14 +298,13 @@ if __name__ == "__main__":
     x_test = data_set_predict.train.images
     y_test = data_set_predict.train.labels
 
-    # def predict_new(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None, model=None,
-    #                 batch_size=32, show_model_acc=True, conf_matrix_file=None, verbose=1):
-
-    target_pred_class, target_pred_probs, prob_predictions, \
-    conf_matrix, uncertainty = predict_new(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels,
+    results = predict_new(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels,
                                            text_labels=text_labels, nb_classes=params_cnn["nb_classes"], model=model,
-                                           batch_size=params_cnn["batch_size"], show_model_acc=True,
+                                           batch_size=params_cnn["batch_size"],
                                            conf_matrix_file=conf_matrix_file, results_file=results_file)
+
+    logger.info("Average predictive entropy: {}".format(np.mean(results['uncertainty']['predictive_entropy'])))
+    logger.info("Average mutual information: {}".format(np.mean(results['uncertainty']['mutual_information'])))
 
     sys.exit()
 
