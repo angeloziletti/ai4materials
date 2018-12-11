@@ -29,36 +29,15 @@ if __name__ == "__main__":
 
     sys.path.insert(0, atomic_data_dir)
 
-    from ase.spacegroup import get_spacegroup
+    from argparse import ArgumentParser
+    from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
     from ai4materials.descriptors.diffraction3d import DISH
+    from ai4materials.models.cnn_polycrystals import predict
     from ai4materials.utils.utils_config import set_configs
     from ai4materials.utils.utils_config import setup_logger
-    from ai4materials.utils.utils_crystals import create_supercell
-    from ai4materials.utils.utils_crystals import create_vacancies
-    from ai4materials.utils.utils_crystals import random_displace_atoms
-    from keras.models import load_model
-    from ai4materials.visualization.viewer import Viewer
-    import matplotlib.cm as cm
-    from ai4materials.utils.utils_data_retrieval import clean_folder
-    from ai4materials.utils.utils_data_retrieval import generate_facets_input
-    from ai4materials.utils.utils_parsing import read_atomic_structures
-    from ai4materials.dataprocessing.preprocessing import prepare_dataset
-    from ai4materials.interpretation.deconv_resp_maps import plot_att_response_maps
-    from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
-    from ai4materials.dataprocessing.preprocessing import make_data_sets
-    from ai4materials.utils.utils_data_retrieval import read_ase_db
-    from ai4materials.visualization.viewer import Viewer
-    from ai4materials.utils.utils_data_retrieval import write_ase_db
-    from ai4materials.wrappers import calc_descriptor
-    from ai4materials.wrappers import load_descriptor
-    import numpy as np
-    from ai4materials.models.cnn_architectures import model_cnn_rot_inv
-    from ai4materials.models.cnn_polycrystals import predict, train_neural_network
-    from argparse import ArgumentParser
-    from functools import partial
     from datetime import datetime
+    from keras.models import load_model
     import numpy as np
-    import webbrowser
 
     startTime = datetime.now()
     now = datetime.now()
@@ -98,123 +77,10 @@ if __name__ == "__main__":
     filtered_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'filtered_file.json')))
     training_log_file = os.path.abspath(
         os.path.normpath(os.path.join(checkpoint_dir, 'training_' + str(now.isoformat()) + '.log')))
-    results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
 
     configs['io']['dataset_folder'] = dataset_folder
 
     descriptor = DISH(configs=configs)
-    # descriptor = Diffraction2D(configs=configs)
-
-    target_nb_atoms = 128
-    nb_rotations = 5
-
-    # define operations on structures
-    operations_on_structure_list = [(create_supercell, dict(create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                            target_nb_atoms=target_nb_atoms, random_rotation=True,
-                                                            random_rotation_before=True,
-                                                            cell_type='standard_no_symmetries',
-                                                            optimal_supercell=True)), (create_vacancies,
-                                                                                       dict(target_vacancy_ratio=0.10,
-                                                                                            create_replicas_by='nb_atoms',
-                                                                                            min_nb_atoms=32,
-                                                                                            target_nb_atoms=256,
-                                                                                            random_rotation=False,
-                                                                                            random_rotation_before=True,
-                                                                                            cell_type='standard_no_symmetries',
-                                                                                            optimal_supercell=False)), (
-                                        random_displace_atoms, dict(noise_distribution='gaussian', displacement=0.10,
-                                                                    create_replicas_by='nb_atoms', min_nb_atoms=32,
-                                                                    target_nb_atoms=256, random_rotation=False,
-                                                                    random_rotation_before=True,
-                                                                    cell_type='standard_no_symmetries',
-                                                                    optimal_supercell=False))]
-
-    # =============================================================================
-    # Read prototype data from files
-    # =============================================================================
-    proto_names = ['A_hP2_194_c', 'A_cP1_221_a', 'A_cF4_225_a', 'A_cF8_227_a', 'A_cI2_229_a']
-    # proto_names = ['A_cF4_225_a']
-
-    data_folders = [os.path.join(prototypes_basedir, proto_name) for proto_name in proto_names]
-    ase_db_files = [os.path.join(db_files_prototypes_basedir, proto_name) + '.db' for proto_name in proto_names]
-
-    db_protos = zip(proto_names, ase_db_files)
-    # for idx_proto, data_folder in enumerate(data_folders):
-    #    ase_atoms = read_atomic_structures(data_folder, filename_suffix='.aims', format_input='aims', calc_spgroup=True,
-    #                                        symprec=(1e-03, 1e-06, 1e-09))
-    #    print(data_folder, len(ase_atoms))
-
-    # add label to structures
-    #    for idx_structure, structure in enumerate(ase_atoms):
-    #         structure.info['label'] = proto_names[idx_proto] + '_' + str(idx_structure)
-
-    # write an ase db to file for each spacegroup
-    #    ase_db_file = write_ase_db(ase_atoms, main_folder, db_name=proto_names[idx_proto], overwrite=True,
-    #                                folder_name='db_ase_prototypes')
-
-    #    ase_db_files.append(ase_db_file)
-
-    # for ase_db_file in ase_db_files:
-    #    ase_atoms_list = read_ase_db(db_path=ase_db_file)
-    #    print(ase_db_file, len(ase_atoms_list))
-
-    # =============================================================================
-    # Descriptor calculation
-    # =============================================================================
-
-    # for idx_db, db_proto in enumerate(db_protos):
-    #     ase_atoms_list = read_ase_db(db_path=ase_db_files[idx_db])
-    #
-    #     print('{} structures for prototype {}'.format(len(ase_atoms_list), db_proto[0]))
-    #
-    #     for idx_rot in range(nb_rotations):
-    #
-    #         desc_file_path = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-    #                                          tmp_folder=tmp_folder, desc_folder=desc_folder,
-    #                                          desc_info_file=desc_info_file,
-    #                                          desc_file='{0}_target_nb_atoms{1}_rotid{2}.tar.gz'.format(db_proto[0],
-    #                                                                                           target_nb_atoms, idx_rot),
-    #                                          format_geometry='aims',
-    #                                          operations_on_structure=operations_on_structure_list[0], nb_jobs=-1)
-    #     print(desc_file_path)
-
-    # filename_suffix = '_pristine.tar.gz'
-    # filename_suffix_vac = '_vac25.tar.gz'
-    # filename_suffix_vac = '_vac20.tar.gz'
-    # filename_suffix_disp = '_disp002.tar.gz'
-    # filename_suffix_disp = '_disp001.tar.gz'
-
-    # #
-    # desc_file_paths = []
-    # for root, dirs, files in os.walk(configs['io']['desc_folder']):
-    #     for file_ in files:
-    #         # if file_.endswith(filename_suffix_vac) or file_.endswith(filename_suffix_disp):
-    #         if file_.endswith(filename_suffix_vac):
-    #             desc_file_paths.append(os.path.join(root, file_))
-    #
-    # logger.info("Found {} descriptor files".format(len(desc_file_paths)))
-    #
-    # target_list, structure_list = load_descriptor(desc_files=desc_file_paths, configs=configs)
-    # #
-    # ase_db_file = write_ase_db(ase_atoms_list=structure_list, main_folder=configs['io']['main_folder'],
-    #                            db_name='vac20', db_type='db', overwrite=True,
-    #                            folder_name='db_ase')
-    #
-    # # calculate spacegroup for each structure and put it in target_list
-    # spgroup_list = []
-    # for idx_str, structure in enumerate(structure_list):
-    #     target_list[idx_str]['data'][0]['spacegroup_0.001'] = structure.info['spacegroup_0.001']
-    #
-    # path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
-    #                                                         desc_metadata='diffraction_3d_sh_spectrum',
-    #                                                         dataset_name='hcp-bcc-sc-diam-fcc-disp001',
-    #                                                         target_name='spacegroup_0.001',
-    #                                                         target_categorical=True,
-    #                                                         input_dims=(52, 32), configs=configs,
-    #                                                         dataset_folder=dataset_folder, main_folder=main_folder,
-    #                                                         desc_folder=configs['io']['desc_folder'],
-    #                                                         tmp_folder=configs['io']['tmp_folder'],
-    #                                                         notes="Dataset with 5 rotations.")
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
@@ -224,7 +90,7 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-2%'
+    test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-8%'
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
     path_to_y_test = os.path.abspath(
@@ -232,6 +98,7 @@ if __name__ == "__main__":
     path_to_summary_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_summary.json')))
 
+    # load the data
     x_train, y_train, dataset_info_train = load_dataset_from_file(path_to_x=path_to_x_train, path_to_y=path_to_y_train,
                                                                   path_to_summary=path_to_summary_train)
 
@@ -239,49 +106,13 @@ if __name__ == "__main__":
                                                                path_to_summary=path_to_summary_test)
 
     params_cnn = {"nb_classes": dataset_info_train["data"][0]["nb_classes"],
-                  "classes": dataset_info_train["data"][0]["classes"],
-                  # "checkpoint_filename": 'try_' + str(now.isoformat()),
-                  "checkpoint_filename": 'enc_dec_no_batch_norm',
-                  # "checkpoint_filename": 'fully_conv_acc100',
-                  # "checkpoint_filename": 'rot_inv_kernel_15',
-                  "batch_size": 32, "img_channels": 1}
+                  "batch_size": 32}
 
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
 
-    data_set_train = make_data_sets(x_train_val=x_train, y_train_val=y_train, split_train_val=True, test_size=0.1,
-                                    x_test=x_test, y_test=y_test, flatten_images=False)
-
-    # beautiful maps
-    #        conv2d_filters=[32, 16, 12, 8, 4, 4],
-    #        kernel_sizes=[3, 3, 3, 3, 3, 3],
-    # hidden_layer_size = 32)
-
-    # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 32, 16, 16, 16, 16],
-    #                                      kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
-
     # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 16, 8, 8, 16, 32],
-    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.25)
-
-    # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[8, 8, 8, 8, 8, 8],
-    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
-
-    # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[8, 8, 8, 8, 8, 8],
-    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
-
-
-    # best for disp002 - best so far
-    # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 32, 16, 16, 8, 8],
-    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64)
-
-    partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 16, 8, 8, 16, 32],
-                                     kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.1)
-
-    # partial_model_architecture = partial(model_fully_conv, conv2d_filters=[32, 16, 8, 8, 16, 32, 128],
-    #                                      kernel_sizes=[3, 3, 3, 3, 3])
-
-    data_set_predict = make_data_sets(x_train_val=x_test, y_train_val=y_test, split_train_val=False, test_size=0.1,
-                                      x_test=x_test, y_test=y_test)
+    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.1)
 
     # train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
     #                      partial_model_architecture=partial_model_architecture,
@@ -289,43 +120,19 @@ if __name__ == "__main__":
     #                      neural_network_name=params_cnn["checkpoint_filename"],
     #                      nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
 
+    # load trained neural network from hdf5 file
     path_to_saved_model = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/saved_models/enc_dec_drop12.5/model.h5'
     model = load_model(path_to_saved_model)
-    model.summary()
 
-    # load the data
-    x_test = data_set_predict.train.images
-    y_test = data_set_predict.train.labels
-
-    results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels,
-                                           text_labels=text_labels, nb_classes=params_cnn["nb_classes"], model=model,
-                                           batch_size=params_cnn["batch_size"],
-                                           conf_matrix_file=conf_matrix_file, results_file=results_file)
+    results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
+                      nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
+                      conf_matrix_file=conf_matrix_file, results_file=results_file)
 
     logger.info("Average predictive entropy: {}".format(np.mean(results['uncertainty']['predictive_entropy'])))
     logger.info("Average mutual information: {}".format(np.mean(results['uncertainty']['mutual_information'])))
 
     sys.exit()
 
-    # ase_db_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/db_ase/pristine.db'
-    #
-    # ase_atoms_list = read_ase_db(ase_db_file)[:10]
-    #
-    # viewer = Viewer(configs=configs)
-    # n_structs = len(ase_atoms_list)
-    #
-    # x = np.random.rand(n_structs)
-    # y = np.random.rand(n_structs)
-    # target = target_pred_class[:10]
-    #
-    # file_html_link, file_html_name = viewer.plot_with_structures(x=x, y=y, target=target,
-    #                                                              ase_atoms_list=ase_atoms_list,
-    #                                                              is_classification=True, target_replicas=(1, 1, 1),
-    #                                                              tmp_folder=configs['io']['tmp_folder'])
-    #
-    # print(file_html_name)
-    # webbrowser.open(file_html_name)
-    #
     # sys.exit()
 
     model_weights_file = os.path.join(checkpoint_dir, '{0}.h5'.format(

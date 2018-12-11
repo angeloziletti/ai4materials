@@ -24,6 +24,7 @@ __date__ = "23/09/18"
 
 import keras
 from keras import backend as K
+
 K.set_image_data_format("channels_last")
 
 # K.set_image_dim_ordering('tf')
@@ -163,24 +164,24 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
     model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
 
     if not data_augmentation:
-        model.fit(x_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, validation_data=(x_val, y_val), shuffle=True,
-              verbose=0, callbacks=callbacks)
+        model.fit(x_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, validation_data=(x_val, y_val),
+                  shuffle=True, verbose=0, callbacks=callbacks)
     else:
         logger.info('Using real-time data augmentation.')
 
         # this will do preprocessing and realtime data augmentation
         datagen = ImageDataGenerator(featurewise_center=False,  # set input mean to 0 over the dataset
-            samplewise_center=False,  # set each sample mean to 0
-            featurewise_std_normalization=False,  # divide inputs by std of the dataset
-            samplewise_std_normalization=False,  # divide each input by its std
-            zca_whitening=False,  # apply ZCA whitening
-            rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
-            shear_range=0.0,  # value in radians, equivalent to 20 deg
-            zoom_range=0.1,              # zoom_range = [1/1, 1],   #same as in NIPS 2015 paper.
-            width_shift_range=4.0,  # randomly shift images horizontally
-            height_shift_range=4.0,  # randomly shift images vertically
-            horizontal_flip=False,  # randomly flip images
-            vertical_flip=False)  # randomly flip images
+                                     samplewise_center=False,  # set each sample mean to 0
+                                     featurewise_std_normalization=False,  # divide inputs by std of the dataset
+                                     samplewise_std_normalization=False,  # divide each input by its std
+                                     zca_whitening=False,  # apply ZCA whitening
+                                     rotation_range=0,  # randomly rotate images in the range (degrees, 0 to 180)
+                                     shear_range=0.0,  # value in radians, equivalent to 20 deg
+                                     zoom_range=0.1,  # zoom_range = [1/1, 1],   #same as in NIPS 2015 paper.
+                                     width_shift_range=4.0,  # randomly shift images horizontally
+                                     height_shift_range=4.0,  # randomly shift images vertically
+                                     horizontal_flip=False,  # randomly flip images
+                                     vertical_flip=False)  # randomly flip images
 
         # compute quantities required for featurewise normalization
         # (std, mean, and principal components if ZCA whitening is applied)
@@ -202,10 +203,8 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
     del model
 
 
-def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None,
-                model=None, batch_size=32, conf_matrix_file=None, verbose=1,
-                with_uncertainty=True, mc_samples=5):
-
+def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None, model=None, batch_size=32,
+            conf_matrix_file=None, verbose=1, with_uncertainty=True, mc_samples=5):
     uncertainty = None
 
     if results_file is None:
@@ -239,7 +238,7 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_
 
     # get the argmax to have the class label from the probabilities
     y_pred = prob_predictions.argmax(axis=-1)
-    logger.info("Accuracy: {}%".format(accuracy_score(np.argmax(y, axis=1), y_pred)*100.))
+    logger.info("Accuracy: {}%".format(accuracy_score(np.argmax(y, axis=1), y_pred) * 100.))
 
     conf_matrix = confusion_matrix(np.argmax(y, axis=1), y_pred)
     np.set_printoptions(precision=2)
@@ -295,16 +294,6 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
     - predictive_entropy: defined in Eq. 3.20
     - mutual_information: defined at pag. 53 (no Eq. number)
 
-    Note: the current implementation works only for neural networks with layers that have the same behaviour
-    at training and test time. For example, fully connected layers and convolution layers are allowed,
-    while batch normalization layers are not.
-
-    This is because the whole behaviour of the network is changed to the training learning phase, so that
-    the dropout is used by Keras.
-
-    Keras will soon implement a Dropout which can be kept also at test time; when this will be release, the function
-    ``f`` below will no longer be necessary.
-
     .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
     """
@@ -358,16 +347,8 @@ def reshape_images(images):
     input_dims = (images.shape[1], images.shape[2])
     if len(input_dims) == 2:
         # enforce Tensorflow convention
-        images = np.reshape(images, (images.shape[0], images.shape[1], images.shape[2], -1))
-        # add channels
-        # if K.image_data_format() == 'channels_first':
-        #     logger.info("Image ordering: channels first (Theano convention)")
-        #     images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))
-        # elif K.image_data_format() == 'channels_last':
-        #     logger.info("Image ordering: channels last (Tensorflow convention)")
-            # raise NotImplementedError('Tensorflow backend is not supported.')
-        # else:
-        #     raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
+        images = np.reshape(images, (images.shape[0], images.shape[1], images.shape[2],
+                                     -1))  # add channels  # if K.image_data_format() == 'channels_first':  #     logger.info("Image ordering: channels first (Theano convention)")  #     images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))  # elif K.image_data_format() == 'channels_last':  #     logger.info("Image ordering: channels last (Tensorflow convention)")  # raise NotImplementedError('Tensorflow backend is not supported.')  # else:  #     raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
     else:
         raise Exception("Wrong number of dimensions.")
 
