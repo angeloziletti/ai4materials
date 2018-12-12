@@ -1066,7 +1066,7 @@ def random_displace_atoms(atoms, noise_distribution, displacement=None, displace
             scale_factor = get_nn_distance(atoms)
             displacement = displacement_scaled * scale_factor
             noise = np.random.uniform(low=-displacement, high=displacement, size=(len(atoms), 3))
-            logger.info("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
+            logger.debug("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
         else:
             raise NotImplementedError("The noise distribution chosen is not implemented.")
 
