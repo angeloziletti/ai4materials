@@ -33,6 +33,7 @@ if __name__ == "__main__":
     from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
     from ai4materials.descriptors.diffraction3d import DISH
     from ai4materials.models.cnn_polycrystals import predict
+    from ai4materials.models.cnn_architectures import cnn_architecture_polycrystals
     from ai4materials.utils.utils_config import set_configs
     from ai4materials.utils.utils_config import setup_logger
     from datetime import datetime
@@ -89,8 +90,9 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    # test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-8%'
-    test_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
+    test_set_name = 'hcp-sc-fcc-diam-bcc_vacancies-1%'
+    # test_set_name = 'hcp-sc-fcc-diam-bcc_displacement-20%'
+    # test_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
     path_to_y_test = os.path.abspath(
@@ -111,7 +113,7 @@ if __name__ == "__main__":
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
 
-    # partial_model_architecture = partial(model_cnn_rot_inv, conv2d_filters=[32, 16, 8, 8, 16, 32],
+    # partial_model_architecture = partial(cnn_architecture_polycrystals, conv2d_filters=[32, 16, 8, 8, 16, 32],
     #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.1)
 
     # train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,

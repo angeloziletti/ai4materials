@@ -43,8 +43,9 @@ import logging
 logger = logging.getLogger('ai4materials')
 
 
-def cnn_architecture_polycrystals(learning_rate, conv2d_filters, kernel_sizes, hidden_layer_size, n_rows, n_columns,
-                                  nb_classes, dropout, img_channels=1):
+def cnn_architecture_polycrystals(learning_rate=0.0003, conv2d_filters=[32, 16, 8, 8, 16, 32],
+                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, n_rows=50, n_columns=32,
+                                  nb_classes=5, dropout=0.125, img_channels=1):
     """Deep convolutional neural network model for crystal structure recognition.
 
     This neural network architecture was used to classify crystal structures - represented by the three-dimensional

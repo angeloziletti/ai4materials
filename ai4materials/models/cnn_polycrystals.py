@@ -232,7 +232,7 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_
     logger.info('Predicting...')
 
     if with_uncertainty:
-        logger.info("Using multiple passed to have principles probability and uncertainty estimates")
+        logger.info("Using multiple passes to have principles probability and uncertainty estimates")
         prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)
     else:
         logger.info("Using only a single pass. No uncertainty estimation.")
