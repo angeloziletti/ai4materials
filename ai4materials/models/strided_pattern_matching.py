@@ -34,7 +34,6 @@ from ai4materials.dataprocessing.preprocessing import prepare_dataset
 from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
 from ai4materials.dataprocessing.preprocessing import make_data_sets
 from ai4materials.models.cnn_polycrystals import predict
-from ai4materials.models.cnn_polycrystals import predict_new
 from keras.models import load_model
 import pandas as pd
 import six.moves.cPickle as pickle
@@ -134,26 +133,14 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
     filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, checkpoint_filename)))
 
     model = load_model(filename_no_ext)
-    # results = predict(x_test, y_test, model=model, configs=configs, numerical_labels=numerical_labels,
-    #                   text_labels=text_labels)
 
-    # print(results.keys())
-    target_pred_class, target_pred_probs, prob_predictions, conf_matrix, uncertainty = predict(x_test, y_test, model=model,
-                                                                                               configs=configs,
-                                                                                               nb_classes=5,
-                                                                                               batch_size=params_cnn[
-                                                                                                   "batch_size"],
-                                                                                               show_model_acc=False,
-                                                                                               mc_samples=mc_samples,
-                                                                                               predict_probabilities=True,
-                                                                                               plot_conf_matrix=True,
-                                                                                               conf_matrix_file=conf_matrix_file,
-                                                                                               numerical_labels=numerical_labels,
-                                                                                               text_labels=text_labels,
-                                                                                               results_file=results_file,
-                                                                                               normalize=True)
+    results = predict(x_test, y_test, model=model, configs=configs, nb_classes=5, batch_size=params_cnn["batch_size"],
+                      mc_samples=mc_samples, conf_matrix_file=conf_matrix_file, numerical_labels=numerical_labels,
+                      text_labels=text_labels, results_file=results_file)
 
-    predictive_mean = prob_predictions
+
+    predictive_mean = results['prob_predictions']
+    uncertainty = results['uncertainty']
 
     class_plot_pos = np.asarray(strided_pattern_pos)
     (z_max, y_max, x_max) = np.amax(class_plot_pos, axis=0) + 1
@@ -383,11 +370,14 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
         # logger.info("Creating three-dimensional plot.")  # x = np.arange(prob_prediction_class.shape[0])[:, None, None]  # y = np.arange(prob_prediction_class.shape[1])[None, :, None]  # z = np.arange(prob_prediction_class.shape[2])[None, None, :]  # x, y, z = np.broadcast_arrays(x, y, z)  #  # from mpl_toolkits.mplot3d import Axes3D  # # ax = fig.add_subplot(111, projection='3d')  #  # colmap = cm.ScalarMappable(cmap=plt.cm.Blues)  # colmap.set_array(prob_prediction_class.ravel())  #  # fig = plt.figure(figsize=(8, 6))  # ax = fig.gca(projection='3d')  # ax.scatter(x, y, z, marker='s', s=140, c=prob_prediction_class.ravel(), cmap=plt.cm.Blues, vmin=0, vmax=1,  #            alpha=0.7)  # alpha is transparancey value, 0 (transparent) and 1 (opaque)  # cb = fig.colorbar(colmap)  #  # ax.set_xlabel('x $[\mathrm{\AA}]$')  # ax.set_ylabel('y $[\mathrm{\AA}]$')  # ax.set_zlabel('z $[\mathrm{\AA}]$')  # plt.title(filename)  # plt.show()  # plt.close()  # pl.dump(fig,file(filename+'.pickle','w'))
 
     if class_name != '':
-        plt.savefig(os.path.join(main_folder, '{0}_class{1}.eps'.format(str(prefix), str(class_name))), format='eps',
+        filename = '{0}_class{1}.eps'.format(str(prefix), str(class_name))
+        plt.savefig(os.path.join(main_folder, filename), format='eps',
                     dpi=1000)
     else:
-        plt.savefig(os.path.join(main_folder, '{0}_{1}.eps'.format(str(prefix), str(suffix))), format='eps', dpi=1000)
+        filename = '{0}_{1}.eps'.format(str(prefix), str(suffix))
+        plt.savefig(os.path.join(main_folder, filename), format='eps', dpi=1000)
 
+    logger.info("File saved at {}.".format(filename))
     plt.close()
 
 
