@@ -370,14 +370,14 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
         # logger.info("Creating three-dimensional plot.")  # x = np.arange(prob_prediction_class.shape[0])[:, None, None]  # y = np.arange(prob_prediction_class.shape[1])[None, :, None]  # z = np.arange(prob_prediction_class.shape[2])[None, None, :]  # x, y, z = np.broadcast_arrays(x, y, z)  #  # from mpl_toolkits.mplot3d import Axes3D  # # ax = fig.add_subplot(111, projection='3d')  #  # colmap = cm.ScalarMappable(cmap=plt.cm.Blues)  # colmap.set_array(prob_prediction_class.ravel())  #  # fig = plt.figure(figsize=(8, 6))  # ax = fig.gca(projection='3d')  # ax.scatter(x, y, z, marker='s', s=140, c=prob_prediction_class.ravel(), cmap=plt.cm.Blues, vmin=0, vmax=1,  #            alpha=0.7)  # alpha is transparancey value, 0 (transparent) and 1 (opaque)  # cb = fig.colorbar(colmap)  #  # ax.set_xlabel('x $[\mathrm{\AA}]$')  # ax.set_ylabel('y $[\mathrm{\AA}]$')  # ax.set_zlabel('z $[\mathrm{\AA}]$')  # plt.title(filename)  # plt.show()  # plt.close()  # pl.dump(fig,file(filename+'.pickle','w'))
 
     if class_name != '':
-        filename = '{0}_class{1}.eps'.format(str(prefix), str(class_name))
-        plt.savefig(os.path.join(main_folder, filename), format='eps',
+        filename = os.path.join(main_folder, '{0}_class{1}.eps'.format(str(prefix), str(class_name)))
+        plt.savefig(filename, format='eps',
                     dpi=1000)
     else:
-        filename = '{0}_{1}.eps'.format(str(prefix), str(suffix))
-        plt.savefig(os.path.join(main_folder, filename), format='eps', dpi=1000)
+        filename = os.path.join(main_folder, '{0}_{1}.eps'.format(str(prefix), str(suffix)))
+        plt.savefig(filename, format='eps', dpi=1000)
 
-    logger.info("File saved at {}.".format(filename))
+    logger.info("File saved to {}.".format(filename))
     plt.close()
 
 
