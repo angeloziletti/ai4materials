@@ -36,6 +36,8 @@ if __name__ == "__main__":
     from ai4materials.utils.utils_crystals import create_supercell
     from ai4materials.utils.utils_crystals import create_vacancies
     from ai4materials.utils.utils_crystals import random_displace_atoms
+    from ai4materials.utils.utils_plotting import aggregate_struct_trans_data
+    from ai4materials.utils.utils_plotting import make_crossover_plot
     from ai4materials.wrappers import load_descriptor
     from ai4materials.utils.utils_data_retrieval import generate_facets_input
     from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
@@ -220,11 +222,16 @@ if __name__ == "__main__":
 
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
-    results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
-                      nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-                      conf_matrix_file=conf_matrix_file, results_file=results_file, with_uncertainty=False)
+    # results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
+    #                   nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
+    #                   conf_matrix_file=conf_matrix_file, results_file=results_file, with_uncertainty=False)
 
-    logger.info("Average predictive entropy: {}".format(np.mean(results['uncertainty']['predictive_entropy'])))
-    logger.info("Average mutual information: {}".format(np.mean(results['uncertainty']['mutual_information'])))
+    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=44,
+                                             max_order_param=1.0, prob_idxs=[0, 1, 2, 3, 4])
 
-    sys.exit()
+    make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
+                        labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
+                        nb_order_param_steps=11,
+                        filename_suffix=".png", title="Rocksalt with different Delta Z",
+                        x_label="Delta Z", show_plot=False)
+
