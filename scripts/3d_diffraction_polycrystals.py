@@ -31,27 +31,11 @@ if __name__ == "__main__":
     from ai4materials.utils.utils_config import setup_logger
     from ai4materials.utils.utils_crystals import create_supercell
     from ai4materials.models.strided_pattern_matching import get_classification_map
-    from ai4materials.visualization.viewer import Viewer
-    from ai4materials.utils.utils_data_retrieval import generate_facets_input
-    from ai4materials.utils.utils_parsing import read_atomic_structures
-    from ai4materials.dataprocessing.preprocessing import prepare_dataset
-    from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
-    from ai4materials.dataprocessing.preprocessing import make_data_sets
-    from ai4materials.utils.utils_data_retrieval import read_ase_db
-    from ai4materials.visualization.viewer import Viewer
-    from ai4materials.models.strided_pattern_matching import get_structures_by_boxes
     from ai4materials.utils.utils_crystals import create_vacancies
     from ai4materials.utils.utils_crystals import random_displace_atoms
-    from ai4materials.utils.utils_data_retrieval import write_ase_db
-    from ai4materials.wrappers import calc_descriptor
-    from ai4materials.wrappers import load_descriptor
     from ai4materials.models.strided_pattern_matching import make_strided_pattern_matching_dataset
-    import numpy as np
     from argparse import ArgumentParser
-    from functools import partial
     from datetime import datetime
-    import numpy as np
-    import webbrowser
 
     startTime = datetime.now()
     now = datetime.now()
@@ -199,19 +183,3 @@ if __name__ == "__main__":
                                    conf_matrix_file=conf_matrix_file, train_set_name='hcp-sc-fcc-diam-bcc_pristine',
                                    cmap_uncertainty='hot', interpolation_uncertainty='none')
 
-        # get_classification_map(polycrystal_file=structure_file, descriptor=descriptor,
-        #                        desc_metadata='diffraction_3d_sh_spectrum', configs=configs,
-        #                        checkpoint_dir=checkpoint_dir, checkpoint_filename='model_try_best.h5',
-        #                        desc_only=False,  #
-        #  operations_on_structure=operations_on_structure_list[0], stride_size=stride_size,  #
-        #               box_size=box_sizes[idx],  #
-        #          train_set_name='hcp-sc-fcc-diam-bcc_pristine',  #
-        #  box_size=None,  #                        # init_sliding_volume=(16., 16., 16.),  #
-        #                      desc_file=desc_file,  #
-        #    show_plot_lengths=False,  #
-        #  desc_only=False,  #                        calc_uncertainty=True,  #
-        #         mc_samples=20,  #
-        #   desc_file_suffix_name='', nb_jobs=6, conf_matrix_file=conf_matrix_file,  #
-        #                  results_file=results_file)
-
-    sys.exit()
