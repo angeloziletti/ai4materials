@@ -29,6 +29,7 @@ if __name__ == "__main__":
 
     sys.path.insert(0, atomic_data_dir)
 
+    from ase.io.trajectory import Trajectory
     from ase.spacegroup import crystal
     from ai4materials.descriptors.diffraction3d import DISH
     from ai4materials.utils.utils_config import set_configs
@@ -135,46 +136,61 @@ if __name__ == "__main__":
     el_list = [el.symbol for el in element(range(z_min, z_max + 1))]
 
     # build atomic structure
-    a = 5.0
+    # a = 5.0
+    # ase_atoms_list = []
+    # for el in el_list:
+    #     structure = crystal([el_list[0], el], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225,
+    #                     cellpar=[a, a, a, 90, 90, 90])
+    #
+    #     ase_atoms_list.append(structure)
+
+    # read trajectory file
+    traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin.traj'
+    traj = Trajectory(traj_file)
+
     ase_atoms_list = []
-    for el in el_list:
-        structure = crystal([el_list[0], el], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225,
-                        cellpar=[a, a, a, 90, 90, 90])
+    for idx, atoms in enumerate(traj):
+        ase_atoms_list.append(atoms)
 
-        ase_atoms_list.append(structure)
+    desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
+                                               ase_atoms_list=ase_atoms_list,
+                                               tmp_folder=configs['io']['tmp_folder'],
+                                               desc_folder=configs['io']['desc_folder'],
+                                               # desc_file='sc_to_rocksalt.tar.gz',
+                                               desc_file='cu_melt_3x3x3_500.tar.gz',
+                                               format_geometry='aims',
+                                               # operations_on_structure=operations_on_structure_list[0],
+                                               operations_on_structure=None,
+                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
 
-    # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
-    #                                            ase_atoms_list=ase_atoms_list,
-    #                                            tmp_folder=configs['io']['tmp_folder'],
-    #                                            desc_folder=configs['io']['desc_folder'],
-    #                                            desc_file='sc_to_rocksalt.tar.gz',
-    #                                            format_geometry='aims',
-    #                                            operations_on_structure=operations_on_structure_list[0],
-    #                                            nb_jobs=-1)  # operations_on_structure=None, nb_jobs=1)
-
-    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/sc_to_rocksalt.tar.gz'
+    # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/sc_to_rocksalt.tar.gz'
+    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/cu_melt_3x3x3_500.tar.gz'
 
     # now prepare the dataset
     # load the previously saved file containing the crystal structures and their corresponding descriptor
-    # target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
+    target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
+
+    # sort the structures according to the original label
+    structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
+
 
     # create a texture atlas with all the two-dimensional diffraction fingerprints
     # df, texture_atlas = generate_facets_input(structure_list=structure_list, desc_metadata='diffraction_3d_sh_spectrum',
     #                                           target_list=target_list, sprite_atlas_filename=desc_file_path,
     #                                           configs=configs, normalize=True)
 
-    # path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list,
-    #                                                                        target_list=target_list,
-    #                                                                        desc_metadata='diffraction_3d_sh_spectrum',
-    #                                                                        dataset_name='sc_to_rocksalt',
-    #                                                                        target_name='target',
-    #                                                                        target_categorical=True, input_dims=(52, 32),
-    #                                                                        configs=configs,
-    #                                                                        dataset_folder=configs['io'][
-    #                                                                            'dataset_folder'],
-    #                                                                        main_folder=configs['io']['main_folder'],
-    #                                                                        desc_folder=configs['io']['desc_folder'],
-    #                                                                        tmp_folder=configs['io']['tmp_folder'])
+    path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list,
+                                                                           target_list=target_list,
+                                                                           desc_metadata='diffraction_3d_sh_spectrum',
+                                                                           dataset_name='cu_melting',
+                                                                           target_name='target',
+                                                                           target_categorical=True, input_dims=(52, 32),
+                                                                           configs=configs,
+                                                                           dataset_folder=configs['io'][
+                                                                               'dataset_folder'],
+                                                                           main_folder=configs['io']['main_folder'],
+                                                                           desc_folder=configs['io']['desc_folder'],
+                                                                           tmp_folder=configs['io']['tmp_folder'])
 
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
@@ -185,7 +201,7 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    test_set_name = 'sc_to_rocksalt'
+    test_set_name = 'cu_melting'
 
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
@@ -222,16 +238,26 @@ if __name__ == "__main__":
 
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
-    # results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
-    #                   nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-    #                   conf_matrix_file=conf_matrix_file, results_file=results_file, with_uncertainty=False)
-
-    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=44,
+    results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
+                      nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
+                      conf_matrix_file=conf_matrix_file, results_file=results_file)
+    #
+    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=500,
                                              max_order_param=1.0, prob_idxs=[0, 1, 2, 3, 4])
 
     make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
-                        nb_order_param_steps=11,
+                        nb_order_param_steps=10,
                         filename_suffix=".png", title="Rocksalt with different Delta Z",
-                        x_label="Delta Z", show_plot=False)
+                        x_label="Delta Z", show_plot=False, markersize=3.0)
+
+
+    import pandas as pd
+    df = pd.read_csv(results_file)
+    unc = df['uncertainty_mutual_information'].values
+
+    import matplotlib.pyplot as plt
+    plt.clf()
+    plt.plot(unc)
+    plt.savefig('./try.png')
 

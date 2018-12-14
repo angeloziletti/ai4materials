@@ -258,9 +258,9 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_or
     panda dataframe
         A panda dataframe with the following columns:
 
-        #. a_to_b_index_ : value of the order parameter
+        - a_to_b_index_ : value of the order parameter
 
-        #. 2i columns (where the i's are the elements of the list prob_idxs)
+        - 2i columns (where the i's are the elements of the list prob_idxs)
         as below:
 
             prob_predictions_i_mean : mean of the distribution of classification
