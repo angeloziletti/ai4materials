@@ -1209,7 +1209,7 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=4.0,
 
     nb_atoms = atoms.get_number_of_atoms()
     cutoffs = np.ones(nb_atoms) * cutoff
-    nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=False)
+    nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
     nl.build(atoms)
 
     nn_dist = []
