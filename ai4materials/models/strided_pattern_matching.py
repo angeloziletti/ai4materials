@@ -138,7 +138,6 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
                       mc_samples=mc_samples, conf_matrix_file=conf_matrix_file, numerical_labels=numerical_labels,
                       text_labels=text_labels, results_file=results_file)
 
-
     predictive_mean = results['prob_predictions']
     uncertainty = results['uncertainty']
 

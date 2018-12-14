@@ -22,13 +22,9 @@ __maintainer__ = "Angelo Ziletti"
 __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
-import keras
 from keras import backend as K
-
 K.set_image_data_format("channels_last")
 
-# K.set_image_dim_ordering('tf')
-from ai4materials.models.cnn_nature_comm_ziletti2018 import reshape_images_to_theano
 from keras.callbacks import CSVLogger
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import EarlyStopping
@@ -36,16 +32,13 @@ from keras.preprocessing.image import ImageDataGenerator
 from ai4materials.utils.utils_plotting import plot_confusion_matrix
 from sklearn.metrics import confusion_matrix
 from scipy import stats
-from keras.optimizers import SGD, Adam, Nadam, RMSprop
+from keras.optimizers import Adam
 from keras.utils import np_utils
-from keras.models import model_from_json
-from keras.models import load_model
 from keras_tqdm import TQDMCallback, TQDMNotebookCallback
-import sys
-import os
 import logging
-import pandas as pd
 import numpy as np
+import os
+import pandas as pd
 from sklearn.metrics import accuracy_score
 
 logger = logging.getLogger('ai4materials')
@@ -216,9 +209,15 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_
     # convert class vectors to binary class matrices - one-hot encoding
     y = np_utils.to_categorical(y, nb_classes)
 
-    # reshaping it according to Theano rule
-    # Theano backend uses (nb_sample, channels, height, width)
-    x = reshape_images(x)
+    # get the input shape from the Keras model
+    # the first element in the list is the batch size (not defined yet, it is a placeholder)
+    # we keep all the indices after the first one to correctly reshape our array
+    input_shape_from_model = model.layers[0].get_input_at(0).get_shape().as_list()[1:]
+
+    # add -1 so that we can reshape properly for any number of images (or sequences) in the dataset
+    target_shape = tuple([-1] + input_shape_from_model)
+
+    x = reshape_images(x, target_shape=target_shape)
     x = x.astype('float32')
 
     logger.info('Loading test dataset for prediction.')
@@ -349,21 +348,11 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
     return prediction, uncertainty
 
 
-def reshape_images(images):
-    input_dims = (images.shape[1], images.shape[2])
-    if len(input_dims) == 2:
-        # enforce Tensorflow convention
-        images = np.reshape(images, (images.shape[0], images.shape[1], images.shape[2],
-                                     -1))  # add channels  # if K.image_data_format() == 'channels_first':
-        #     logger.info("Image ordering: channels first (Theano convention)")
-        #     images = np.reshape(images, (images.shape[0], -1, images.shape[1], images.shape[2]))
-        # elif K.image_data_format() == 'channels_last':
-        #     logger.info("Image ordering: channels last (Tensorflow convention)")
-        # raise NotImplementedError('Tensorflow backend is not supported.')
-        # else:
-        #     raise ValueError('Image ordering type not recognized. Possible values are th or tf.')
-    else:
-        raise Exception("Wrong number of dimensions.")
+def reshape_images(images, target_shape):
+    """Reshape images according to the target shape"""
+
+    images = np.reshape(images, target_shape)
+    logger.debug("Reshaping to {}".format(target_shape))
 
     return images
 
