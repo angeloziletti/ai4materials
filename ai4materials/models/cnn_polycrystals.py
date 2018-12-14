@@ -255,10 +255,17 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_
         df_cols.append('prob_predictions_' + str(idx))
     df_cols.append('num_labels')
     df_cols.append('class_labels')
+    # df_cols.append('predictive')
+
+    data = np.column_stack((target_pred_class, prob_predictions, numerical_labels, text_labels))
 
     # make a dataframe with the results and write it to file
-    df_results = pd.DataFrame(np.column_stack((target_pred_class, prob_predictions, numerical_labels, text_labels)),
-                              columns=df_cols)
+    if uncertainty is not None:
+        for key, value in uncertainty.items():
+            data = np.column_stack((data, value))
+            df_cols.append('uncertainty_' + str(key))
+
+    df_results = pd.DataFrame(data=data, columns=df_cols)
     df_results.to_csv(results_file, index=False)
     logger.info("Predictions written to: {}".format(results_file))
 
