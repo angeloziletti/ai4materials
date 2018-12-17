@@ -219,7 +219,7 @@ def make_plot_cross_entropy_loss(step, train_data, val_data, title=None):
     return plt
 
 
-def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_order_param_steps=None,
+def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_order_param_steps=None,
                                 min_order_param=0.0, max_order_param=None, prob_idxs=None):
     """ Aggregate structural transition data in order to plot it later.
 
@@ -363,61 +363,6 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     x_label: string, optional, default: "Order parameter"
         Label for the x-axis (the order parameter axis)
 
-
-    Examples:
-
-    To have this example working, you need to set up all the
-    paths, have calculated a descriptor file, have trained a neural
-    network model, and saved the results in the checkpoint_dir folder.
-
-    Minimal example::
-
-        from nomad_sim.wrappers import calc_descriptor
-        from nomad_sim.model_cnn import run_cnn_model
-        from nomad_sim.utils_plotting import aggregate_struct_trans_data
-        from nomad_sim.utils_plotting import make_crossover_plot
-
-
-        run_cnn_model(method='xray_cnn',
-            desc_type='xray',
-            train=False,
-            split_train_val=True,
-            read_from_file=False,
-            path_to_x_train=path_to_x_train,
-            path_to_y_train=path_to_y_train,
-            path_to_x_val=path_to_x_val,
-            path_to_y_val=path_to_y_val,
-            path_to_x_test=path_to_x_test,
-            path_to_y_test=path_to_y_test,
-            target_name='spacegroup_symbol', target_categorical=True,
-            desc_file_list_train=desc_file_list_train,
-            desc_file_list_test=desc_file_bcc_to_amorphous,
-            input_dims=input_dims,
-            desc_folder=example_data_bcc_to_amorphous_folder,
-            tmp_folder=tmp_folder,
-            lookup_file=lookup_file,
-            control_file=control_file,
-            results_file=results_file_bcc_to_amorphous,
-            checkpoint_filename=checkpoint_filename,
-            checkpoint_dir=checkpoint_dir,
-            nb_epoch=1,
-            batch_size=32,
-            data_augmentation=False)
-
-        df_results = aggregate_struct_trans_data(results_file_bcc_to_amorphous,
-            nb_samples=421,
-            nb_order_param_steps=9, max_order_param=0.4,
-            prob_idxs=[0, 1, 2, 3])
-
-        make_crossover_plot(df_results, results_file_bcc_to_amorphous,
-            prob_idxs=[0, 1, 2, 3],
-            labels = ["$p_{diamond}$", "$p_{fcc}$", "$p_{bcc}$", "$p_{sc}$"],
-            nb_order_param_steps=9,
-            filename_suffix=".png",
-            title="From body-centered-cubic (bcc) to amorphous",
-            x_label="Lindemann parameter", show_plot=True)
-
-
     .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
     """
@@ -460,13 +405,13 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     steps, step = np.linspace(np.amin(a_to_b_param), np.amax(a_to_b_param), max_nb_ticks, retstep=True)
 
     # the sigma/STD_SCALING upper and lower analytic population bounds
-    STD_SCALING = 1.0
+    std_scaling = 1.0
     lower_bound = []
     upper_bound = []
 
     for prob_idx in range(len(prob_idxs)):
-        lower_bound.append(prob_mean[prob_idx] - prob_std[prob_idx] / STD_SCALING)
-        upper_bound.append(prob_mean[prob_idx] + prob_std[prob_idx] / STD_SCALING)
+        lower_bound.append(prob_mean[prob_idx] - prob_std[prob_idx] / std_scaling)
+        upper_bound.append(prob_mean[prob_idx] + prob_std[prob_idx] / std_scaling)
 
     fig, ax = plt.subplots(1)
 
@@ -500,7 +445,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     ax.tick_params(labelsize=15)
 
-    legend = ax.legend(loc='center left', fontsize=10, bbox_to_anchor=(0.8, 0.5), borderaxespad=1.0, frameon=1)
+    legend = ax.legend(loc='center left', fontsize=10, bbox_to_anchor=(0.1, 0.5), borderaxespad=1.0, frameon=1)
 
     if style == 'publication':
         for text in legend.get_texts():

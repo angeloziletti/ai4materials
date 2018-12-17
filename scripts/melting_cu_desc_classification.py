@@ -131,37 +131,24 @@ if __name__ == "__main__":
     # Read prototype data from files
     # =============================================================================
 
-    z_min = 11
-    z_max = 54
-    el_list = [el.symbol for el in element(range(z_min, z_max + 1))]
-
-    # build atomic structure
-    # a = 5.0
-    # ase_atoms_list = []
-    # for el in el_list:
-    #     structure = crystal([el_list[0], el], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225,
-    #                     cellpar=[a, a, a, 90, 90, 90])
-    #
-    #     ase_atoms_list.append(structure)
-
     # read trajectory file
-    traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin.traj'
-    traj = Trajectory(traj_file)
+    # traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin.traj'
+    # traj = Trajectory(traj_file)
+    #
+    # ase_atoms_list = []
+    # for idx, atoms in enumerate(traj):
+    #     ase_atoms_list.append(atoms)
 
-    ase_atoms_list = []
-    for idx, atoms in enumerate(traj):
-        ase_atoms_list.append(atoms)
-
-    desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
-                                               ase_atoms_list=ase_atoms_list,
-                                               tmp_folder=configs['io']['tmp_folder'],
-                                               desc_folder=configs['io']['desc_folder'],
-                                               # desc_file='sc_to_rocksalt.tar.gz',
-                                               desc_file='cu_melt_3x3x3_500.tar.gz',
-                                               format_geometry='aims',
-                                               # operations_on_structure=operations_on_structure_list[0],
-                                               operations_on_structure=None,
-                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
+    # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
+    #                                            ase_atoms_list=ase_atoms_list,
+    #                                            tmp_folder=configs['io']['tmp_folder'],
+    #                                            desc_folder=configs['io']['desc_folder'],
+    #                                            # desc_file='sc_to_rocksalt.tar.gz',
+    #                                            desc_file='cu_melt_3x3x3_500.tar.gz',
+    #                                            format_geometry='aims',
+    #                                            # operations_on_structure=operations_on_structure_list[0],
+    #                                            operations_on_structure=None,
+    #                                            nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
 
     # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/sc_to_rocksalt.tar.gz'
     desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/cu_melt_3x3x3_500.tar.gz'
@@ -191,7 +178,6 @@ if __name__ == "__main__":
                                                                            main_folder=configs['io']['main_folder'],
                                                                            desc_folder=configs['io']['desc_folder'],
                                                                            tmp_folder=configs['io']['tmp_folder'])
-
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
@@ -223,24 +209,16 @@ if __name__ == "__main__":
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
 
-    # partial_model_architecture = partial(cnn_architecture_polycrystals, conv2d_filters=[32, 16, 8, 8, 16, 32],
-    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.1)
-
-    # train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
-    #                      partial_model_architecture=partial_model_architecture,
-    #                      batch_size=params_cnn["batch_size"], checkpoint_dir=checkpoint_dir,
-    #                      neural_network_name=params_cnn["checkpoint_filename"],
-    #                      nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
-
     # load trained neural network from hdf5 file
     path_to_saved_model = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/saved_models/enc_dec_drop12.5/model.h5'
     model = load_model(path_to_saved_model)
 
-    conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
+    conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder,
+                                                                     'confusion_matrix_' + test_set_name + '.png')))
 
     results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-                      conf_matrix_file=conf_matrix_file, results_file=results_file)
+                      conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=1000)
     #
     df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=500,
                                              max_order_param=1.0, prob_idxs=[0, 1, 2, 3, 4])
@@ -251,7 +229,6 @@ if __name__ == "__main__":
                         filename_suffix=".png", title="Rocksalt with different Delta Z",
                         x_label="Delta Z", show_plot=False, markersize=3.0)
 
-
     import pandas as pd
     df = pd.read_csv(results_file)
     unc = df['uncertainty_mutual_information'].values
@@ -259,5 +236,5 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     plt.clf()
     plt.plot(unc)
-    plt.savefig('./try.png')
+    plt.savefig(os.path.join(main_folder, 'mutual_info.png'))
 

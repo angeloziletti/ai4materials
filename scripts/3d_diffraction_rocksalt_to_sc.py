@@ -102,37 +102,37 @@ if __name__ == "__main__":
     target_nb_atoms = 128
     nb_rotations = 5
 
+    nb_order_param_steps = 52
+    min_order_param = 0.4
+    max_order_param = 0.5
     # define operations on structures
-    target_vacancy_ratios = np.linspace(0., 0.5, 51, endpoint=True)
+    target_vacancy_ratios = np.linspace(min_order_param, max_order_param, nb_order_param_steps, endpoint=True)
 
+    nb_samples = 5
     a = 5.0
-    nacl_structure = crystal(['Na', 'Cl'], [(0, 0, 0), (0.5, 0.5, 0.5)],
-                             spacegroup=225, cellpar=[a, a, a, 90, 90, 90])
+    nacl_structure = crystal(['Na', 'Cl'], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90])
 
     ase_atoms_list = []
     for target_vacancy_ratio in target_vacancy_ratios:
 
+        for sample in range(nb_samples):
+            nacl_structure_def = create_vacancies(nacl_structure, target_vacancy_ratio=target_vacancy_ratio,
+                                                  target_species='Cl', create_replicas_by='user-defined',
+                                                  target_replicas=(3, 3, 3), random_rotation_before=True,
+                                                  cell_type='standard_no_symmetries', optimal_supercell=False)
 
-        nacl_structure_def = create_vacancies(nacl_structure, target_vacancy_ratio=target_vacancy_ratio,
-                                              target_species='Cl',
-                                            create_replicas_by='user-defined', target_replicas=(3, 3, 3),
-                                            random_rotation_before=True,
-                                         cell_type='standard_no_symmetries', optimal_supercell=False)
+            ase_atoms_list.append(nacl_structure_def)
 
-        ase_atoms_list.append(nacl_structure_def)
+    # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
+    #                                            tmp_folder=configs['io']['tmp_folder'],
+    #                                            desc_folder=configs['io']['desc_folder'],
+    #                                            desc_file='rocksalt_to_fcc_5samples.tar.gz', format_geometry='aims',
+    #                                            # operations_on_structure=operations_on_structure_list[0],
+    #                                            operations_on_structure=None,
+    #                                            nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
 
-
-    desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
-                                               ase_atoms_list=ase_atoms_list,
-                                               tmp_folder=configs['io']['tmp_folder'],
-                                               desc_folder=configs['io']['desc_folder'],
-                                               desc_file='rocksalt_to_fcc.tar.gz',
-                                               format_geometry='aims',
-                                               # operations_on_structure=operations_on_structure_list[0],
-                                               operations_on_structure=None,
-                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
-
-    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc.tar.gz'
+    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc_5samples.tar.gz'
+    # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc.tar.gz'
 
     # now prepare the dataset
     # load the previously saved file containing the crystal structures and their corresponding descriptor
@@ -141,25 +141,20 @@ if __name__ == "__main__":
     # sort the structures according to the original label
     structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
 
-
     # create a texture atlas with all the two-dimensional diffraction fingerprints
     # df, texture_atlas = generate_facets_input(structure_list=structure_list, desc_metadata='diffraction_3d_sh_spectrum',
     #                                           target_list=target_list, sprite_atlas_filename=desc_file_path,
     #                                           configs=configs, normalize=True)
 
-    path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list,
-                                                                           target_list=target_list,
-                                                                           desc_metadata='diffraction_3d_sh_spectrum',
-                                                                           dataset_name='rocksalt_to_fcc',
-                                                                           target_name='target',
-                                                                           target_categorical=True, input_dims=(52, 32),
-                                                                           configs=configs,
-                                                                           dataset_folder=configs['io'][
-                                                                               'dataset_folder'],
-                                                                           main_folder=configs['io']['main_folder'],
-                                                                           desc_folder=configs['io']['desc_folder'],
-                                                                           tmp_folder=configs['io']['tmp_folder'])
-
+    path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
+                                                            desc_metadata='diffraction_3d_sh_spectrum',
+                                                            dataset_name='rocksalt_to_fcc', target_name='target',
+                                                            target_categorical=True, input_dims=(52, 32),
+                                                            configs=configs,
+                                                            dataset_folder=configs['io']['dataset_folder'],
+                                                            main_folder=configs['io']['main_folder'],
+                                                            desc_folder=configs['io']['desc_folder'],
+                                                            tmp_folder=configs['io']['tmp_folder'])
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
@@ -185,47 +180,54 @@ if __name__ == "__main__":
     x_test, y_test, dataset_info_test = load_dataset_from_file(path_to_x=path_to_x_test, path_to_y=path_to_y_test,
                                                                path_to_summary=path_to_summary_test)
 
-    params_cnn = {"nb_classes": dataset_info_train["data"][0]["nb_classes"],
-                  "batch_size": 32}
-
+    params_cnn = {"nb_classes": dataset_info_train["data"][0]["nb_classes"], "batch_size": 32}
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
-
-    # partial_model_architecture = partial(cnn_architecture_polycrystals, conv2d_filters=[32, 16, 8, 8, 16, 32],
-    #                                  kernel_sizes=[3, 3, 3, 3, 3, 3], hidden_layer_size=64, dropout=0.1)
-
-    # train_neural_network(x_train=x_train, y_train=y_train, x_val=x_test, y_val=y_test, configs=configs,
-    #                      partial_model_architecture=partial_model_architecture,
-    #                      batch_size=params_cnn["batch_size"], checkpoint_dir=checkpoint_dir,
-    #                      neural_network_name=params_cnn["checkpoint_filename"],
-    #                      nb_epoch=20, training_log_file=training_log_file, early_stopping=False, normalize=True)
 
     # load trained neural network from hdf5 file
     path_to_saved_model = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/saved_models/enc_dec_drop12.5/model.h5'
     model = load_model(path_to_saved_model)
 
-    conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
+    conf_matrix_file = os.path.abspath(
+        os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
     results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-                      conf_matrix_file=conf_matrix_file, results_file=results_file)
-    #
-    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=51,
-                                             max_order_param=1.0, prob_idxs=[0, 1, 2, 3, 4])
+                      conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=1000)
+
+    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=nb_samples,
+                                             nb_order_param_steps=nb_order_param_steps,
+                                             # min_order_param=min_order_param,
+                                             # max_order_param=max_order_param,
+                                             max_order_param=1.0,
+                                             prob_idxs=[0, 1, 2, 3, 4])
 
     make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
-                        nb_order_param_steps=11,
-                        filename_suffix=".png", title="From rocksalt to fcc",
-                        x_label="Delta Z", show_plot=False, markersize=3.0)
-
+                        nb_order_param_steps=11, filename_suffix=".png", title="From rocksalt to fcc",
+                        x_label="Delta Z", show_plot=False, markersize=1.0)
 
     import pandas as pd
+
     df = pd.read_csv(results_file)
-    unc = df['uncertainty_mutual_information'].values
+
+    sample_avg_mut_info = []
+    sample_avg_pred_entropy = []
+    # use n_samples to aggregate results
+    for idx_row in range(0, len(df), nb_samples):
+        # extract nb_samples consecutive samples and average them
+        # then move down nb_samples and continue till the end
+        sample_avg_mut_info.append(
+            df.iloc[idx_row:idx_row + nb_samples]['uncertainty_mutual_information'].values.mean())
+        sample_avg_pred_entropy.append(
+            df.iloc[idx_row:idx_row + nb_samples]['uncertainty_predictive_entropy'].values.mean())
 
     import matplotlib.pyplot as plt
+
     plt.clf()
-    plt.plot(unc)
+    plt.plot(sample_avg_mut_info)
     plt.savefig(os.path.join(main_folder, 'mutual_info.png'))
 
+    plt.clf()
+    plt.plot(sample_avg_pred_entropy)
+    plt.savefig(os.path.join(main_folder, 'pred_entropy.png'))
