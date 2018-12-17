@@ -853,12 +853,13 @@ def rotate_atoms(atoms, phi=0.0, theta=0.0, psi=0.0, center='COU'):
     return atoms
 
 
-def create_vacancies(atoms, target_vacancy_ratio, max_rel_error=0.25, **kwargs):
+def create_vacancies(atoms, target_vacancy_ratio, target_species=None, max_rel_error=0.25, **kwargs):
     """Make a supercell and then create vacancies in the constructed supercell.
 
     It is implicitly without replacement because the atoms are deleted
     at each iteration. This is why, for example, the implementation is different w.r.t.
-    substitute atoms.
+    substitute atoms. It is possible to remove only atoms belonging to a specifical chemical
+    species.
 
     Parameters:
 
@@ -870,6 +871,10 @@ def create_vacancies(atoms, target_vacancy_ratio, max_rel_error=0.25, **kwargs):
         and 1.0 (all atoms removed). For example, 0.2 will lead to the removal of 20% of the atoms. \n
         The actual number of vacancies might differ from it, especially for
         small supercell and/or small percentage of vacancies. See also `max_rel_error` below.
+
+    target_species: str, optional (default = None)
+        If specified, only atoms of the specified chemical species will be removed; note that the `target_vacancy_ratio`
+         still refers to the total number of atoms. If None, atoms from all chemical species will be removed.
 
     max_rel_error: float, optional (default = 0.25)
         Relative (absolute) difference between the `target_vacancy_ratio` and the actual percentage of atoms
@@ -891,14 +896,18 @@ def create_vacancies(atoms, target_vacancy_ratio, max_rel_error=0.25, **kwargs):
 
     nb_atoms = len(atoms)
     if nb_atoms > 0:
-        if 0. < target_vacancy_ratio < 1.:
+        if 0. <= target_vacancy_ratio <= 1.:
             # calculate the number of vancancies to make given the ratio
             nb_vacancies = int(nb_atoms * target_vacancy_ratio)
             actual_vacancy_ratio = nb_vacancies / nb_atoms
 
             # randomly remove one atom from the supercell
             for i in range(nb_vacancies):
-                idx_atom_to_delete = random.choice([atom.index for atom in atoms])
+                if target_species is not None:
+                    # remove only atoms from the target_species specified
+                    idx_atom_to_delete = random.choice([atom.index for atom in atoms if atom.symbol == target_species])
+                else:
+                    idx_atom_to_delete = random.choice([atom.index for atom in atoms])
                 del atoms[idx_atom_to_delete]
 
             rel_error = abs(target_vacancy_ratio - actual_vacancy_ratio) / target_vacancy_ratio
@@ -913,7 +922,7 @@ def create_vacancies(atoms, target_vacancy_ratio, max_rel_error=0.25, **kwargs):
                 logger.warning("Number of vacancies: {}".format(nb_vacancies))
 
         else:
-            raise ValueError('The vacancy ratio needs to be between 0 and 1. (0. excluded)')
+            raise ValueError('The vacancy ratio needs to be between 0 and 1. (0. and 1. can be included)')
     else:
         logger.warning('Structure with no atoms. Continuing.')
 

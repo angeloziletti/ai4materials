@@ -36,7 +36,6 @@ if __name__ == "__main__":
     from ai4materials.utils.utils_config import setup_logger
     from ai4materials.utils.utils_crystals import create_supercell
     from ai4materials.utils.utils_crystals import create_vacancies
-    from ai4materials.utils.utils_crystals import create_vacancies
     from ai4materials.utils.utils_crystals import random_displace_atoms
     from ai4materials.utils.utils_plotting import aggregate_struct_trans_data
     from ai4materials.utils.utils_plotting import make_crossover_plot
@@ -103,36 +102,69 @@ if __name__ == "__main__":
     nb_rotations = 5
 
     # define operations on structures
-    target_vacancy_ratios = np.linspace(0., 0.5, 51, endpoint=True)
+    operations_on_structure_list = [(create_supercell, dict(create_replicas_by='nb_atoms', min_nb_atoms=128,
+                                                            target_nb_atoms=target_nb_atoms, random_rotation=True,
+                                                            random_rotation_before=True,
+                                                            cell_type='standard_no_symmetries',
+                                                            optimal_supercell=True)),
+                                    (create_vacancies,
+                                    dict(target_vacancy_ratio=0.50, create_replicas_by='nb_atoms', min_nb_atoms=32,
+                                         target_nb_atoms=128, random_rotation=True, random_rotation_before=True,
+                                         cell_type='standard_no_symmetries', optimal_supercell=True)), (
+                                    random_displace_atoms,
+                                    dict(noise_distribution='uniform_scaled', displacement_scaled=0.005,
+                                         create_replicas_by='nb_atoms', min_nb_atoms=32, target_nb_atoms=128,
+                                         random_rotation=True, random_rotation_before=True,
+                                         cell_type='standard_no_symmetries', optimal_supercell=True)), (
+                                        random_displace_atoms,
+                                        dict(noise_distribution='uniform_scaled', displacement_scaled=0.01,
+                                             create_replicas_by='nb_atoms', min_nb_atoms=32, target_nb_atoms=128,
+                                             random_rotation=True, random_rotation_before=True,
+                                             cell_type='standard_no_symmetries', optimal_supercell=True)), (
+                                        random_displace_atoms,
+                                        dict(noise_distribution='uniform_scaled', displacement_scaled=0.02,
+                                             create_replicas_by='nb_atoms', min_nb_atoms=32, target_nb_atoms=128,
+                                             random_rotation=True, random_rotation_before=True,
+                                             cell_type='standard_no_symmetries', optimal_supercell=True))]
 
-    a = 5.0
-    nacl_structure = crystal(['Na', 'Cl'], [(0, 0, 0), (0.5, 0.5, 0.5)],
-                             spacegroup=225, cellpar=[a, a, a, 90, 90, 90])
+    # =============================================================================
+    # Read prototype data from files
+    # =============================================================================
+
+    z_min = 11
+    z_max = 54
+    el_list = [el.symbol for el in element(range(z_min, z_max + 1))]
+
+    # build atomic structure
+    # a = 5.0
+    # ase_atoms_list = []
+    # for el in el_list:
+    #     structure = crystal([el_list[0], el], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225,
+    #                     cellpar=[a, a, a, 90, 90, 90])
+    #
+    #     ase_atoms_list.append(structure)
+
+    # read trajectory file
+    traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin.traj'
+    traj = Trajectory(traj_file)
 
     ase_atoms_list = []
-    for target_vacancy_ratio in target_vacancy_ratios:
-
-
-        nacl_structure_def = create_vacancies(nacl_structure, target_vacancy_ratio=target_vacancy_ratio,
-                                              target_species='Cl',
-                                            create_replicas_by='user-defined', target_replicas=(3, 3, 3),
-                                            random_rotation_before=True,
-                                         cell_type='standard_no_symmetries', optimal_supercell=False)
-
-        ase_atoms_list.append(nacl_structure_def)
-
+    for idx, atoms in enumerate(traj):
+        ase_atoms_list.append(atoms)
 
     desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
                                                ase_atoms_list=ase_atoms_list,
                                                tmp_folder=configs['io']['tmp_folder'],
                                                desc_folder=configs['io']['desc_folder'],
-                                               desc_file='rocksalt_to_fcc.tar.gz',
+                                               # desc_file='sc_to_rocksalt.tar.gz',
+                                               desc_file='cu_melt_3x3x3_500.tar.gz',
                                                format_geometry='aims',
                                                # operations_on_structure=operations_on_structure_list[0],
                                                operations_on_structure=None,
                                                nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
 
-    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc.tar.gz'
+    # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/sc_to_rocksalt.tar.gz'
+    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/cu_melt_3x3x3_500.tar.gz'
 
     # now prepare the dataset
     # load the previously saved file containing the crystal structures and their corresponding descriptor
@@ -150,7 +182,7 @@ if __name__ == "__main__":
     path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list,
                                                                            target_list=target_list,
                                                                            desc_metadata='diffraction_3d_sh_spectrum',
-                                                                           dataset_name='rocksalt_to_fcc',
+                                                                           dataset_name='cu_melting',
                                                                            target_name='target',
                                                                            target_categorical=True, input_dims=(52, 32),
                                                                            configs=configs,
@@ -169,7 +201,7 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    test_set_name = 'rocksalt_to_fcc'
+    test_set_name = 'cu_melting'
 
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
@@ -210,13 +242,13 @@ if __name__ == "__main__":
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
                       conf_matrix_file=conf_matrix_file, results_file=results_file)
     #
-    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=51,
+    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=1, nb_order_param_steps=500,
                                              max_order_param=1.0, prob_idxs=[0, 1, 2, 3, 4])
 
     make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
-                        nb_order_param_steps=11,
-                        filename_suffix=".png", title="From rocksalt to fcc",
+                        nb_order_param_steps=10,
+                        filename_suffix=".png", title="Rocksalt with different Delta Z",
                         x_label="Delta Z", show_plot=False, markersize=3.0)
 
 
@@ -227,5 +259,5 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     plt.clf()
     plt.plot(unc)
-    plt.savefig(os.path.join(main_folder, 'mutual_info.png'))
+    plt.savefig('./try.png')
 
