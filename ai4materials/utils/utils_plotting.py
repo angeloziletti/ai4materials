@@ -329,6 +329,7 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_
 
 
 def make_crossover_plot(df_results, filename, filename_suffix, title, labels, prob_idxs, nb_order_param_steps,
+                        plot_type='probability', uncertainty_type='mutual_information',
                         linewidth=1.0, markersize=1.0, max_nb_ticks=None, palette=None, show_plot=False,
                         style='publication', x_label="Order parameter"):
     """ Starting from an aggregated data panda dataframe, plot classification
@@ -339,7 +340,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     Parameters:
 
     df_results: panda dataframe,
-        Panda dataframe returned by the aggregate_struct_trans_data function.
+        Panda dataframe returned by the `aggregate_struct_trans_data` function.
 
     filename: string
         Full path to the results_file created by the run_cnn_model function.
@@ -352,6 +353,12 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     title: string
         Title of the plot
+
+    plot_type: str (options: 'probability', 'uncertainty')
+        Plot either probabilities of classification or uncertainty.
+
+    uncertainty_type: str (options: 'mutual_information', 'predictive_entropy')
+        Type of uncertainty estimation to be plotted. Used only if `plot_type`='uncertainty'.
 
     prob_idxs: list of int
         List of integers which correspond to the classes for which the
@@ -368,7 +375,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         Different values might work, but could give rise to unexpected
         behaviour.
 
-    show_plot: bool, optional, default : False
+    show_plot: bool, optional, default: False
         If True, it opens the generated plot.
 
     style: string, optional, {'publication'}
@@ -395,23 +402,30 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     a_to_b_param = df_results.a_to_b_index_.values
 
-    prob_predictions_mean = []
-    prob_predictions_std = []
     colors_plot = []
     labels_sel = []
-    for prob_idx in prob_idxs:
-        prob_predictions_mean.append('prob_predictions_' + str(prob_idx) + '_mean')
-        prob_predictions_std.append('prob_predictions_' + str(prob_idx) + '_std')
-        colors_plot.append(palette[prob_idx])
-        labels_sel.append(labels[prob_idx])
 
-    # a is 1st prob_idx, b is 2nd (order matters for the plot)
-    prob_mean = []
-    prob_std = []
+    if plot_type == 'probability':
+        prob_predictions_mean = []
+        prob_predictions_std = []
 
-    for prob_idx in range(len(prob_idxs)):
-        prob_mean.append(df_results[prob_predictions_mean[prob_idx]].values)
-        prob_std.append(df_results[prob_predictions_std[prob_idx]].values)
+        for prob_idx in prob_idxs:
+            prob_predictions_mean.append('prob_predictions_' + str(prob_idx) + '_mean')
+            prob_predictions_std.append('prob_predictions_' + str(prob_idx) + '_std')
+
+            colors_plot.append(palette[prob_idx])
+            labels_sel.append(labels[prob_idx])
+    elif plot_type == 'uncertainty':
+        colors_plot.append(palette[0])
+        labels_sel.append(labels[0])
+
+    if plot_type == 'probability':
+        # a is 1st prob_idx, b is 2nd (order matters for the plot)
+        prob_mean = []
+        prob_std = []
+        for prob_idx in range(len(prob_idxs)):
+            prob_mean.append(df_results[prob_predictions_mean[prob_idx]].values)
+            prob_std.append(df_results[prob_predictions_std[prob_idx]].values)
 
     # set max nb ticks
     if max_nb_ticks is not None:
@@ -426,9 +440,10 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     lower_bound = []
     upper_bound = []
 
-    for prob_idx in range(len(prob_idxs)):
-        lower_bound.append(prob_mean[prob_idx] - prob_std[prob_idx] / std_scaling)
-        upper_bound.append(prob_mean[prob_idx] + prob_std[prob_idx] / std_scaling)
+    if plot_type == 'probability':
+        for prob_idx in range(len(prob_idxs)):
+            lower_bound.append(prob_mean[prob_idx] - prob_std[prob_idx] / std_scaling)
+            upper_bound.append(prob_mean[prob_idx] + prob_std[prob_idx] / std_scaling)
 
     fig, ax = plt.subplots(1)
 
@@ -451,15 +466,25 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         # tick.label.set_fontsize('x-small')
         tick.label.set_rotation('vertical')
 
-    for prob_idx in range(len(prob_idxs)):
-        ax.plot(a_to_b_param, prob_mean[prob_idx], marker='o', linestyle='-', color=colors_plot[prob_idx],
-                label=labels_sel[prob_idx], linewidth=linewidth, markeredgecolor=colors_plot[prob_idx],
-                markersize=markersize)
-        ax.fill_between(a_to_b_param, lower_bound[prob_idx], upper_bound[prob_idx], facecolor=colors_plot[prob_idx],
-                        alpha=0.2, edgecolor=colors_plot[prob_idx], linewidth=0.0)
+    if plot_type == 'probability':
+        for prob_idx in range(len(prob_idxs)):
+            ax.plot(a_to_b_param, prob_mean[prob_idx], marker='o', linestyle='-', color=colors_plot[prob_idx],
+                    label=labels_sel[prob_idx], linewidth=linewidth, markeredgecolor=colors_plot[prob_idx],
+                    markersize=markersize)
+            ax.fill_between(a_to_b_param, lower_bound[prob_idx], upper_bound[prob_idx], facecolor=colors_plot[prob_idx],
+                            alpha=0.2, edgecolor=colors_plot[prob_idx], linewidth=0.0)
 
     ax.set_xlabel(x_label, fontsize=15)
-    ax.set_ylabel("Classification probability", fontsize=15)
+
+    if plot_type == 'probability':
+        ax.set_ylabel("Classification probability", fontsize=15)
+    elif plot_type == 'uncertainty':
+        if uncertainty_type == 'mutual_information':
+            ax.set_ylabel("Mutual information", fontsize=15)
+        elif uncertainty_type == 'predictive_entropy':
+            ax.set_ylabel("Predictive entropy", fontsize=15)
+        else:
+            ax.set_ylabel("Label", fontsize=15)
 
     ax.tick_params(labelsize=15)
 
