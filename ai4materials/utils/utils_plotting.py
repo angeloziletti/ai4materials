@@ -220,14 +220,15 @@ def make_plot_cross_entropy_loss(step, train_data, val_data, title=None):
 
 
 def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_order_param_steps=None,
-                                min_order_param=0.0, max_order_param=None, prob_idxs=None):
+                                min_order_param=0.0, max_order_param=None, prob_idxs=None, with_uncertainty=True,
+                                uncertainty_types=('variation_ratio', 'predictive_entropy', 'mutual_information')):
     """ Aggregate structural transition data in order to plot it later.
 
     Starting from the results_file of the run_cnn_model function,
     aggregate the data by a given order parameter and the probabilities of
     each class.
     This is used to prepare the data for the structural transition plots,
-    as shown in Fig. 4, Ziletti et al.
+    as shown in Fig. 4, Ziletti et al., Nature Communications 9, 2775 (2018).
 
     Parameters:
 
@@ -270,9 +271,7 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_
             of classification probability i for the given a_to_b_index_
             value of the order parameter.
 
-    Examples:
-
-    For an example, see make_crossover_plot.
+        - [optional]: columns containing uncertainty quantification
 
      .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
@@ -284,7 +283,7 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_
     # all classes are present in the dataset
     df = df[nb_rows_to_cut:]
 
-    # nb samples for each bcc/sc order parameter steps
+    # nb samples for each order parameter steps
     steps, step = np.linspace(min_order_param, max_order_param, nb_order_param_steps, retstep=True)
     a_to_b_index = np.repeat(steps, nb_samples)
     df['a_to_b_index'] = a_to_b_index
@@ -297,16 +296,34 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_
         prob_predictions.append(prob_prediction)
         prob_pred_agg.update({prob_prediction: ['mean', 'std']})
 
-    df_results = df.groupby(['a_to_b_index'], as_index=False).agg(prob_pred_agg)
+    df_results_prob = df.groupby(['a_to_b_index'], as_index=False).agg(prob_pred_agg)
 
     # flatten hierarchical index
     # NB: you cannot just rename the columns
-    # the values are order by increasing mean, so the column name --> value
+    # the values are ordered by increasing mean, so the column name --> value
     # will not be conserved
-    df_results.columns = ['_'.join(col).strip() for col in df_results.columns.values]
+    df_results_prob.columns = ['_'.join(col).strip() for col in df_results_prob.columns.values]
+    df_results_prob.reindex(columns=sorted(df_results_prob.columns))
 
-    logger.debug(df_results.head())
-    df_results.reindex(columns=sorted(df_results.columns))
+    if with_uncertainty:
+        uncertainty_preds = []
+        uncertainty_pred_agg = {}
+
+        for uncertainty_type in uncertainty_types:
+            uncertainty_pred = 'uncertainty_' + str(uncertainty_type)
+            uncertainty_preds.append(uncertainty_pred)
+            uncertainty_pred_agg.update({uncertainty_pred: ['mean', 'std']})
+
+        df_results_uncertainty = df.groupby(['a_to_b_index'], as_index=False).agg(uncertainty_pred_agg)
+        df_results_uncertainty.columns = ['_'.join(col).strip() for col in df_results_uncertainty.columns.values]
+        df_results_uncertainty.reindex(columns=sorted(df_results_uncertainty.columns))
+        # df_results_uncertainty.drop('a_to_b_index_', axis=1, inplace=True)
+
+    if with_uncertainty:
+        # merge the probability prediction results with the uncertainty results
+        df_results = pd.merge(df_results_prob, df_results_uncertainty, on='a_to_b_index_')
+    else:
+        df_results = df_results_prob
 
     return df_results
 

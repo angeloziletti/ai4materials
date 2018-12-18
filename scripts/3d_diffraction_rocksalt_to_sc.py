@@ -199,8 +199,8 @@ if __name__ == "__main__":
                                              nb_order_param_steps=nb_order_param_steps,
                                              min_order_param=min_order_param,
                                              max_order_param=max_order_param,
-                                             # max_order_param=1.0,
-                                             prob_idxs=[1, 2])
+                                             prob_idxs=[1, 2],
+                                             with_uncertainty=True)
 
     make_crossover_plot(df_results, results_file, prob_idxs=[1, 2],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
