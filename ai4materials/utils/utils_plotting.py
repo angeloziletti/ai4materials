@@ -405,13 +405,13 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     colors_plot = []
     labels_sel = []
 
-    if plot_type == 'probability':
-        prob_predictions_mean = []
-        prob_predictions_std = []
+    y_label_name_mean = []
+    y_label_name_std = []
 
+    if plot_type == 'probability':
         for prob_idx in prob_idxs:
-            prob_predictions_mean.append('prob_predictions_' + str(prob_idx) + '_mean')
-            prob_predictions_std.append('prob_predictions_' + str(prob_idx) + '_std')
+            y_label_name_mean.append('prob_predictions_' + str(prob_idx) + '_mean')
+            y_label_name_std.append('prob_predictions_' + str(prob_idx) + '_std')
 
             colors_plot.append(palette[prob_idx])
             labels_sel.append(labels[prob_idx])
@@ -419,13 +419,14 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         colors_plot.append(palette[0])
         labels_sel.append(labels[0])
 
+    y_value_mean = []
+    y_value_std = []
+
     if plot_type == 'probability':
         # a is 1st prob_idx, b is 2nd (order matters for the plot)
-        prob_mean = []
-        prob_std = []
         for prob_idx in range(len(prob_idxs)):
-            prob_mean.append(df_results[prob_predictions_mean[prob_idx]].values)
-            prob_std.append(df_results[prob_predictions_std[prob_idx]].values)
+            y_value_mean.append(df_results[y_label_name_mean[prob_idx]].values)
+            y_value_std.append(df_results[y_label_name_std[prob_idx]].values)
 
     # set max nb ticks
     if max_nb_ticks is not None:
@@ -442,8 +443,8 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     if plot_type == 'probability':
         for prob_idx in range(len(prob_idxs)):
-            lower_bound.append(prob_mean[prob_idx] - prob_std[prob_idx] / std_scaling)
-            upper_bound.append(prob_mean[prob_idx] + prob_std[prob_idx] / std_scaling)
+            lower_bound.append(y_value_mean[prob_idx] - y_value_std[prob_idx] / std_scaling)
+            upper_bound.append(y_value_mean[prob_idx] + y_value_std[prob_idx] / std_scaling)
 
     fig, ax = plt.subplots(1)
 
@@ -468,7 +469,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     if plot_type == 'probability':
         for prob_idx in range(len(prob_idxs)):
-            ax.plot(a_to_b_param, prob_mean[prob_idx], marker='o', linestyle='-', color=colors_plot[prob_idx],
+            ax.plot(a_to_b_param, y_value_mean[prob_idx], marker='o', linestyle='-', color=colors_plot[prob_idx],
                     label=labels_sel[prob_idx], linewidth=linewidth, markeredgecolor=colors_plot[prob_idx],
                     markersize=markersize)
             ax.fill_between(a_to_b_param, lower_bound[prob_idx], upper_bound[prob_idx], facecolor=colors_plot[prob_idx],
