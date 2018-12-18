@@ -416,12 +416,13 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     fig, ax = plt.subplots(1)
 
     plt.suptitle(title, fontname='Ubuntu', fontsize=15, fontstyle='italic', fontweight='bold')
-    plt.tight_layout(pad=4.0, w_pad=2.0, h_pad=1.0)
+    plt.tight_layout(pad=5.0, w_pad=2.0, h_pad=1.0)
 
     # restore defaults to 1.5.1 for reproducibility
     # https: // matplotlib.org / users / dflt_style_changes.html  # grid-lines
     plt.grid(True, color='gray', linestyle='--', linewidth=0.5)
-    ax.set_xlim([-np.amax(a_to_b_param) * 0.05 + np.amin(a_to_b_param), np.amax(a_to_b_param) * 1.05])
+    # ax.set_xlim([-np.amax(a_to_b_param) * 0.05 + np.amin(a_to_b_param), np.amax(a_to_b_param) * 1.05])
+    ax.set_xlim([np.amin(a_to_b_param), np.amax(a_to_b_param)])
     ax.set_ylim([-0.1, 1.1])
     start, end = ax.get_xlim()
 
