@@ -350,12 +350,12 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
         fig.colorbar(cax)
     else:
 
-        from mayavi import mlab
+        # from mayavi import mlab
 
         azimuth = 0.0
         elevation = 0.0
-        mlab.options.offscreen = False
-        mlab.clf()
+        # mlab.options.offscreen = False
+        # mlab.clf()
 
         # obj = mlab.contour3d(prob_prediction_class, contours=100, vmin=0.2, vmax=1., opacity=0.)
 
@@ -363,7 +363,7 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
                                     '{0}_{1}_class{2}.npy'.format(str(title), str(prefix), str(class_name)))
 
         np.save(filename_npy, prob_prediction_class)
-
+        logger.info("Voxel array containing the classification map saved at {}.".format(filename_npy))
         # obj.scene.disable_render = True  # obj.scene.anti_aliasing_frames = 0  # mlab.view(azimuth=azimuth, elevation=elevation)  # mlab.colorbar(title='Field intensity', orientation='vertical')  # mlab.show()  #  # mlab.savefig(filename=os.path.join(main_folder, '{0}_class{1}.png'.format(str(prefix),  #                                                                           str(class_name))))  # mlab.close(all=True)
 
         # logger.info("Creating three-dimensional plot.")  # x = np.arange(prob_prediction_class.shape[0])[:, None, None]  # y = np.arange(prob_prediction_class.shape[1])[None, :, None]  # z = np.arange(prob_prediction_class.shape[2])[None, None, :]  # x, y, z = np.broadcast_arrays(x, y, z)  #  # from mpl_toolkits.mplot3d import Axes3D  # # ax = fig.add_subplot(111, projection='3d')  #  # colmap = cm.ScalarMappable(cmap=plt.cm.Blues)  # colmap.set_array(prob_prediction_class.ravel())  #  # fig = plt.figure(figsize=(8, 6))  # ax = fig.gca(projection='3d')  # ax.scatter(x, y, z, marker='s', s=140, c=prob_prediction_class.ravel(), cmap=plt.cm.Blues, vmin=0, vmax=1,  #            alpha=0.7)  # alpha is transparancey value, 0 (transparent) and 1 (opaque)  # cb = fig.colorbar(colmap)  #  # ax.set_xlabel('x $[\mathrm{\AA}]$')  # ax.set_ylabel('y $[\mathrm{\AA}]$')  # ax.set_zlabel('z $[\mathrm{\AA}]$')  # plt.title(filename)  # plt.show()  # plt.close()  # pl.dump(fig,file(filename+'.pickle','w'))
