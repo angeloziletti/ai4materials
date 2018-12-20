@@ -50,6 +50,7 @@ if __name__ == "__main__":
     from keras.models import load_model
     from ai4materials.models.cnn_polycrystals import predict
     from mendeleev import element
+    from ai4materials.utils.utils_data_retrieval import read_ase_db
 
     startTime = datetime.now()
     now = datetime.now()
@@ -132,14 +133,10 @@ if __name__ == "__main__":
     # =============================================================================
 
     # read trajectory file
-    # traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin.traj'
-    traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin_2.traj'
+    ase_db_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/db_ase/melting_copper.db'
 
-    traj = Trajectory(traj_file)
+    ase_atoms_list = read_ase_db(ase_db_file)
 
-    ase_atoms_list = []
-    for idx, atoms in enumerate(traj):
-        ase_atoms_list.append(atoms)
 
     # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
     #                                            ase_atoms_list=ase_atoms_list,
