@@ -86,8 +86,7 @@ if __name__ == "__main__":
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
     lookup_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'lookup.dat')))
     control_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'control.json')))
-    results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
-    results_file_rocksalt_to_fcc = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results_rocksalt_to_fcc.csv')))
+    results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results_diamond_to_am.csv')))
     filtered_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'filtered_file.json')))
     training_log_file = os.path.abspath(
         os.path.normpath(os.path.join(checkpoint_dir, 'training_' + str(now.isoformat()) + '.log')))
@@ -101,61 +100,59 @@ if __name__ == "__main__":
     target_nb_atoms = 128
     nb_rotations = 5
 
-    nb_order_param_steps = 104
+    nb_order_param_steps = 11
     min_order_param = 0.0
-    max_order_param = 0.5
+    max_order_param = 1.0
     # define operations on structures
     target_vacancy_ratios = np.linspace(min_order_param, max_order_param, nb_order_param_steps, endpoint=True)
 
     nb_samples = 1
-    a = 5.0
-    nacl_structure = crystal(['Na', 'Cl'], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90])
+    a = 3.57
+    diamond = crystal('C', [(0, 0, 0)], spacegroup=227, cellpar=[a, a, a, 90, 90, 90])
 
-    ase_atoms_list = []
-    for target_vacancy_ratio in target_vacancy_ratios:
+    # ase_atoms_list = []
+    # for target_vacancy_ratio in target_vacancy_ratios:
 
-        for sample in range(nb_samples):
-            nacl_structure_def = create_vacancies(nacl_structure, target_vacancy_ratio=target_vacancy_ratio,
-                                                  target_species='Cl', create_replicas_by='user-defined',
-                                                  target_replicas=(2, 2, 2), random_rotation_before=True,
-                                                  cell_type='standard_no_symmetries', optimal_supercell=False)
+    #     for sample in range(nb_samples):
+    #         diamond_structure_def = create_vacancies(diamond, target_vacancy_ratio=target_vacancy_ratio,
+    #                                               create_replicas_by='user-defined',
+    #                                               target_replicas=(3, 3, 3), random_rotation_before=True,
+    #                                               cell_type='standard_no_symmetries', optimal_supercell=False)
+    #
+    #         ase_atoms_list.append(diamond_structure_def)
+    #
+    # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
+    #                                            tmp_folder=configs['io']['tmp_folder'],
+    #                                            desc_folder=configs['io']['desc_folder'],
+    #                                            desc_file='diamond_to_amorphous_small.tar.gz', format_geometry='aims',
+    #                                            # operations_on_structure=operations_on_structure_list[0],
+    #                                            operations_on_structure=None,
+    #                                            nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
 
-            ase_atoms_list.append(nacl_structure_def)
 
-    desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                               tmp_folder=configs['io']['tmp_folder'],
-                                               desc_folder=configs['io']['desc_folder'],
-                                               desc_file='rocksalt_to_fcc_104_2x2_for_figure_0-1.tar.gz', format_geometry='aims',
-                                               # operations_on_structure=operations_on_structure_list[0],
-                                               operations_on_structure=None,
-                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
-
-    sys.exit()
-
-    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc_104_20samples.tar.gz'
-    # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc.tar.gz'
+    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/diamond_to_amorphous_small.tar.gz'
 
     # now prepare the dataset
     # load the previously saved file containing the crystal structures and their corresponding descriptor
-    # target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
+    target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
 
     # sort the structures according to the original label
-    # structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
+    structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
 
     # create a texture atlas with all the two-dimensional diffraction fingerprints
     # df, texture_atlas = generate_facets_input(structure_list=structure_list, desc_metadata='diffraction_3d_sh_spectrum',
     #                                           target_list=target_list, sprite_atlas_filename=desc_file_path,
     #                                           configs=configs, normalize=True)
 
-    # path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
-    #                                                         desc_metadata='diffraction_3d_sh_spectrum',
-    #                                                         dataset_name='rocksalt_to_fcc', target_name='target',
-    #                                                         target_categorical=True, input_dims=(52, 32),
-    #                                                         configs=configs,
-    #                                                         dataset_folder=configs['io']['dataset_folder'],
-    #                                                         main_folder=configs['io']['main_folder'],
-    #                                                         desc_folder=configs['io']['desc_folder'],
-    #                                                         tmp_folder=configs['io']['tmp_folder'])
+    path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
+                                                            desc_metadata='diffraction_3d_sh_spectrum',
+                                                            dataset_name='diamond_to_amorphous', target_name='target',
+                                                            target_categorical=True, input_dims=(52, 32),
+                                                            configs=configs,
+                                                            dataset_folder=configs['io']['dataset_folder'],
+                                                            main_folder=configs['io']['main_folder'],
+                                                            desc_folder=configs['io']['desc_folder'],
+                                                            tmp_folder=configs['io']['tmp_folder'])
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
@@ -165,7 +162,7 @@ if __name__ == "__main__":
     path_to_summary_train = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
-    test_set_name = 'rocksalt_to_fcc'
+    test_set_name = 'diamond_to_amorphous'
 
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
@@ -192,28 +189,26 @@ if __name__ == "__main__":
     conf_matrix_file = os.path.abspath(
         os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
-    # results_file_rocksalt_to_fcc
-
     results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-                      conf_matrix_file=conf_matrix_file, results_file=results_file_rocksalt_to_fcc, mc_samples=1000)
+                      conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=100)
 
-    df_results = aggregate_struct_trans_data(results_file_rocksalt_to_fcc, nb_rows_to_cut=0, nb_samples=nb_samples,
+    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=nb_samples,
                                              nb_order_param_steps=nb_order_param_steps,
                                              min_order_param=min_order_param,
                                              max_order_param=max_order_param,
-                                             prob_idxs=[1, 2],
+                                             prob_idxs=[0, 1, 2, 3, 4],
                                              with_uncertainty=True)
 
-    make_crossover_plot(df_results, results_file_rocksalt_to_fcc, prob_idxs=[1, 2],
+    make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
-                        nb_order_param_steps=21, filename_suffix=".svg", title="From rocksalt to fcc",
+                        nb_order_param_steps=11, filename_suffix=".svg", title="From diamond to amorphous",
                         x_label="Central atoms removed (%)", show_plot=False, markersize=1.0,
                         palette=['yellow', 'red', 'blue', 'green', 'indigo'])
 
-    make_crossover_plot(df_results, results_file_rocksalt_to_fcc, plot_type='uncertainty',
-                        labels=["$mc_{1000}$"],
-                        nb_order_param_steps=21, filename_suffix=".svg", title="From rocksalt to fcc",
+    make_crossover_plot(df_results, results_file, plot_type='uncertainty',
+                        labels=["$mc_{100}$"],
+                        nb_order_param_steps=11, filename_suffix=".svg", title="From rocksalt to fcc",
                         x_label="Central atoms removed (%)", show_plot=False, markersize=1.0,
                         palette=['black'])
 

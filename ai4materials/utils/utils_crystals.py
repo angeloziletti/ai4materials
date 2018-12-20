@@ -1159,7 +1159,8 @@ def get_min_distance(atoms, nb_splits=100):
 
 
 def get_nn_distance(atoms, distribution='quantile_nn', cutoff=4.0,
-                    min_nb_nn=5, pbc=True, plot_histogram=False, bins=100, constrain_nn_distances=True, nn_distances_cutoff=0.9):
+                    min_nb_nn=5, pbc=True, plot_histogram=False, bins=100, constrain_nn_distances=True,
+                    nn_distances_cutoff=0.9):
     """Calculate an "averaged" (actual average or quantile-based) nearest neighbors distance.
     This is a measure of the characteristic structural lengthscale of the system.
 

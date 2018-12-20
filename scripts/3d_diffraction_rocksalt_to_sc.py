@@ -84,14 +84,13 @@ if __name__ == "__main__":
     checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models')))
     figure_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'attentive_resp_maps')))
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
-    results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
     lookup_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'lookup.dat')))
     control_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'control.json')))
     results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
+    results_file_rocksalt_to_fcc = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results_rocksalt_to_fcc.csv')))
     filtered_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'filtered_file.json')))
     training_log_file = os.path.abspath(
         os.path.normpath(os.path.join(checkpoint_dir, 'training_' + str(now.isoformat()) + '.log')))
-    results_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'results.csv')))
 
     configs['io']['dataset_folder'] = dataset_folder
     configs['io']['desc_folder'] = desc_folder
@@ -103,33 +102,35 @@ if __name__ == "__main__":
     nb_rotations = 5
 
     nb_order_param_steps = 104
-    min_order_param = 0.4
+    min_order_param = 0.0
     max_order_param = 0.5
     # define operations on structures
     target_vacancy_ratios = np.linspace(min_order_param, max_order_param, nb_order_param_steps, endpoint=True)
 
-    nb_samples = 20
+    nb_samples = 1
     a = 5.0
     nacl_structure = crystal(['Na', 'Cl'], [(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90])
 
-    # ase_atoms_list = []
-    # for target_vacancy_ratio in target_vacancy_ratios:
-    #
-    #     for sample in range(nb_samples):
-    #         nacl_structure_def = create_vacancies(nacl_structure, target_vacancy_ratio=target_vacancy_ratio,
-    #                                               target_species='Cl', create_replicas_by='user-defined',
-    #                                               target_replicas=(3, 3, 3), random_rotation_before=True,
-    #                                               cell_type='standard_no_symmetries', optimal_supercell=False)
-    #
-    #         ase_atoms_list.append(nacl_structure_def)
+    ase_atoms_list = []
+    for target_vacancy_ratio in target_vacancy_ratios:
 
-    # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-    #                                            tmp_folder=configs['io']['tmp_folder'],
-    #                                            desc_folder=configs['io']['desc_folder'],
-    #                                            desc_file='rocksalt_to_fcc_104_20samples.tar.gz', format_geometry='aims',
-    #                                            # operations_on_structure=operations_on_structure_list[0],
-    #                                            operations_on_structure=None,
-    #                                            nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
+        for sample in range(nb_samples):
+            nacl_structure_def = create_vacancies(nacl_structure, target_vacancy_ratio=target_vacancy_ratio,
+                                                  target_species='Cl', create_replicas_by='user-defined',
+                                                  target_replicas=(2, 2, 2), random_rotation_before=True,
+                                                  cell_type='standard_no_symmetries', optimal_supercell=False)
+
+            ase_atoms_list.append(nacl_structure_def)
+
+    desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
+                                               tmp_folder=configs['io']['tmp_folder'],
+                                               desc_folder=configs['io']['desc_folder'],
+                                               desc_file='rocksalt_to_fcc_104_2x2_for_figure_0-1.tar.gz', format_geometry='aims',
+                                               # operations_on_structure=operations_on_structure_list[0],
+                                               operations_on_structure=None,
+                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
+
+    sys.exit()
 
     desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc_104_20samples.tar.gz'
     # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc.tar.gz'
@@ -165,7 +166,6 @@ if __name__ == "__main__":
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')))
 
     test_set_name = 'rocksalt_to_fcc'
-
     path_to_x_test = os.path.abspath(
         os.path.normpath(os.path.join(configs['io']['dataset_folder'], test_set_name + '_x.pkl')))
     path_to_y_test = os.path.abspath(
@@ -191,44 +191,28 @@ if __name__ == "__main__":
     conf_matrix_file = os.path.abspath(
         os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
+    # results_file_rocksalt_to_fcc
+
     results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-                      conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=2)
+                      conf_matrix_file=conf_matrix_file, results_file=results_file_rocksalt_to_fcc, mc_samples=1000)
 
-    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=nb_samples,
+    df_results = aggregate_struct_trans_data(results_file_rocksalt_to_fcc, nb_rows_to_cut=0, nb_samples=nb_samples,
                                              nb_order_param_steps=nb_order_param_steps,
                                              min_order_param=min_order_param,
                                              max_order_param=max_order_param,
                                              prob_idxs=[1, 2],
                                              with_uncertainty=True)
 
-    make_crossover_plot(df_results, results_file, prob_idxs=[1, 2],
+    make_crossover_plot(df_results, results_file_rocksalt_to_fcc, prob_idxs=[1, 2],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
                         nb_order_param_steps=21, filename_suffix=".svg", title="From rocksalt to fcc",
                         x_label="Central atoms removed (%)", show_plot=False, markersize=1.0,
                         palette=['yellow', 'red', 'blue', 'green', 'indigo'])
 
-    import pandas as pd
+    make_crossover_plot(df_results, results_file_rocksalt_to_fcc, plot_type='uncertainty',
+                        labels=["$mc_{1000}$"],
+                        nb_order_param_steps=21, filename_suffix=".svg", title="From rocksalt to fcc",
+                        x_label="Central atoms removed (%)", show_plot=False, markersize=1.0,
+                        palette=['black'])
 
-    df = pd.read_csv(results_file)
-
-    sample_avg_mut_info = []
-    sample_avg_pred_entropy = []
-    # use n_samples to aggregate results
-    for idx_row in range(0, len(df), nb_samples):
-        # extract nb_samples consecutive samples and average them
-        # then move down nb_samples and continue till the end
-        sample_avg_mut_info.append(
-            df.iloc[idx_row:idx_row + nb_samples]['uncertainty_mutual_information'].values.mean())
-        sample_avg_pred_entropy.append(
-            df.iloc[idx_row:idx_row + nb_samples]['uncertainty_predictive_entropy'].values.mean())
-
-    import matplotlib.pyplot as plt
-
-    plt.clf()
-    plt.plot(sample_avg_mut_info)
-    plt.savefig(os.path.join(main_folder, 'mutual_info.png'))
-
-    plt.clf()
-    plt.plot(sample_avg_pred_entropy)
-    plt.savefig(os.path.join(main_folder, 'pred_entropy.png'))

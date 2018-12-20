@@ -2,63 +2,84 @@ from __future__ import print_function
 
 from ase.lattice.cubic import FaceCenteredCubic
 from ase.md.langevin import Langevin
-from ase.md.nvtberendsen import NVTBerendsen
 from ase.io.trajectory import Trajectory
 from ase import units
-
+import os.path
 from asap3 import EMT  # Way too slow with ase.EMT !
-size = 3
-
-T = 5  # Kelvin
-
-# Set up a crystal
-# atoms = FaceCenteredCubic(
-#     # directions=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-#                           symbol="Cu",
-#                           size=(size, size, size),
-#                           pbc=True)
-
-from ase.spacegroup import crystal
-
-a = 2.87
-atoms = crystal('Fe', [(0, 0, 0)], spacegroup=229, cellpar=[a, a, a, 90, 90, 90])
-
-# Describe the interatomic interactions with the Effective Medium Theory
-atoms.set_calculator(EMT())
-# We want to run MD with constant energy using the Langevin algorithm
-# with a time step of 5 fs, the temperature T and the friction
-# coefficient to 0.02 atomic units.
-dyn = Langevin(atoms, 1 * units.fs, T * units.kB, 0.002)
-
-
-def printenergy(a=atoms):  # store a reference to atoms in the definition.
-    """Function to print the potential, kinetic and total energy."""
-    epot = a.get_potential_energy() / len(a)
-    ekin = a.get_kinetic_energy() / len(a)
-    temp = int(round(ekin / (1.5 * units.kB)))
-    if temp == T:
-        print('Energy per atom: Epot = %.3feV  Ekin = %.3feV (T=%3.0fK)  '
-              'Etot = %.3feV' % (epot, ekin, temp, epot + ekin))
-
-
-dyn.attach(printenergy, interval=100)
-
-# We also want to save the positions of all atoms after every 100th time step.
-traj = Trajectory('moldyn3_langevin.traj', 'w', atoms)
-dyn.attach(traj.write, interval=100)
-
-# Now run the dynamics
-printenergy()
-dyn.run(50000)
-
 import numpy as np
-# http://pymatgen.org/pymatgen.analysis.diffusion_analyzer.html?highlight=mean%20square%20displacement
-#  get_msd_plot(plt=None, mode=u'specie')[source]
-# Get the plot of the smoothed msd vs time graph. Useful for checking convergence. This can be written to an image file.
-#
 
-# https://stackoverflow.com/questions/31264591/mean-square-displacement-python
-# r = np.sqrt(xdata ** 2 + ydata ** 2)
-# diff = np.diff(r)  # this calculates r(t + dt) - r(t)
-# diff_sq = diff ** 2
-# MSD = np.mean(diff_sq)
+output_folder = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/'
+
+output_traj_file = os.path.abspath(os.path.normpath(os.path.join(output_folder, 'moldyn3_langevin_2.traj')))
+
+supercell_size = 3
+
+# target_temps = np.linspace(0., 200, 6)  # Kelviv
+n_samples = 5
+
+# set up a crystal
+# atoms = FaceCenteredCubic(symbol="Cu", size=(supercell_size, supercell_size, supercell_size), pbc=True)
+
+
+def save_temp(a):  # store a reference to atoms in the definition.
+    """Function to save the actual temperature in the atoms structure"""
+    ekin = a.get_kinetic_energy() / len(a)
+    temp = ekin / (1.5 * units.kB)
+    # a.info['temp'] = int(round(temp))
+    a.info['temp'] = temp
+    print(temp)
+    return a
+
+
+ase_atoms_list = []
+
+target_temps = [10, 20, 30, 40]
+
+for target_temp in target_temps:
+
+    atoms = FaceCenteredCubic(symbol="Cu", size=(supercell_size, supercell_size, supercell_size), pbc=True)
+
+    # Describe the interatomic interactions with the Effective Medium Theory
+    # see here for supported chemical elements (fcc only)
+    # https://wiki.fysik.dtu.dk/asap/EMT
+    # set up a crystal
+
+    atoms.set_calculator(EMT())
+    # We want to run MD with constant energy using the Langevin algorithm
+    # with a time step of 5 fs, the temperature T and the friction
+    # coefficient to 0.02 atomic units.
+    dyn = Langevin(atoms, 1 * units.fs, target_temp * units.kB, 0.002)
+    # dyn.attach(save_temp, interval=100)
+
+    # We also want to save the positions of all atoms after every 100th time step.
+    traj = Trajectory(output_traj_file, 'w', atoms)
+    dyn.attach(traj.write, interval=100)
+
+    print("Running dynamics for temp {}".format(target_temp))
+    # # now run the dynamics
+    # for i in range(n_samples):
+    dyn.run(10000)
+    atoms = save_temp(atoms)
+    ase_atoms_list.append(atoms)
+    print("Done.")
+
+    # read trajectory file
+    # traj = Trajectory(output_traj_file)
+
+    idx_sample = 0
+    for idx, atoms in enumerate(ase_atoms_list):
+        # print("Configuration with target temp {}".format(atoms.info['temp']))
+
+        if atoms.info['temp'] == target_temp:
+            print("Adding configuration with target temp {}".format(target_temp))
+            ase_atoms_list.append(atoms)
+            idx_sample += 1
+
+            if idx_sample >= n_samples:
+                print("Reached target n_samples for temp {}: {}".format(target_temp, n_samples))
+                break
+
+    del dyn
+    del atoms
+
+print(len(ase_atoms_list))

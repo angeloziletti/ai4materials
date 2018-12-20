@@ -133,11 +133,13 @@ if __name__ == "__main__":
 
     # read trajectory file
     # traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin.traj'
-    # traj = Trajectory(traj_file)
-    #
-    # ase_atoms_list = []
-    # for idx, atoms in enumerate(traj):
-    #     ase_atoms_list.append(atoms)
+    traj_file = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/structures_for_paper/melting_copper/moldyn3_langevin_2.traj'
+
+    traj = Trajectory(traj_file)
+
+    ase_atoms_list = []
+    for idx, atoms in enumerate(traj):
+        ase_atoms_list.append(atoms)
 
     # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs,
     #                                            ase_atoms_list=ase_atoms_list,

@@ -16,13 +16,13 @@ filenames = []
 # filenames.append('Uncertainty (mutual_information)_uncertainty_class.npy')
 # filenames.append('Uncertainty (variation_ratio)_uncertainty_class.npy')
 
-# filenames.append('prob_class0_pristine.npy')
-# filenames.append('prob_class1_pristine.npy')
-# filenames.append('prob_class2_pristine.npy')
-# filenames.append('prob_class3_pristine.npy')
-# filenames.append('prob_class4_pristine.npy')
-# filenames.append('uncertainty_class_pristine.npy')
-filenames.append('power_spect.npy')
+filenames.append('prob_class0_pristine.npy')
+filenames.append('prob_class1_pristine.npy')
+filenames.append('prob_class2_pristine.npy')
+filenames.append('prob_class3_pristine.npy')
+filenames.append('prob_class4_pristine.npy')
+filenames.append('uncertainty_class_pristine.npy')
+# filenames.append('power_spect.npy')
 
 filenames = ['/home/ziletti/Documents/calc_nomadml/rot_inv_3d/' + item for item in filenames]
 
@@ -50,7 +50,7 @@ for filename in filenames:
     # mlab.volume_slice(s, plane_orientation='x_axes', slice_index=88)
     # mlab.volume_slice(s, plane_orientation='y_axes', slice_index=88)
     # mlab.volume_slice(s, plane_orientation='z_axes', slice_index=88)
-    obj = mlab.contour3d(s, contours=20, vmin=0.8, vmax=None, opacity=0.5)
+    obj = mlab.contour3d(s, contours=20, vmin=0.0, vmax=None, opacity=0.5)
     # obj.scene.disable_render = True
     # obj.scene.anti_aliasing_frames = 0
     mlab.colorbar(title='Field intensity', orientation='vertical')

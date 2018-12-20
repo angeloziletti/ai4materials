@@ -328,8 +328,8 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_
     return df_results
 
 
-def make_crossover_plot(df_results, filename, filename_suffix, title, labels, prob_idxs, nb_order_param_steps,
-                        plot_type='probability', uncertainty_type='mutual_information',
+def make_crossover_plot(df_results, filename, filename_suffix, title, labels, nb_order_param_steps,
+                        plot_type='probability', prob_idxs=None, uncertainty_type='mutual_information',
                         linewidth=1.0, markersize=1.0, max_nb_ticks=None, palette=None, show_plot=False,
                         style='publication', x_label="Order parameter"):
     """ Starting from an aggregated data panda dataframe, plot classification
@@ -416,8 +416,13 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
             colors_plot.append(palette[prob_idx])
             labels_sel.append(labels[prob_idx])
     elif plot_type == 'uncertainty':
+        y_label_name_mean.append('uncertainty_' + str(uncertainty_type) + '_mean')
+        y_label_name_std.append('uncertainty_' + str(uncertainty_type) + '_std')
+
         colors_plot.append(palette[0])
         labels_sel.append(labels[0])
+    else:
+        raise Exception("Please specify a valid plot_type. Possible values are: 'probability', 'uncertainty'.")
 
     y_value_mean = []
     y_value_std = []
@@ -427,6 +432,11 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         for prob_idx in range(len(prob_idxs)):
             y_value_mean.append(df_results[y_label_name_mean[prob_idx]].values)
             y_value_std.append(df_results[y_label_name_std[prob_idx]].values)
+    elif plot_type == 'uncertainty':
+        y_value_mean.append(df_results[y_label_name_mean].values)
+        y_value_std.append(df_results[y_label_name_std].values)
+    else:
+        pass
 
     # set max nb ticks
     if max_nb_ticks is not None:
@@ -445,6 +455,11 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         for prob_idx in range(len(prob_idxs)):
             lower_bound.append(y_value_mean[prob_idx] - y_value_std[prob_idx] / std_scaling)
             upper_bound.append(y_value_mean[prob_idx] + y_value_std[prob_idx] / std_scaling)
+    elif plot_type == 'uncertainty':
+        lower_bound.append(y_value_mean[0] - y_value_std[0] / std_scaling)
+        upper_bound.append(y_value_mean[0] + y_value_std[0] / std_scaling)
+    else:
+        pass
 
     fig, ax = plt.subplots(1)
 
@@ -456,7 +471,9 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     plt.grid(True, color='gray', linestyle='--', linewidth=0.5)
     # ax.set_xlim([-np.amax(a_to_b_param) * 0.05 + np.amin(a_to_b_param), np.amax(a_to_b_param) * 1.05])
     ax.set_xlim([np.amin(a_to_b_param), np.amax(a_to_b_param)])
-    ax.set_ylim([-0.1, 1.1])
+
+    if plot_type == 'probability':
+        ax.set_ylim([-0.1, 1.1])
     start, end = ax.get_xlim()
 
     ax.xaxis.set_ticks(steps)
@@ -474,6 +491,15 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
                     markersize=markersize)
             ax.fill_between(a_to_b_param, lower_bound[prob_idx], upper_bound[prob_idx], facecolor=colors_plot[prob_idx],
                             alpha=0.2, edgecolor=colors_plot[prob_idx], linewidth=0.0)
+    elif plot_type == 'uncertainty':
+        ax.plot(a_to_b_param, y_value_mean[0], marker='o', linestyle='-', color=colors_plot[0],
+                label=labels_sel[0], linewidth=linewidth, markeredgecolor=colors_plot[0],
+                markersize=markersize)
+        ax.fill_between(a_to_b_param, np.array(lower_bound).reshape(-1), np.array(upper_bound).reshape(-1)
+                        , facecolor=colors_plot[0],
+                        alpha=0.2, edgecolor=colors_plot[0], linewidth=0.0)
+    else:
+        pass
 
     ax.set_xlabel(x_label, fontsize=15)
 
@@ -505,9 +531,9 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         frame.set_edgecolor((32 / 255, 32 / 255, 32 / 255))
 
     if filename_suffix == ".png":
-        plt.savefig(filename.rsplit('.', 1)[0] + filename_suffix, format="png")
+        plt.savefig(filename.rsplit('.', 1)[0] + '_' + plot_type + filename_suffix, format="png")
     elif filename_suffix == ".svg":
-        plt.savefig(filename.rsplit('.', 1)[0] + filename_suffix, format="svg")
+        plt.savefig(filename.rsplit('.', 1)[0] + '_' + plot_type + filename_suffix, format="svg")
     else:
         raise Exception("Filename suffix {0} is not a valid file format.".format(filename_suffix))
 
