@@ -583,7 +583,7 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
     label_present = [True if 'label' in ase_atoms.info.keys() else False for ase_atoms in ase_atoms_list_with_op]
     if not np.all(label_present):
         logger.info("Some structures in the list do not have labels. Adding or substituting labels.")
-        logger.info("Default labels given by the order in the list (1st structure: label=struct-1)")
+        logger.info("Default labels given by the order in the list (1st structure: label=struct-0)")
         logger.info("To avoid this add a label to each ASE structure using ase_atoms.info['label']='your_label'")
 
         # substitute and add default labels

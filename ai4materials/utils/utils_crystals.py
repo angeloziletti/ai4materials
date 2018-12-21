@@ -27,6 +27,11 @@ from ase.build import find_optimal_cell_shape_pure_python
 from ase.build import get_deviation_from_optimal_cell_shape
 from ase.build import make_supercell
 from ase.spacegroup import get_spacegroup as ase_get_spacegroup
+from ase import units
+from ase.lattice.cubic import FaceCenteredCubic
+from ase.md.langevin import Langevin
+from asap3 import EMT
+import ase.calculators.emt
 import ase
 import os
 import sys
@@ -598,37 +603,118 @@ def radius_to_replicas(atoms, min_nb_atoms, radius):
     return replicas
 
 
-# def _align_supercell(atoms):
-#     """Coherent point drift registration. Only a stub, it does not work."""
-#     import pycpd
-#     from functools import partial
-#
-#     phi = np.random.uniform() * 360.0
-#     theta = np.random.uniform() * 180.0
-#     psi = np.random.uniform() * 360.0
-#     atoms = rotate_atoms(atoms, phi=phi, theta=theta, psi=psi)
-#
-#     logger.debug("Euler angles for rotation. phi: {}, theta {}, psi {}".format(phi, theta, psi))
-#
-#     positions = atoms.get_positions()
-#     atoms_rot = rotate_atoms(atoms, phi=phi, theta=theta, psi=psi)
-#     rotated_positions = atoms_rot.get_positions()
-#
-#     def visualize(iteration, error, coord, coord_rot, ax_plot):
-#         plt.cla()
-#         ax_plot.scatter(coord[:, 0], coord[:, 1], coord[:, 2], color='red')
-#         ax_plot.scatter(coord_rot[:, 0], coord_rot[:, 1], coord_rot[:, 2], color='blue')
-#         plt.draw()
-#         print("iteration %d, error %.5f" % (iteration, error))
-#         plt.pause(0.001)
-#
-#     fig = plt.figure()
-#     ax = fig.add_subplot(111, projection='3d')
-#     callback = partial(visualize, ax_plots=ax)
-#
-#     reg = pycpd.rigid_registration(positions, rotated_positions, maxIterations=1e6, tolerance=1.e-10)
-#     reg.register(callback)
-#     plt.show()
+def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=5, max_nb_trials=1000, backend='asap',
+                      supercell_size=3):
+    """Starting from a crystal structure, run Langevin dynamics, and extract configurations at given temperatures.
+
+    At present, the structure is FCC copper and the dynamics in Langevin dynamics, but in principle any structure
+    and dynamics supported by ASE and/or ASAP can be used.
+    The target temperatures are determined use `numpy.linspace(min_target_t, max_target_t, steps_t)`.
+
+    Parameters:
+
+    min_target_t: float
+        Smallest target temperature for the Langevin dynamics.
+
+    max_target_t: float
+        Largest target temperature for the Langevin dynamics.
+
+    steps_t: int, optional (default=11)
+        Number of intermediate temperature to be considered between `min_target_t` and `max_target_t`
+
+    n_samples: int, optional (default=5)
+        Number of different atomic structures to extract at each temperature.
+
+    max_nb_trials: int, optional (default=1000)
+        Number of (short) molecular dynamics runs (for each temperature) in order to obtain the number of
+        configurations needed for a given temperature.
+
+    backend: str, optional (default='asap')
+        Backend to be used in running the Langevin dynamics. Possible choices are 'asap' or 'ase'.
+        'asap' is approximately two orders of magnitude faster than 'ase', but it can generate
+        compatibility problems when writing to file.
+
+    supercell_size: int, optional (default=3)
+        Number of periodic replicas to be used for bulk copper in the calculation.
+
+
+    Returns:
+
+    list of int
+        List of atomic structure at target temperatures as `ase.Atoms` object. The temperature of each configuration
+        is stored in item.info['temp']
+
+    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+
+    """
+
+    def save_temp(atoms):  # store a reference to atoms in the definition.
+        """Function to save the actual temperature in the atoms structure"""
+        ekin = atoms.get_kinetic_energy() / len(atoms)
+        temp = ekin / (1.5 * units.kB)
+        atoms.info['temp'] = temp
+        return atoms
+
+    ase_atoms_list = []
+
+    target_temps = np.linspace(min_target_t, max_target_t, steps_t)
+
+    for target_temp in target_temps:
+
+        atoms = FaceCenteredCubic(symbol="Cu", size=(supercell_size, supercell_size, supercell_size), pbc=True)
+        # Describe the interatomic interactions with the Effective Medium Theory
+        # see here for supported chemical elements (fcc only)
+        # https://wiki.fysik.dtu.dk/asap/EMT
+        # set up a crystal
+        if backend == 'asap':
+            # ASAP3 calculator
+            atoms.set_calculator(EMT())
+        elif backend == 'ase':
+            # we use  the much slower ASE implementation because it is not possible to save an ASE db to file
+            # if we use the ASAP calculator
+            atoms.set_calculator(ase.calculators.emt.EMT())
+        else:
+            raise Exception("Please specify a valid backend. Valid backends are: 'asap', 'ase'.")
+
+        # We want to run MD with constant energy using the Langevin algorithm
+        # with a time step of 5 fs, the temperature T and the friction
+        # coefficient to 0.02 atomic units.
+        dyn = Langevin(atoms, 1 * units.fs, target_temp * units.kB, 0.02)
+
+        logger.info("Running dynamics for temp {}".format(target_temp))
+        # # now run the dynamics
+        # for i in range(n_samples):
+        dyn.run(1000)
+        atoms = save_temp(atoms)
+
+        interval = 100
+        idx_sample = 0
+        idx_trial = 0
+
+        while idx_sample <= n_samples:
+            logger.info("Trial number: {}".format(idx_trial))
+            dyn.run(interval)
+            atoms = save_temp(atoms)
+            # print(atoms.info['temp'])
+            if int(round(atoms.info['temp'])) == target_temp:
+                logger.info("Adding configuration with target temp {}".format(atoms.info['temp']))
+                # you need to deepcopy the object
+                atoms_out = copy.deepcopy(atoms)
+                ase_atoms_list.append(atoms_out)
+                idx_sample += 1
+
+                if idx_sample >= n_samples:
+                    logger.info("Reached target n_samples for temp {}: {}".format(target_temp, n_samples))
+                    break
+
+            idx_trial += 1
+
+            if idx_trial >= max_nb_trials:
+                raise Exception("Maximum number of trials ({}) exceeded.".format(max_nb_trials))
+
+        del atoms
+
+    return ase_atoms_list
 
 
 def standardize_cell(atoms, cell_type):
