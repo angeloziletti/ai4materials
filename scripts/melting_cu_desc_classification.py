@@ -41,6 +41,7 @@ if __name__ == "__main__":
     from ai4materials.utils.utils_plotting import make_crossover_plot
     from ai4materials.utils.utils_crystals import get_md_structures
     from ai4materials.wrappers import load_descriptor
+    from ai4materials.utils.utils_data_retrieval import write_ase_db
     from ai4materials.utils.utils_data_retrieval import generate_facets_input
     from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
     from ai4materials.dataprocessing.preprocessing import prepare_dataset
@@ -103,18 +104,29 @@ if __name__ == "__main__":
     # Read prototype data from files
     # =============================================================================
 
-    ase_atoms_list = get_md_structures(min_target_t=0., max_target_t=600., steps_t=21, n_samples=2, max_nb_trials=1000,
-                                       backend='asap', supercell_size=3)
+    steps_t = 61
+    nb_samples = 20
+    min_target_t = 0.
+    max_target_t = 600.
+
+    target_temps = np.linspace(min_target_t, max_target_t, steps_t)
+
+    ase_atoms_list = get_md_structures(min_target_t=min_target_t, max_target_t=max_target_t, steps_t=steps_t,
+                                       nb_samples=nb_samples,
+                                       max_nb_trials=100000, backend='asap', supercell_size=4)
+
+    ase_db_filename = write_ase_db(ase_atoms_list, main_folder, db_name='cu_copper', db_type='db', overwrite=True,
+                         folder_name='db_ase')  # for item in ase_atoms_list:
+
+    ase_atoms_list = read_ase_db(ase_db_filename)
 
     desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
                                                tmp_folder=configs['io']['tmp_folder'],
                                                desc_folder=configs['io']['desc_folder'],
                                                desc_file='melting_cu_55.tar.gz', format_geometry='aims',
-                                               # operations_on_structure=operations_on_structure_list[0],
                                                operations_on_structure=None,
-                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
+                                               nb_jobs=6)
 
-    # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/sc_to_rocksalt.tar.gz'
     desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/melting_cu_55.tar.gz'
 
     # now prepare the dataset
@@ -123,11 +135,6 @@ if __name__ == "__main__":
 
     # sort the structures according to the original label
     structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
-
-    # create a texture atlas with all the two-dimensional diffraction fingerprints
-    # df, texture_atlas = generate_facets_input(structure_list=structure_list, desc_metadata='diffraction_3d_sh_spectrum',
-    #                                           target_list=target_list, sprite_atlas_filename=desc_file_path,
-    #                                           configs=configs, normalize=True)
 
     path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
                                                             desc_metadata='diffraction_3d_sh_spectrum',
@@ -179,14 +186,16 @@ if __name__ == "__main__":
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
                       conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=1000)
 
-    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=5, nb_order_param_steps=11,
-                                             max_order_param=1.0, prob_idxs=[0, 1, 2, 3, 4])
+    df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=nb_samples,
+                                             nb_order_param_steps=steps_t,
+                                             min_order_param=min_target_t,
+                                             max_order_param=max_target_t, prob_idxs=[0, 1, 2, 3, 4])
 
     make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
-                        nb_order_param_steps=10, filename_suffix=".png", title="Rocksalt with different Delta Z",
+                        nb_order_param_steps=steps_t, filename_suffix=".png", title="Rocksalt with different Delta Z",
                         x_label="Delta Z", show_plot=False, markersize=3.0)
 
     make_crossover_plot(df_results, results_file, plot_type='uncertainty', labels=["$mc_{1000}$"],
-                        nb_order_param_steps=21, filename_suffix=".svg", title="From rocksalt to fcc",
+                        nb_order_param_steps=steps_t, filename_suffix=".svg", title="From rocksalt to fcc",
                         x_label="Central atoms removed (%)", show_plot=False, markersize=1.0, palette=['black'])

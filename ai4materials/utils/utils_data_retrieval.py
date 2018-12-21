@@ -729,7 +729,7 @@ def write_ase_db(ase_atoms_list, main_folder, db_name='my_ase_db', db_type='db',
     for idx, atoms in enumerate(ase_atoms_list):
         if idx % (int(len(ase_atoms_list) / 10) + 1) == 0:
             logger.info("Writing: file {0}/{1} "
-                        "to ASE database in ".format(idx + 1, len(ase_atoms_list)))
+                        "to ASE database".format(idx + 1, len(ase_atoms_list)))
         # write structure to ASE database
         # other info https://wiki.fysik.dtu.dk/ase/ase/db/db.html?highlight=db#ase-db
         db.write(atoms, data=atoms.info)

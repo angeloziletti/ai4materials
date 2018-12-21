@@ -22,13 +22,14 @@ __maintainer__ = "Angelo Ziletti"
 __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
+from ase import Atoms
 from ase.neighborlist import NeighborList
 from ase.build import find_optimal_cell_shape_pure_python
 from ase.build import get_deviation_from_optimal_cell_shape
 from ase.build import make_supercell
 from ase.spacegroup import get_spacegroup as ase_get_spacegroup
 from ase import units
-from ase.lattice.cubic import FaceCenteredCubic
+from ase.spacegroup import crystal
 from ase.md.langevin import Langevin
 from asap3 import EMT
 import ase.calculators.emt
@@ -146,7 +147,7 @@ def get_spacegroup(atoms, symprec=None, angle_tolerance=-1.0):
     spacegroup_nbs = []
     for key, value in space_group_analyzer.items():
         spacegroup_nb = value.get_space_group_number()
-        atoms.info['spacegroup_nb_'+str(key)] = spacegroup_nb
+        atoms.info['spacegroup_nb_' + str(key)] = spacegroup_nb
         spacegroup_nbs.append(spacegroup_nb)
 
     return spacegroup_nbs
@@ -464,8 +465,8 @@ def spacegroup_a_to_spacegroup_b(atoms, spgroup_a, spgroup_b, target_b_contribut
             # 1/2 of the cell length or position (0.0, 0.0, 0.0)
             cell_length = atoms.get_cell_lengths_and_angles()[0]
             if abs(atoms.positions[idx][0] - cell_length / 2.0) <= TOL or abs(
-                atoms.positions[idx][1] - cell_length / 2.0) <= TOL or abs(
-                    atoms.positions[idx][2] - cell_length / 2.0) <= TOL:
+                    atoms.positions[idx][1] - cell_length / 2.0) <= TOL or abs(
+                atoms.positions[idx][2] - cell_length / 2.0) <= TOL:
                 pass
             elif (abs(atoms.positions[idx][0]) <= TOL and abs(atoms.positions[idx][1]) <= TOL and abs(
                     atoms.positions[idx][2]) <= TOL):
@@ -603,7 +604,7 @@ def radius_to_replicas(atoms, min_nb_atoms, radius):
     return replicas
 
 
-def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=5, max_nb_trials=1000, backend='asap',
+def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples=5, max_nb_trials=100000, backend='asap',
                       supercell_size=3):
     """Starting from a crystal structure, run Langevin dynamics, and extract configurations at given temperatures.
 
@@ -622,7 +623,7 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=
     steps_t: int, optional (default=11)
         Number of intermediate temperature to be considered between `min_target_t` and `max_target_t`
 
-    n_samples: int, optional (default=5)
+    nb_samples: int, optional (default=5)
         Number of different atomic structures to extract at each temperature.
 
     max_nb_trials: int, optional (default=1000)
@@ -661,7 +662,10 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=
 
     for target_temp in target_temps:
 
-        atoms = FaceCenteredCubic(symbol="Cu", size=(supercell_size, supercell_size, supercell_size), pbc=True)
+        a = 3.597
+        atoms = crystal('Cu', [(0, 0, 0)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90])*supercell_size
+
+        # atoms = FaceCenteredCubic(symbol="Cu", size=(supercell_size, supercell_size, supercell_size), pbc=True)
         # Describe the interatomic interactions with the Effective Medium Theory
         # see here for supported chemical elements (fcc only)
         # https://wiki.fysik.dtu.dk/asap/EMT
@@ -691,8 +695,8 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=
         idx_sample = 0
         idx_trial = 0
 
-        while idx_sample <= n_samples:
-            logger.info("Trial number: {}".format(idx_trial))
+        while idx_sample <= nb_samples:
+            logger.debug("Trial number: {}".format(idx_trial))
             dyn.run(interval)
             atoms = save_temp(atoms)
             # print(atoms.info['temp'])
@@ -703,8 +707,8 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=
                 ase_atoms_list.append(atoms_out)
                 idx_sample += 1
 
-                if idx_sample >= n_samples:
-                    logger.info("Reached target n_samples for temp {}: {}".format(target_temp, n_samples))
+                if idx_sample >= nb_samples:
+                    logger.info("Reached target n_samples for temp {}: {}".format(target_temp, nb_samples))
                     break
 
             idx_trial += 1
@@ -713,6 +717,25 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, n_samples=
                 raise Exception("Maximum number of trials ({}) exceeded.".format(max_nb_trials))
 
         del atoms
+
+    # convert the list of structures obtain from ASAP to ASE
+    # currently, it is not possible to write ASAP structures directly, so we make new ASE structures from the
+    # structures obtained from ASAP
+    if backend == 'asap':
+        ase_atoms_list_new = []
+        for item in ase_atoms_list:
+
+            atomic_nbs = item.get_atomic_numbers()
+            new_item = Atoms(symbols=atomic_nbs)
+
+            new_item.set_pbc(item.get_pbc())
+            new_item.set_positions(item.get_positions())
+            new_item.set_cell(item.get_cell())
+            new_item.info = item.info
+
+            ase_atoms_list_new.append(new_item)
+
+        ase_atoms_list = copy.deepcopy(ase_atoms_list_new)
 
     return ase_atoms_list
 
@@ -761,8 +784,7 @@ def standardize_cell(atoms, cell_type):
 
 
 def create_supercell(atoms, create_replicas_by='nb_atoms', min_nb_atoms=None, target_nb_atoms=None,
-                     max_diff_nb_atoms=100, random_rotation_before=False, random_rotation=False,
-                     cell_type=None,
+                     max_diff_nb_atoms=100, random_rotation_before=False, random_rotation=False, cell_type=None,
                      optimal_supercell=False, radius=None, target_replicas=None):
     """Create a supercell specifying using a specified method.
 
@@ -1244,9 +1266,8 @@ def get_min_distance(atoms, nb_splits=100):
     return shortest_distance
 
 
-def get_nn_distance(atoms, distribution='quantile_nn', cutoff=4.0,
-                    min_nb_nn=5, pbc=True, plot_histogram=False, bins=100, constrain_nn_distances=True,
-                    nn_distances_cutoff=0.9):
+def get_nn_distance(atoms, distribution='quantile_nn', cutoff=4.0, min_nb_nn=5, pbc=True, plot_histogram=False,
+                    bins=100, constrain_nn_distances=True, nn_distances_cutoff=0.9):
     """Calculate an "averaged" (actual average or quantile-based) nearest neighbors distance.
     This is a measure of the characteristic structural lengthscale of the system.
 
@@ -1335,12 +1356,10 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=4.0,
         else:
             logger.debug("Atom {} has less than {} neighbours. Skipping.".format(idx, min_nb_nn))
 
-
     if constrain_nn_distances:
-         # Select all nearest neighbor distances larger than nn_distances_cutoff
-         threshold_indices = np.array(nn_dist) > nn_distances_cutoff 
-         nn_dist = np.extract(threshold_indices , nn_dist)
-
+        # Select all nearest neighbor distances larger than nn_distances_cutoff
+        threshold_indices = np.array(nn_dist) > nn_distances_cutoff
+        nn_dist = np.extract(threshold_indices, nn_dist)
 
     if distribution == 'avg_nn':
         length_scale = np.mean(nn_dist)
@@ -1352,7 +1371,7 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=4.0,
         # the are of the spherical shells grows like r**2
         hist_scaled = []
         for idx_shell, hist_i in enumerate(hist):
-            hist_scaled.append(float(hist_i)/(bin_edges[idx_shell]**2))
+            hist_scaled.append(float(hist_i) / (bin_edges[idx_shell] ** 2))
 
         length_scale = (bin_edges[np.argmax(hist_scaled)] + bin_edges[np.argmax(hist_scaled) + 1]) / 2.0
 
@@ -1419,22 +1438,20 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
                 if min_scale_factor < scale_factor < max_scale_factor:
                     logger.debug("Cut off of {0} was successful".format(cutoff))
                     logger.debug("Scale factor: {}".format(scale_factor))
-                    logger.debug(
-                        "Scale factor with extrinsic scaling: {} Angstrom".format(
-                            scale_factor * extrinsic_scale_factor))
+                    logger.debug("Scale factor with extrinsic scaling: {} Angstrom".format(
+                        scale_factor * extrinsic_scale_factor))
                     break
                 else:
                     logger.info("Unable to obtain a physically meaningful scaling factor.")
                     logger.info("Scale factor: {} Angstrom".format(scale_factor))
-                    logger.debug(
-                        "Scale factor with extrinsic scaling: {} Angstrom".format(
-                            scale_factor * extrinsic_scale_factor))
-                    logger.info("Increasing cutoff from {} to {} Angstrom".format(
-                        atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))
+                    logger.debug("Scale factor with extrinsic scaling: {} Angstrom".format(
+                        scale_factor * extrinsic_scale_factor))
+                    logger.info("Increasing cutoff from {} to {} Angstrom".format(atoms_scaling_cutoffs[idx_cutoff],
+                        atoms_scaling_cutoffs[idx_cutoff + 1]))
             else:
                 logger.info("Unable to obtain a scaling factor.")
-                logger.info("Increasing cutoff from {} to {} Angstrom".format(
-                    atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))
+                logger.info("Increasing cutoff from {} to {} Angstrom".format(atoms_scaling_cutoffs[idx_cutoff],
+                    atoms_scaling_cutoffs[idx_cutoff + 1]))
     else:
         raise ValueError("Not recognized option for scaling_type. "
                          "Possible values are: 'min_nn', 'avg_nn', or 'quantile_nn'.")
@@ -1457,11 +1474,10 @@ def get_spacegroup_old(structure, materials_class=None):
 
     if materials_class == 'binaries':
         # Get chemical formula with two elements and total energy per binary.
-        chemical_formula = get_chemical_formula_binaries(structure)
-        # energy_total = 2 * structure.energy_total / len(structure)
+        chemical_formula = get_chemical_formula_binaries(
+            structure)  # energy_total = 2 * structure.energy_total / len(structure)
     else:
-        chemical_formula = structure.chemical_formula
-        # energy_total = structure.energy_total
+        chemical_formula = structure.chemical_formula  # energy_total = structure.energy_total
 
     spacegroup_number = ase_get_spacegroup(structure, symprec=1e-03).no
 
@@ -1650,8 +1666,8 @@ def format_e(n):
 
 
 def filter_ase_list_by_label(ase_list, folder_name, cell_type='standard_no_symmetries', main_folder=None,
-                             filter_by=None, accepted_labels=None, write_to_file=False,
-                             symprec=None, all_symprec_consistent=True):
+                             filter_by=None, accepted_labels=None, write_to_file=False, symprec=None,
+                             all_symprec_consistent=True):
     """ Filter the ase_list for the descriptor according to the spgroup value.
 
     Example:
@@ -1696,8 +1712,7 @@ def filter_ase_list_by_label(ase_list, folder_name, cell_type='standard_no_symme
         for key, value in space_group_analyzer.items():
             atoms.info['spacegroup_nb'][str(key)] = value.get_space_group_number()
             atoms.info['crystal_system'][str(key)] = value.get_crystal_system()
-            atoms.info['lattice_type'][str(key)] = value.get_lattice_type()
-            # labels.update({'json_file': json_file})
+            atoms.info['lattice_type'][str(key)] = value.get_lattice_type()  # labels.update({'json_file': json_file})
 
         if filter_by is not None:
             filter_count = 0
@@ -1847,7 +1862,7 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
     coordinate_vector_and_element_list = []  # 2D list with each element = [coordinate vector(1D list),'element name']
     lines = f.readlines()[2:]  # skip first two lines since they do not contain coordinates,
     # only number of total atoms and a comment line
-    
+
     for line in lines:
         # Save all x,y and z coordinates in separate arrays
         # to determine min,max and range later on
@@ -1866,19 +1881,19 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
     z_max = max(z) + padding[2]
     z_min = min(z) - padding[2]
 
-    x_range = x_max-x_min
-    y_range = y_max-y_min
-    z_range = z_max-z_min
+    x_range = x_max - x_min
+    y_range = y_max - y_min
+    z_range = z_max - z_min
 
     logger.info("x range: {}".format(x_range))
     logger.info("y range: {}".format(y_range))
     logger.info("z range: {}".format(z_range))
-    
+
     # Size of sliding window
     x_sliding_volume_edge_length = sliding_volume[0]
     y_sliding_volume_edge_length = sliding_volume[1]
     z_sliding_volume_edge_length = sliding_volume[2]
-    
+
     # Step size for sliding window
     step_size_x = stride_size[0]
     step_size_y = stride_size[1]
@@ -1905,8 +1920,8 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
     max_vector = np.array([x_max, y_max, z_max])
 
     number_of_strides_vector = np.array(
-        [int(math.floor(x_range/step_size_x))+1, int(math.floor(y_range/step_size_y))+1,
-         int(math.floor(z_range/step_size_z))+1])
+        [int(math.floor(x_range / step_size_x)) + 1, int(math.floor(y_range / step_size_y)) + 1,
+         int(math.floor(z_range / step_size_z)) + 1])
 
     stride_size_vector = np.array([step_size_x, step_size_y, step_size_z])
     sliding_volume_vector = np.array(
@@ -1914,8 +1929,8 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
 
     if adapt:
         # take number_of_strides_vector-1 because first step at minimum taken into account
-        overhang = min_vector+np.multiply(number_of_strides_vector-1,
-                                          stride_size_vector)+sliding_volume_vector-max_vector
+        overhang = min_vector + np.multiply(number_of_strides_vector - 1,
+                                            stride_size_vector) + sliding_volume_vector - max_vector
 
         logger.debug("Minimum: {}".format(min_vector))
         logger.debug("Maximum: {}".format(max_vector))
@@ -1923,9 +1938,9 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
         logger.debug("Stride size: {}".format(stride_size_vector))
         logger.debug("Sliding volume: {}".format(sliding_volume_vector))
         logger.debug("Resulting overhang: {}".format(overhang))
-            
+
         for i in range(0, 3):  # go through x,y,z coordinates of overhang vector
-            
+
             # If overhang is negative, i.e. sliding box is so small that in the last step structure is potentially lost,
             # increase the number of strides automatically until overhang becomes positive (or zero)
             if overhang[i] < 0:
@@ -1933,19 +1948,19 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
                     logger.debug("In direction x_{}: overhang<0".format(str(i)))
                     number_of_strides_vector[i] += 1
                     # need to recompute overhang
-                    overhang[i] = min_vector[i] + (number_of_strides_vector[i]-1)*stride_size_vector[i] + \
-                        sliding_volume_vector[i] - max_vector[i]
+                    overhang[i] = min_vector[i] + (number_of_strides_vector[i] - 1) * stride_size_vector[i] + \
+                                  sliding_volume_vector[i] - max_vector[i]
                     logger.debug("In direction x_{}: residual overhang = {}".format(str(i), str(overhang[i])))
-            
+
             if overhang[i] == 0.0:
                 logger.debug("In direction x_{}: overhang=0".format(str(i)))
-    
+
             # At this point the overhang is either zero or positive.
             # In the latter case, half of the overhang is subtracted from the minimum vector such that
             # boundary effects in the heatmaps are reduced
             if overhang[i] > 0:
                 logger.debug("In direction x_{}: overhang>0".format(str(i)))
-                min_vector[i] = min_vector[i]-(overhang[i]/2.0)
+                min_vector[i] = min_vector[i] - (overhang[i] / 2.0)
 
         logger.debug("New min: {}".format(min_vector))
         logger.debug("New number of strides: {}".format(number_of_strides_vector))
@@ -1955,9 +1970,10 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
     z_min = min_vector[2]
 
     # Now determine boxes
-    
+
     # start vector
-    start = [x_min+x_sliding_volume_edge_length, y_min+y_sliding_volume_edge_length, z_min+z_sliding_volume_edge_length]
+    start = [x_min + x_sliding_volume_edge_length, y_min + y_sliding_volume_edge_length,
+             z_min + z_sliding_volume_edge_length]
     logger.debug("Start vector: {}".format(start))
 
     list_of_xyz_boxes = []
@@ -1969,78 +1985,78 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
 
         list_of_xy_boxes = []
         number_of_atoms_xy = []
-        
+
         for i in range(number_of_strides_vector[1]):
-            
+
             list_of_x_boxes = []
             number_of_atoms_x = []
-            
+
             for j in range(number_of_strides_vector[0]):
-                
+
                 # Determine atoms within sliding box
                 positionvectors_within_sliding_volume = []
                 element_names_within_sliding_volume = ''
 
                 for vector, element_name in coordinate_vector_and_element_list:
-                    condition = vector[0] <= start[0] and vector[1] <= start[1] and vector[2] <= start[2] \
-                                and vector[0] >= (start[0]-x_sliding_volume_edge_length) \
-                                and vector[1] >= (start[1]-y_sliding_volume_edge_length) \
-                                and vector[2] >= (start[2]-z_sliding_volume_edge_length)
-                    
+                    condition = vector[0] <= start[0] and vector[1] <= start[1] and vector[2] <= start[2] and vector[
+                        0] >= (start[0] - x_sliding_volume_edge_length) and vector[1] >= (
+                                            start[1] - y_sliding_volume_edge_length) and vector[2] >= (
+                                            start[2] - z_sliding_volume_edge_length)
+
                     if condition:
                         positionvectors_within_sliding_volume.append(vector)
                         element_names_within_sliding_volume += element_name
-                
+
                 if len(positionvectors_within_sliding_volume) == 0:
                     number_of_atoms_x.append(0)
-                    
+
                     element_name = element_names_within_sliding_volume  # should be ''
                     # create ase Atoms object Atoms(symbols='',pbc=False)
                     atoms_within_sliding_volume = ase.Atoms(element_name)
                     # Optional: assign label
                     # atoms_within_sliding_volume.info['label']='box_label_'+str(i)+str(j)+str(k)
                     list_of_x_boxes.append(atoms_within_sliding_volume)
-                    
+
                 else:
                     number_of_atoms_x.append(len(positionvectors_within_sliding_volume))
-                    
+
                     if element_agnostic:
-                        element_name = 'Fe'+str(len(positionvectors_within_sliding_volume))
+                        element_name = 'Fe' + str(len(positionvectors_within_sliding_volume))
                     else:
                         element_name = element_names_within_sliding_volume
                     atoms_within_sliding_volume = ase.Atoms(element_name, positionvectors_within_sliding_volume)
                     # Optional: assign label
                     # atoms_within_sliding_volume.info['label']='box_label_'+str(i)+str(j)+str(k)
                     list_of_x_boxes.append(atoms_within_sliding_volume)
-                
+
                 start[0] += step_size_x
 
             number_of_atoms_xy.append(number_of_atoms_x)
             list_of_xy_boxes.append(list_of_x_boxes)
-            start[0] = x_min+x_sliding_volume_edge_length  # Reset x_value after most inner for loop finished
+            start[0] = x_min + x_sliding_volume_edge_length  # Reset x_value after most inner for loop finished
             start[1] += step_size_y  # next y
-        
+
         number_of_atoms_xyz.append(number_of_atoms_xy)
         list_of_xyz_boxes.append(list_of_xy_boxes)
-        start[1] = y_min+y_sliding_volume_edge_length  # Reset y_value for next z coordinate
+        start[1] = y_min + y_sliding_volume_edge_length  # Reset y_value for next z coordinate
         start[2] += step_size_z
-        
+
     if give_atom_density:
-        
+
         if plot_atom_density:
-            
+
             z = 0
             for xy_density in number_of_atoms_xyz:
                 plt.xlabel('x $[\mathrm{\AA}]$')
                 plt.ylabel('y $[\mathrm{\AA}]$')
                 plt.title('Atom density for z=' + str(z))
                 plt.imshow(xy_density, interpolation='hanning', cmap='viridis',
-                           extent=[0, (len(xy_density[0]))*stride_size[0], (len(xy_density))*stride_size[1], 0])
+                           extent=[0, (len(xy_density[0])) * stride_size[0], (len(xy_density)) * stride_size[1], 0])
                 plt.colorbar()
                 plt.show()
                 plt.savefig(filename[:-4] + '_Atom_density_for_z=' + str(z) + '.png')
                 plt.close()
-                
+
                 z += stride_size[2]
 
         return list_of_xyz_boxes, number_of_atoms_xyz
