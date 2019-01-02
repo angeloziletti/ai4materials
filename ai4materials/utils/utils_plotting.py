@@ -398,7 +398,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, nb
 
     # colors from https://matplotlib.org/examples/color/named_colors.html
     if palette is None:
-        palette = ['green', 'blue', 'indigo', 'red', 'olive', 'orange', 'black']
+        palette = ['yellow', 'red', 'blue', 'green', 'purple', 'orange', 'black']
 
     a_to_b_param = df_results.a_to_b_index_.values
 

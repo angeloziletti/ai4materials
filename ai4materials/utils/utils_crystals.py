@@ -604,8 +604,8 @@ def radius_to_replicas(atoms, min_nb_atoms, radius):
     return replicas
 
 
-def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples=5, max_nb_trials=100000, backend='asap',
-                      supercell_size=3):
+def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples=5, max_nb_trials=100000,
+                      backend='asap', supercell_size=3):
     """Starting from a crystal structure, run Langevin dynamics, and extract configurations at given temperatures.
 
     At present, the structure is FCC copper and the dynamics in Langevin dynamics, but in principle any structure

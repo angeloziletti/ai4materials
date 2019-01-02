@@ -109,42 +109,40 @@ if __name__ == "__main__":
     min_target_t = 0.
     max_target_t = 600.
 
-    target_temps = np.linspace(min_target_t, max_target_t, steps_t)
+    # ase_atoms_list = get_md_structures(min_target_t=min_target_t, max_target_t=max_target_t, steps_t=steps_t,
+    #                                    nb_samples=nb_samples,
+    #                                    max_nb_trials=100000, backend='asap', supercell_size=4)
 
-    ase_atoms_list = get_md_structures(min_target_t=min_target_t, max_target_t=max_target_t, steps_t=steps_t,
-                                       nb_samples=nb_samples,
-                                       max_nb_trials=100000, backend='asap', supercell_size=4)
+    # ase_db_filename = write_ase_db(ase_atoms_list, main_folder, db_name='cu_copper_61steps_0_600_sc4',
+    #                                db_type='db', overwrite=True, folder_name='db_ase')  # for item in ase_atoms_list:
+    #
+    # ase_atoms_list = read_ase_db(ase_db_filename)
 
-    ase_db_filename = write_ase_db(ase_atoms_list, main_folder, db_name='cu_copper', db_type='db', overwrite=True,
-                         folder_name='db_ase')  # for item in ase_atoms_list:
+    # desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
+    #                                            tmp_folder=configs['io']['tmp_folder'],
+    #                                            desc_folder=configs['io']['desc_folder'],
+    #                                            desc_file='cu_copper_61steps_0_600_sc4.tar.gz', format_geometry='aims',
+    #                                            operations_on_structure=None,
+    #                                            nb_jobs=6)
 
-    ase_atoms_list = read_ase_db(ase_db_filename)
-
-    desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
-                                               tmp_folder=configs['io']['tmp_folder'],
-                                               desc_folder=configs['io']['desc_folder'],
-                                               desc_file='melting_cu_55.tar.gz', format_geometry='aims',
-                                               operations_on_structure=None,
-                                               nb_jobs=6)
-
-    desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/melting_cu_55.tar.gz'
+    # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/cu_copper_61steps_0_600_sc4.tar.gz'
 
     # now prepare the dataset
     # load the previously saved file containing the crystal structures and their corresponding descriptor
-    target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
+    # target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
 
     # sort the structures according to the original label
-    structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
-
-    path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
-                                                            desc_metadata='diffraction_3d_sh_spectrum',
-                                                            dataset_name='cu_melting', target_name='target',
-                                                            target_categorical=True, input_dims=(52, 32),
-                                                            configs=configs,
-                                                            dataset_folder=configs['io']['dataset_folder'],
-                                                            main_folder=configs['io']['main_folder'],
-                                                            desc_folder=configs['io']['desc_folder'],
-                                                            tmp_folder=configs['io']['tmp_folder'])
+    # structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
+    #
+    # path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
+    #                                                         desc_metadata='diffraction_3d_sh_spectrum',
+    #                                                         dataset_name='cu_melting', target_name='target',
+    #                                                         target_categorical=True, input_dims=(52, 32),
+    #                                                         configs=configs,
+    #                                                         dataset_folder=configs['io']['dataset_folder'],
+    #                                                         main_folder=configs['io']['main_folder'],
+    #                                                         desc_folder=configs['io']['desc_folder'],
+    #                                                         tmp_folder=configs['io']['tmp_folder'])
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
@@ -182,20 +180,21 @@ if __name__ == "__main__":
     conf_matrix_file = os.path.abspath(
         os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
 
-    results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
-                      nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
-                      conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=1000)
+    # results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
+    #                   nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],
+    #                   conf_matrix_file=conf_matrix_file, results_file=results_file, mc_samples=1000)
 
     df_results = aggregate_struct_trans_data(results_file, nb_rows_to_cut=0, nb_samples=nb_samples,
                                              nb_order_param_steps=steps_t,
                                              min_order_param=min_target_t,
-                                             max_order_param=max_target_t, prob_idxs=[0, 1, 2, 3, 4])
+                                             max_order_param=max_target_t, prob_idxs=[0, 2])
 
-    make_crossover_plot(df_results, results_file, prob_idxs=[0, 1, 2, 3, 4],
+    make_crossover_plot(df_results, results_file, prob_idxs=[0, 2],
                         labels=["$p_{hcp}$", "$p_{sc}$", "$p_{fcc}$", "$p_{diam}$", "$p_{bcc}$"],
-                        nb_order_param_steps=steps_t, filename_suffix=".png", title="Rocksalt with different Delta Z",
-                        x_label="Delta Z", show_plot=False, markersize=3.0)
+                        nb_order_param_steps=31, filename_suffix=".svg", title="FCC to amorphous",
+                        x_label="Temperature [K]", show_plot=False, markersize=3.0,
+                        palette=['olive', 'red', 'blue', 'green', 'purple', 'orange', 'black'])
 
     make_crossover_plot(df_results, results_file, plot_type='uncertainty', labels=["$mc_{1000}$"],
-                        nb_order_param_steps=steps_t, filename_suffix=".svg", title="From rocksalt to fcc",
-                        x_label="Central atoms removed (%)", show_plot=False, markersize=1.0, palette=['black'])
+                        nb_order_param_steps=31, filename_suffix=".svg", title="From rocksalt to fcc",
+                        x_label="Temperature [K]", show_plot=False, markersize=1.0, palette=['black'])
