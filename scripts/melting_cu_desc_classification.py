@@ -104,14 +104,21 @@ if __name__ == "__main__":
     # Read prototype data from files
     # =============================================================================
 
-    steps_t = 61
-    nb_samples = 20
+    # Cu (FCC) - from FCC to amorphous
+    # steps_t = 61
+    # nb_samples = 20
+    # min_target_t = 0.
+    # max_target_t = 600.
+
+    # Fe (BCC) - from BCC to amorphous
+    steps_t = 5
+    nb_samples = 2
     min_target_t = 0.
     max_target_t = 600.
 
-    # ase_atoms_list = get_md_structures(min_target_t=min_target_t, max_target_t=max_target_t, steps_t=steps_t,
-    #                                    nb_samples=nb_samples,
-    #                                    max_nb_trials=100000, backend='asap', supercell_size=4)
+    ase_atoms_list = get_md_structures(min_target_t=min_target_t, max_target_t=max_target_t, steps_t=steps_t,
+                                       nb_samples=nb_samples, element='Fe',
+                                       max_nb_trials=100000, backend='asap', supercell_size=2)
 
     # ase_db_filename = write_ase_db(ase_atoms_list, main_folder, db_name='cu_copper_61steps_0_600_sc4',
     #                                db_type='db', overwrite=True, folder_name='db_ase')  # for item in ase_atoms_list:
@@ -143,6 +150,7 @@ if __name__ == "__main__":
     #                                                         main_folder=configs['io']['main_folder'],
     #                                                         desc_folder=configs['io']['desc_folder'],
     #                                                         tmp_folder=configs['io']['tmp_folder'])
+    sys.exit()
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(

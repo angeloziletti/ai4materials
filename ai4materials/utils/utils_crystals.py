@@ -22,6 +22,7 @@ __maintainer__ = "Angelo Ziletti"
 __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
+from ai4materials.utils.utils_config import get_data_filename
 from ase import Atoms
 from ase.neighborlist import NeighborList
 from ase.build import find_optimal_cell_shape_pure_python
@@ -29,8 +30,10 @@ from ase.build import get_deviation_from_optimal_cell_shape
 from ase.build import make_supercell
 from ase.spacegroup import get_spacegroup as ase_get_spacegroup
 from ase import units
-from ase.spacegroup import crystal
+from ase.build import bulk
+from ase.calculators.eam import EAM
 from ase.md.langevin import Langevin
+from ase.spacegroup import crystal
 from asap3 import EMT
 import ase.calculators.emt
 import ase
@@ -605,7 +608,7 @@ def radius_to_replicas(atoms, min_nb_atoms, radius):
 
 
 def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples=5, max_nb_trials=100000,
-                      backend='asap', supercell_size=3):
+                      backend='asap', element='Cu', supercell_size=3):
     """Starting from a crystal structure, run Langevin dynamics, and extract configurations at given temperatures.
 
     At present, the structure is FCC copper and the dynamics in Langevin dynamics, but in principle any structure
@@ -635,6 +638,11 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples
         'asap' is approximately two orders of magnitude faster than 'ase', but it can generate
         compatibility problems when writing to file.
 
+    element: str, optional (default='Cu')
+        Defines which structure is going to be simulated. Only two elements are possible: 'Cu' and 'Fe'.
+        This is because the goal of this function is to reproduce the results presented in the article
+        Ziletti et al, 2019.
+
     supercell_size: int, optional (default=3)
         Number of periodic replicas to be used for bulk copper in the calculation.
 
@@ -662,26 +670,39 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples
 
     for target_temp in target_temps:
 
-        a = 3.597
-        atoms = crystal('Cu', [(0, 0, 0)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90])*supercell_size
+        if element == 'Cu':
+            a = 3.597
+            atoms = crystal('Cu', [(0, 0, 0)], spacegroup=225, cellpar=[a, a, a, 90, 90, 90]) * supercell_size
 
-        # atoms = FaceCenteredCubic(symbol="Cu", size=(supercell_size, supercell_size, supercell_size), pbc=True)
-        # Describe the interatomic interactions with the Effective Medium Theory
-        # see here for supported chemical elements (fcc only)
-        # https://wiki.fysik.dtu.dk/asap/EMT
-        # set up a crystal
-        if backend == 'asap':
-            # ASAP3 calculator
-            atoms.set_calculator(EMT())
-        elif backend == 'ase':
-            # we use  the much slower ASE implementation because it is not possible to save an ASE db to file
-            # if we use the ASAP calculator
-            atoms.set_calculator(ase.calculators.emt.EMT())
+            # Describe the interatomic interactions with the Effective Medium Theory
+            # see here for supported chemical elements (fcc only)
+            # https://wiki.fysik.dtu.dk/asap/EMT
+            # set up a crystal
+            if backend == 'asap':
+                # ASAP3 calculator
+                atoms.set_calculator(EMT())
+            elif backend == 'ase':
+                # we use  the much slower ASE implementation because it is not possible to save an ASE db to file
+                # if we use the ASAP calculator
+                atoms.set_calculator(ase.calculators.emt.EMT())
+            else:
+                raise Exception("Please specify a valid backend. Valid backends are: 'asap', 'ase'.")
+        elif element == 'Fe':
+            a = 2.856
+            atoms = crystal('Fe', [(0, 0, 0)], spacegroup=229, cellpar=[a, a, a, 90, 90, 90]) * supercell_size
+
+            if backend == 'asap':
+                # not supported - EMT potentials are only for FCC elements
+                logger.debug("ASAP backend is available for 'Cu'. Switching to ASE backend.")
+
+            potential_file = get_data_filename('data/potentials/fe_carter_bulkB.alloy')
+            atoms.set_calculator(EAM(potential=potential_file))
+
         else:
-            raise Exception("Please specify a valid backend. Valid backends are: 'asap', 'ase'.")
+            logger.error("Please specify a valid element. The only valid elements are: 'Cu', 'Fe'. ")
 
         # We want to run MD with constant energy using the Langevin algorithm
-        # with a time step of 5 fs, the temperature T and the friction
+        # with a time step of 1 fs, the temperature T and the friction
         # coefficient to 0.02 atomic units.
         dyn = Langevin(atoms, 1 * units.fs, target_temp * units.kB, 0.02)
 
@@ -1482,25 +1503,6 @@ def get_spacegroup_old(structure, materials_class=None):
     spacegroup_number = ase_get_spacegroup(structure, symprec=1e-03).no
 
     return chemical_formula, energy_total, spacegroup_number
-
-
-def get_lattice_type(structure):
-    """Get lattice_type from a list of NOMAD structure."""
-
-    energy_total = {}
-    chemical_formula = {}
-    lattice_type = {}
-
-    for (gIndexRun, gIndexDesc), atoms in iteritems(structure.atoms):
-        if atoms is not None:
-            energy_total[gIndexRun, gIndexDesc] = structure.energy_total[(gIndexRun, gIndexDesc)]
-            chemical_formula[gIndexRun, gIndexDesc] = structure.chemical_formula[(gIndexRun, gIndexDesc)]
-
-            lattice_type[gIndexRun, gIndexDesc] = structure.spacegroup_analyzer[
-                gIndexRun, gIndexDesc].get_lattice_type()
-            break
-
-    return chemical_formula[0, 0], energy_total[0, 0], lattice_type[0, 0]
 
 
 def get_target_diff_dic(df, sample_key=None, energy=None, spacegroup=None):
