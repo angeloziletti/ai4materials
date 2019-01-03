@@ -158,17 +158,17 @@ if __name__ == "__main__":
         #     desc_file=desc_file, desc_only=False, show_plot_lengths=True,  desc_file_suffix_name='',
         #     nb_jobs=6, padding_ratio=(0.5, 0.5, 0.))
 
-        path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_x.pkl')
-        path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_y.pkl')
-        path_to_summary_test = os.path.join(dataset_folder,
-                                            'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_summary.json')
-        path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
-
-        # path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_x.pkl')
-        # path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_y.pkl')
+        # path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_x.pkl')
+        # path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_y.pkl')
         # path_to_summary_test = os.path.join(dataset_folder,
-        #                                     'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_summary.json')
-        # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
+        #                                     'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_summary.json')
+        # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
+
+        path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_x.pkl')
+        path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_y.pkl')
+        path_to_summary_test = os.path.join(dataset_folder,
+                                            'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_summary.json')
+        path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
 
         # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_x.pkl'
         # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_y.pkl'
@@ -187,6 +187,6 @@ if __name__ == "__main__":
 
         get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summary_test,
                                path_to_strided_pattern_pos, checkpoint_dir, checkpoint_filename='model.h5',
-                               mc_samples=10, interpolation='none', results_file=None, calc_uncertainty=True,
+                               mc_samples=100, interpolation='none', results_file=None, calc_uncertainty=True,
                                conf_matrix_file=conf_matrix_file, train_set_name='hcp-sc-fcc-diam-bcc_pristine',
                                cmap_uncertainty='hot', interpolation_uncertainty='none')

@@ -170,7 +170,8 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
             prob_prediction_class = predictive_mean_sorted[:, idx_class].reshape(z_max, y_max, x_max)
 
         plot_prediction_heatmaps(prob_prediction_class, title='Probability', class_name=str(idx_class), prefix='prob',
-                                 main_folder=configs['io']['main_folder'], cmap='viridis', interpolation=interpolation)
+                                 main_folder=configs['io']['main_folder'], cmap='viridis', color_nan='lightgrey',
+                                 interpolation=interpolation)
 
     if calc_uncertainty:
         df_uncertainty = pd.DataFrame()
@@ -195,6 +196,7 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
             # for idx_uncertainty in range(predictive_mean_sorted.shape[1]):
             plot_prediction_heatmaps(uncertainty_prediction, title='Uncertainty ({})'.format(str(key)),
                                      main_folder=configs['io']['main_folder'], cmap=cmap_uncertainty,
+                                     color_nan='lightgrey',
                                      prefix='uncertainty', suffix=str(key), interpolation=interpolation_uncertainty)
 
 
@@ -323,7 +325,7 @@ def calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, c
 
 
 def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_name='', prefix='prob', suffix='',
-                             cmap='viridis', interpolation='none', vmin=None, vmax=None):
+                             cmap='viridis', color_nan='black', interpolation='none', vmin=None, vmax=None):
     """
 
     For available interpolation methods see:
@@ -337,7 +339,7 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
 
         cmap = matplotlib.cm.get_cmap(name=cmap)
         # set the color for NaN values
-        cmap.set_bad(color='gray')
+        cmap.set_bad(color=color_nan)
 
         cax = ax.imshow(prob_prediction_class, interpolation=interpolation, vmin=vmin, vmax=vmax, cmap=cmap,
                         origin='lower')
