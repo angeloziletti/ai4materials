@@ -689,14 +689,16 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples
                 raise Exception("Please specify a valid backend. Valid backends are: 'asap', 'ase'.")
         elif element == 'Fe':
             a = 2.856
-            atoms = crystal('Fe', [(0, 0, 0)], spacegroup=229, cellpar=[a, a, a, 90, 90, 90]) * supercell_size
+            atoms = crystal('Cu', [(0, 0, 0)], spacegroup=229, cellpar=[a, a, a, 90, 90, 90]) * supercell_size
 
             if backend == 'asap':
                 # not supported - EMT potentials are only for FCC elements
                 logger.debug("ASAP backend is available for 'Cu'. Switching to ASE backend.")
 
-            potential_file = get_data_filename('data/potentials/fe_carter_bulkB.alloy')
-            atoms.set_calculator(EAM(potential=potential_file))
+            # potential_file = get_data_filename('data/potentials/fe_carter_bulkB.alloy')
+            # atoms.set_calculator(EAM(potential=potential_file))
+            atoms.set_calculator(EMT())
+
 
         else:
             logger.error("Please specify a valid element. The only valid elements are: 'Cu', 'Fe'. ")
@@ -707,8 +709,7 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples
         dyn = Langevin(atoms, 1 * units.fs, target_temp * units.kB, 0.02)
 
         logger.info("Running dynamics for temp {}".format(target_temp))
-        # # now run the dynamics
-        # for i in range(n_samples):
+        # now run the dynamics
         dyn.run(1000)
         atoms = save_temp(atoms)
 
