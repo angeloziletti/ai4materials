@@ -32,7 +32,6 @@ from ai4materials.wrappers import calc_descriptor
 from ai4materials.wrappers import load_descriptor
 from ai4materials.dataprocessing.preprocessing import prepare_dataset
 from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
-from ai4materials.dataprocessing.preprocessing import make_data_sets
 from ai4materials.models.cnn_polycrystals import predict
 from keras.models import load_model
 import pandas as pd
@@ -62,6 +61,12 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
         dataset_name = '{0}_stride_{1}_{2}_{3}_box_size_{4}_{5}.tar.gz'.format(polycrystal_name, stride_size[0],
                                                                                stride_size[1], stride_size[2], box_size,
                                                                                desc_file_suffix_name)
+        min_nb_atoms = 20
+
+        # if total number of atoms less than cutoff, set descriptor to NaN
+        for structure in structure_list:
+            if structure.get_number_of_atoms() <= min_nb_atoms:
+                structure.info['descriptor'][desc_metadata][:] = np.nan
 
         path_to_x_test, path_to_y_test, path_to_summary_test = prepare_dataset(structure_list=structure_list,
                                                                                target_list=target_list,
@@ -126,9 +131,6 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
 
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
-
-    # data_set_predict = make_data_sets(x_train_val=x_test, y_train_val=y_test, split_train_val=False, test_size=0.1,
-    #                                   x_test=x_test, y_test=y_test)
 
     filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, checkpoint_filename)))
 

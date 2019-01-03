@@ -131,8 +131,10 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_disp01.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_3.0_3.0_20.0_box_size_15.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder,
+                             # 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
     desc_file = os.path.join(main_folder,
-                             'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
+                             'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp01_vac20.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_6.0_6.0_20.0_box_size_15.1.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
@@ -150,18 +152,17 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_disp1_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
 
     for idx, structure_file in enumerate(structure_files):
-        # path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos = make_strided_pattern_matching_dataset(
-        #     polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
-        #     configs=configs, operations_on_structure=None, stride_size=(10., 10., 20.), box_size=10.,
-        #     init_sliding_volume=(14., 14., 14.), desc_file=None, desc_only=False, show_plot_lengths=True,
-        #     desc_file_suffix_name='', nb_jobs=6, padding_ratio=None)
+        path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos = make_strided_pattern_matching_dataset(
+            polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
+            configs=configs, operations_on_structure=None, stride_size=(6., 6., 20.), box_size=15.,
+            desc_file=desc_file, desc_only=False, show_plot_lengths=True,  desc_file_suffix_name='',
+            nb_jobs=6, padding_ratio=(0.5, 0.5, 0.))
 
-        path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly_disp01_vac20.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz_x.pkl')
-        path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly_disp01_vac20.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz_y.pkl')
-        path_to_summary_test = os.path.join(dataset_folder,
-                                            'four_grains_poly_disp01_vac20.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar'
-                                            '.gz_summary.json')
-        path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_10.0__pristine.tar.gz_strided_pattern_pos.pkl')
+        # path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_x.pkl')
+        # path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_y.pkl')
+        # path_to_summary_test = os.path.join(dataset_folder,
+        #                                     'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_summary.json')
+        # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
 
         # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_x.pkl'
         # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_y.pkl'
@@ -180,6 +181,6 @@ if __name__ == "__main__":
 
         get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summary_test,
                                path_to_strided_pattern_pos, checkpoint_dir, checkpoint_filename='model.h5',
-                               mc_samples=2, interpolation='none', results_file=None, calc_uncertainty=True,
+                               mc_samples=10, interpolation='none', results_file=None, calc_uncertainty=True,
                                conf_matrix_file=conf_matrix_file, train_set_name='hcp-sc-fcc-diam-bcc_pristine',
                                cmap_uncertainty='hot', interpolation_uncertainty='none')
