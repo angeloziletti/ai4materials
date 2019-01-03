@@ -24,7 +24,7 @@ __date__ = "23/09/18"
 
 import logging
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+import matplotlib.cm
 import os
 import numpy as np
 from ai4materials.utils.utils_crystals import get_boxes_from_xyz
@@ -334,6 +334,10 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
     if len(prob_prediction_class.shape) == 2:
         logger.info("Creating two-dimensional plot.")
         fig, ax = plt.subplots()
+
+        cmap = matplotlib.cm.get_cmap(name=cmap)
+        # set the color for NaN values
+        cmap.set_bad(color='gray')
 
         cax = ax.imshow(prob_prediction_class, interpolation=interpolation, vmin=vmin, vmax=vmax, cmap=cmap,
                         origin='lower')
