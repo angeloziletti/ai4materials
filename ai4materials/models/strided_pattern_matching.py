@@ -44,7 +44,7 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
                                           operations_on_structure=None, stride_size=(4., 4., 4.), box_size=12.0,
                                           init_sliding_volume=(14., 14., 14.), desc_file=None, desc_only=False,
                                           show_plot_lengths=True, desc_file_suffix_name='_pristine', nb_jobs=-1,
-                                          padding_ratio=None):
+                                          padding_ratio=None, min_nb_atoms=20):
     if desc_file is None:
         logger.info("Calculating system's representation.")
         desc_file = calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, configs,
@@ -61,7 +61,6 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
         dataset_name = '{0}_stride_{1}_{2}_{3}_box_size_{4}_{5}.tar.gz'.format(polycrystal_name, stride_size[0],
                                                                                stride_size[1], stride_size[2], box_size,
                                                                                desc_file_suffix_name)
-        min_nb_atoms = 20
 
         # if total number of atoms less than cutoff, set descriptor to NaN
         for structure in structure_list:

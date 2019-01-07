@@ -29,19 +29,14 @@ if __name__ == "__main__":
 
     sys.path.insert(0, atomic_data_dir)
 
-    from ase.io.trajectory import Trajectory
     from ase.spacegroup import crystal
     from ai4materials.descriptors.diffraction3d import DISH
     from ai4materials.utils.utils_config import set_configs
     from ai4materials.utils.utils_config import setup_logger
-    from ai4materials.utils.utils_crystals import create_supercell
     from ai4materials.utils.utils_crystals import create_vacancies
-    from ai4materials.utils.utils_crystals import create_vacancies
-    from ai4materials.utils.utils_crystals import random_displace_atoms
     from ai4materials.utils.utils_plotting import aggregate_struct_trans_data
     from ai4materials.utils.utils_plotting import make_crossover_plot
     from ai4materials.wrappers import load_descriptor
-    from ai4materials.utils.utils_data_retrieval import generate_facets_input
     from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
     from ai4materials.dataprocessing.preprocessing import prepare_dataset
     from ai4materials.wrappers import calc_descriptor_in_memory
@@ -50,7 +45,6 @@ if __name__ == "__main__":
     import numpy as np
     from keras.models import load_model
     from ai4materials.models.cnn_polycrystals import predict
-    from mendeleev import element
 
     startTime = datetime.now()
     now = datetime.now()
@@ -125,37 +119,30 @@ if __name__ == "__main__":
     desc_file_path = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
                                                tmp_folder=configs['io']['tmp_folder'],
                                                desc_folder=configs['io']['desc_folder'],
-                                               desc_file='rocksalt_to_fcc_104_2x2_for_figure_0-1.tar.gz', format_geometry='aims',
-                                               # operations_on_structure=operations_on_structure_list[0],
+                                               desc_file='rocksalt_to_fcc_104_2x2_for_figure_0-1.tar.gz',
+                                               format_geometry='aims',
                                                operations_on_structure=None,
-                                               nb_jobs=6)  # operations_on_structure=None, nb_jobs=1)
-
-    sys.exit()
+                                               nb_jobs=6)
 
     desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc_104_20samples.tar.gz'
     # desc_file_path = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/desc_folder/rocksalt_to_fcc.tar.gz'
 
     # now prepare the dataset
     # load the previously saved file containing the crystal structures and their corresponding descriptor
-    # target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
+    target_list, structure_list = load_descriptor(desc_files=desc_file_path, configs=configs)
 
     # sort the structures according to the original label
-    # structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
+    structure_list.sort(key=lambda x: int(x.info['label'].split('struct-')[1]))
 
-    # create a texture atlas with all the two-dimensional diffraction fingerprints
-    # df, texture_atlas = generate_facets_input(structure_list=structure_list, desc_metadata='diffraction_3d_sh_spectrum',
-    #                                           target_list=target_list, sprite_atlas_filename=desc_file_path,
-    #                                           configs=configs, normalize=True)
-
-    # path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
-    #                                                         desc_metadata='diffraction_3d_sh_spectrum',
-    #                                                         dataset_name='rocksalt_to_fcc', target_name='target',
-    #                                                         target_categorical=True, input_dims=(52, 32),
-    #                                                         configs=configs,
-    #                                                         dataset_folder=configs['io']['dataset_folder'],
-    #                                                         main_folder=configs['io']['main_folder'],
-    #                                                         desc_folder=configs['io']['desc_folder'],
-    #                                                         tmp_folder=configs['io']['tmp_folder'])
+    path_to_x, path_to_y, path_to_summary = prepare_dataset(structure_list=structure_list, target_list=target_list,
+                                                            desc_metadata='diffraction_3d_sh_spectrum',
+                                                            dataset_name='rocksalt_to_fcc', target_name='target',
+                                                            target_categorical=True, input_dims=(52, 32),
+                                                            configs=configs,
+                                                            dataset_folder=configs['io']['dataset_folder'],
+                                                            main_folder=configs['io']['main_folder'],
+                                                            desc_folder=configs['io']['desc_folder'],
+                                                            tmp_folder=configs['io']['tmp_folder'])
 
     train_set_name = 'hcp-sc-fcc-diam-bcc_pristine'
     path_to_x_train = os.path.abspath(
@@ -190,8 +177,6 @@ if __name__ == "__main__":
 
     conf_matrix_file = os.path.abspath(
         os.path.normpath(os.path.join(main_folder, 'confusion_matrix_' + test_set_name + '.png')))
-
-    # results_file_rocksalt_to_fcc
 
     results = predict(x=x_test, y=y_test, configs=configs, numerical_labels=numerical_labels, text_labels=text_labels,
                       nb_classes=params_cnn["nb_classes"], model=model, batch_size=params_cnn["batch_size"],

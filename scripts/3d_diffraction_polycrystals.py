@@ -111,6 +111,25 @@ if __name__ == "__main__":
 
     # desc_file = None
 
+    # ------------ polycrystal with four grains ----------------#
+    # desc_file = os.path.join(main_folder,
+    #                          'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
+    # desc_file = os.path.join(main_folder,
+    #                          'desc_folder/four_grains/four_grains_poly_disp1_vac20.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
+
+    # ------------ stacking fault ----------------#
+    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
+    desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large_vac20.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
+
+    # ------------ small edge dislocation ----------------#
+    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_disp1_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
+
+    # ------------- fcc crystal twinning -----------------#
+    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning_vac20.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
+
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac50.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac70.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
@@ -118,57 +137,27 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac90.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz_stride_1.0_1.0_1.0_box_size_10.0_.tar.gz')
 
-    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_1.0_1.0_20.0_box_size_14.0_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
-
-    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large_vac50.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
-
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_40.0_9.0_20.0_box_size_12.0_pristine.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_vac20.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_disp01.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_3.0_3.0_20.0_box_size_15.0_pristine.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
-    # desc_file = os.path.join(main_folder,
-    #                          'desc_folder/four_grains/four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_pristine.tar.gz')
-    desc_file = os.path.join(main_folder,
-                             'desc_folder/four_grains/four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_pristine.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp01_vac20.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_6.0_6.0_20.0_box_size_15.1.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp2_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp4_vac50.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/four_grains/four_grains_poly_disp1_vac20.xyz_stride_1.0_1.0_20.0_box_size_15.1.tar.gz')
-
-    # desc_file = os.path.join(main_folder,
-    #                          'desc_folder/edge_dislocation/Al_edge_vac20.xyz_stride_1.0_1.0_20.0_box_size_18.1_.tar.gz')
-    # desc_file = os.path.join(main_folder,
-    #                          'desc_folder/edge_dislocation/Al_edge.xyz_stride_1.0_1.0_20.0_box_size_18.1.tar.gz')
-
-    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
-    # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation_disp1_vac10.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
-
     for idx, structure_file in enumerate(structure_files):
-        # path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos = make_strided_pattern_matching_dataset(
-        #     polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
-        #     configs=configs, operations_on_structure=None, stride_size=(1., 1., 20.), box_size=15.,
-        #     desc_file=desc_file, desc_only=False, show_plot_lengths=True,  desc_file_suffix_name='',
-        #     nb_jobs=6, padding_ratio=(0.5, 0.5, 0.))
+        path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos = make_strided_pattern_matching_dataset(
+            polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
+            configs=configs, operations_on_structure=None, stride_size=(1., 1., 20.), box_size=15.,
+            desc_file=desc_file, desc_only=False, show_plot_lengths=True,  desc_file_suffix_name='',
+            nb_jobs=6, padding_ratio=(0., 0., 0.), min_nb_atoms=10)
 
-        # path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_x.pkl')
-        # path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_y.pkl')
+        # ------------------------------ four grains - pristine --------------------------------#
+        # path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_x.pkl')
+        # path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_y.pkl')
         # path_to_summary_test = os.path.join(dataset_folder,
-        #                                     'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_summary.json')
-        # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_6.0_6.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
+        #                                     'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_summary.json')
+        # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
 
-        path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_x.pkl')
-        path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_y.pkl')
-        path_to_summary_test = os.path.join(dataset_folder,
-                                            'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_summary.json')
-        path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
+        # --------------- four grains - vacancies and displacement  -------------------------------- #
+        # path_to_x_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_x.pkl')
+        # path_to_y_test = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_y.pkl')
+        # path_to_summary_test = os.path.join(dataset_folder,
+        #                                     'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_summary.json')
+        # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
+
 
         # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_x.pkl'
         # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_y.pkl'
