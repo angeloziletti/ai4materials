@@ -26,9 +26,17 @@ if __name__ == "__main__":
     import os.path
     import pandas as pd
 
-    filename_in = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_pristine_baa.xyz'
+    # filename_in = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_pristine_baa.xyz'
+    # filename_out = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_pristine_baa_fcc_only.xyz'
 
-    filename_out = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_pristine_baa_fcc_only.xyz'
+    # filename_in = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_vac50_baa.xyz'
+    # filename_out = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_vac50_baa_fcc_only.xyz'
+
+    # filename_in = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_pristine_ptm.xyz'
+    # filename_out = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_pristine_ptm_fcc_only.xyz'
+
+    filename_in = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_vac50_ptm.xyz'
+    filename_out = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/results_paper/inclusion/inclusion_fcc_bcc_vac50_ptm_fcc_only.xyz'
 
     with open(filename_in) as f:
         content = f.readlines()  # you may also want to remove whitespace characters like `\n` at the end of each line

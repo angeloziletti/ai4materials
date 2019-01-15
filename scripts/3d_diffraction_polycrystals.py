@@ -64,7 +64,8 @@ if __name__ == "__main__":
     logger = setup_logger(configs, level='INFO', display_configs=False)
 
     # setup folder and files
-    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/enc_dec_drop12.5')))
+    # checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/enc_dec_drop12.5')))
+    checkpoint_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'saved_models/enc_dec_drop15')))
     dataset_folder = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'datasets')))
     figure_dir = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'attentive_resp_maps')))
     conf_matrix_file = os.path.abspath(os.path.normpath(os.path.join(main_folder, 'confusion_matrix.png')))
@@ -82,7 +83,8 @@ if __name__ == "__main__":
     structure_files = []
     # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/fcc_crystal_twinning.xyz'))
     # structure_files.append(os.path.join(main_folder, 'structures_for_paper/stacking_fault/Al_SF_large.xyz'))
-    structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly.xyz'))
+    # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly.xyz'))
+    structure_files.append(os.path.join(main_folder, 'structures_for_paper/inclusions/bcc_amorphous_disp50.xyz'))
     # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly_disp01_vac20.xyz'))
     # structure_files.append(os.path.join(main_folder, 'structures_for_paper/four_grains/four_grains_poly_disp04_vac50.xyz'))
     # structure_files.append(os.path.join(main_folder, 'structures_for_paper/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz'))
@@ -105,9 +107,9 @@ if __name__ == "__main__":
     # Descriptor calculation
     # =============================================================================
     # stride_size = [0.5, 0.5, 20.0]
-    stride_size = [6.0, 6.0, 20.0]
+    stride_size = [6.0, 6.0, 6.0]
     box_sizes = [15.0, 15.0, 15.0, 15.0]
-    padding_ratios = [(0.5, 0.5, 0.0), (0.5, 0.5, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)]
+    padding_ratios = [(0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0)]
 
     # desc_file = None
 
@@ -119,7 +121,7 @@ if __name__ == "__main__":
 
     # ------------ stacking fault ----------------#
     # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
-    desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large_vac20.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
+    # desc_file = os.path.join(main_folder, 'desc_folder/stacking_fault/Al_SF_large_vac20.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
 
     # ------------ small edge dislocation ----------------#
     # desc_file = os.path.join(main_folder, 'desc_folder/small_edge_dislocation/small_edge_dislocation.xyz_stride_1.0_1.0_20.0_box_size_10.0_.tar.gz')
@@ -130,17 +132,20 @@ if __name__ == "__main__":
     # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/fcc_crystal_twinning/fcc_crystal_twinning_vac20.xyz_stride_0.5_0.5_20.0_box_size_10.0_.tar.gz')
 
-    # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
+    # ------------- inclusion  -----------------#
+    desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac50.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac70.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac80.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
     # desc_file = os.path.join(main_folder, 'desc_folder/inclusions/bcc_fcc_inclusion_vac90.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz')
+
+    # ------------- grain boundary  -----------------#
     # desc_file = os.path.join(main_folder, 'desc_folder/grain_boundaries/0012262150_v6bxv2_tv0.4bxv0.3_d2.1z_traj.xyz_stride_1.0_1.0_1.0_box_size_10.0_.tar.gz')
 
     for idx, structure_file in enumerate(structure_files):
         path_to_x_test, path_to_y_test, path_to_summary_test, path_to_strided_pattern_pos = make_strided_pattern_matching_dataset(
             polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='diffraction_3d_sh_spectrum',
-            configs=configs, operations_on_structure=None, stride_size=(1., 1., 20.), box_size=15.,
+            configs=configs, operations_on_structure=None, stride_size=(12., 12., 12.), box_size=10.,
             desc_file=desc_file, desc_only=False, show_plot_lengths=True,  desc_file_suffix_name='',
             nb_jobs=6, padding_ratio=(0., 0., 0.), min_nb_atoms=10)
 
@@ -158,6 +163,11 @@ if __name__ == "__main__":
         #                                     'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_summary.json')
         # path_to_strided_pattern_pos = os.path.join(dataset_folder, 'four_grains_poly.xyz_stride_1.0_1.0_20.0_box_size_15.0_.tar.gz_strided_pattern_pos.pkl')
 
+        # --------------- inclusion -------------------------------- #
+        # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz_x.pkl'
+        # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz_y.pkl'
+        # path_to_summary_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz_summary.json'
+        # path_to_strided_pattern_pos = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/four_grains_poly.xyz_stride_1.5_1.5_1.5_box_size_13.5_.tar.gz_strided_pattern_pos.pkl'
 
         # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_x.pkl'
         # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/Al_SF_large.xyz_stride_6.0_6.0_20.0_box_size_15.1_.tar.gz_y.pkl'
@@ -174,8 +184,13 @@ if __name__ == "__main__":
         # path_to_summary_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/small_edge_dislocation.xyz_stride_10.0_10.0_20.0_box_size_10.0_.tar.gz_summary.json'
         # path_to_strided_pattern_pos = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/small_edge_dislocation.xyz_stride_10.0_10.0_20.0_box_size_10.0_.tar.gz_strided_pattern_pos.pkl'
 
+        # path_to_x_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/bcc_amorphous_disp50.xyz_stride_12.0_12.0_12.0_box_size_10.0_.tar.gz_x.pkl'
+        # path_to_y_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/bcc_amorphous_disp50.xyz_stride_12.0_12.0_12.0_box_size_10.0_.tar.gz_y.pkl'
+        # path_to_summary_test = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/bcc_amorphous_disp50.xyz_stride_12.0_12.0_12.0_box_size_10.0_.tar.gz_summary.json'
+        # path_to_strided_pattern_pos = '/home/ziletti/Documents/calc_nomadml/rot_inv_3d/datasets/bcc_amorphous_disp50.xyz_stride_12.0_12.0_12.0_box_size_10.0_.tar.gz_strided_pattern_pos.pkl'
+
         get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summary_test,
                                path_to_strided_pattern_pos, checkpoint_dir, checkpoint_filename='model.h5',
-                               mc_samples=100, interpolation='none', results_file=None, calc_uncertainty=True,
+                               mc_samples=20, interpolation='none', results_file=None, calc_uncertainty=True,
                                conf_matrix_file=conf_matrix_file, train_set_name='hcp-sc-fcc-diam-bcc_pristine',
                                cmap_uncertainty='hot', interpolation_uncertainty='none')

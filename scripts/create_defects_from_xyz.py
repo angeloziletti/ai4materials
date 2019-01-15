@@ -33,6 +33,7 @@ if __name__ == "__main__":
     import ase
     from ai4materials.utils.utils_crystals import random_displace_atoms
     from ai4materials.utils.utils_crystals import create_vacancies
+    from ase.spacegroup import crystal
 
     startTime = datetime.now()
     now = datetime.now()
@@ -65,18 +66,25 @@ if __name__ == "__main__":
     structure_files.append(os.path.join(main_folder, 'structures_for_paper/edge_dislocation/small_edge_dislocation.xyz'))
 
     for structure_file in structure_files:
-        atoms = ase.io.read(structure_file, index=0, format='xyz')
+        a = 2.856
+        supercell_size = 15
+        # atoms = ase.io.read(structure_file, index=0, format='xyz')
+        atoms = crystal('Fe', [(0, 0, 0)], spacegroup=229, cellpar=[a, a, a, 90, 90, 90]) * supercell_size
 
-        # atoms_mod = random_displace_atoms(atoms, displacement_scaled=0.01, create_replicas_by='user-defined',
-        #                                   cell_type=None, target_replicas=[1, 1, 1],
-        #                                   noise_distribution='uniform_scaled', target_nb_atoms=128,
-        #                                   random_rotation=False, optimal_supercell=False)
-
-        atoms_mod2 = create_vacancies(atoms, target_vacancy_ratio=0.05, create_replicas_by='user-defined',
+        atoms_mod = random_displace_atoms(atoms, displacement_scaled=0.2, create_replicas_by='user-defined',
                                           cell_type=None, target_replicas=[1, 1, 1],
+                                          noise_distribution='uniform_scaled',
+                                          # target_nb_atoms=4000,
                                           random_rotation=False, optimal_supercell=False)
 
-        structure_name, file_extension = os.path.splitext(structure_file)
+        # atoms_mod2 = create_vacancies(atoms, target_vacancy_ratio=0.05, create_replicas_by='user-defined',
+        #                                   cell_type=None, target_replicas=[1, 1, 1],
+        #                                   random_rotation=False, optimal_supercell=False)
 
-        ase.io.write(structure_name + '_vac5.xyz', atoms_mod2, format='xyz', parallel=True)
+        # structure_name, file_extension = os.path.splitext(structure_file)
+
+        structure_name = 'bcc_amorphous'
+        output_filename = os.path.join(main_folder, structure_name)
+        ase.io.write(output_filename + '_disp20.xyz', atoms_mod, format='xyz', parallel=True)
+        # ase.io.write(structure_name + '_vac5.xyz', atoms_mod2, format='xyz', parallel=True)
 
