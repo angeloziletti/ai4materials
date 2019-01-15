@@ -64,7 +64,9 @@ def main():
 
         # You can just specify the packages manually here if your project is
         # simple. Or you can use find_packages().
-        packages=['ai4materials', 'ai4materials.dataprocessing', 'ai4materials.descriptors', 'ai4materials.interpretation',
+        packages=['ai4materials', 'ai4materials.dataprocessing', 'ai4materials.descriptors',
+                  'ai4materials.external',
+                  'ai4materials.interpretation',
                    'ai4materials.models', 'ai4materials.utils', 'ai4materials.visualization'],
         #packages=find_packages(include=['ai4materials']),
 

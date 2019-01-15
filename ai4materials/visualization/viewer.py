@@ -265,13 +265,13 @@ class Viewer(object):
 
         hover = HoverTool(tooltips=tooltips)
 
-        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave,resize"
+        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave"
         p1 = self._make_main_plot(tools=tools_main_plot, plot_title=plot_title, colors=colors,
                                  show_axis=show_axis,
                                  source=source, point_size=point_size, x_axis_label=x_axis_label,
                                  y_axis_label=y_axis_label)
 
-        tools_small_plot = "pan,box_zoom,wheel_zoom,resize,reset"
+        tools_small_plot = "pan,box_zoom,wheel_zoom,reset"
         p2 = self._make_small_plot(tools=tools_small_plot, point_size=map_point_size, colors=colors,
                                   source_map=source_map, source=source)
 
@@ -541,12 +541,12 @@ class Viewer(object):
             data=dict(x=x, y=y, colors=colors, x_zoom=x_zoom, y_zoom=y_zoom, width_zoom=width_zoom,
                       height_zoom=height_zoom))
 
-        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave,resize"
+        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave"
         p1 = self._make_main_plot(tools=tools_main_plot, plot_title=plot_title, colors=colors, show_axis=show_axis,
                                  source=source, point_size=point_size, x_axis_label=x_axis_label,
                                  y_axis_label=y_axis_label)
 
-        tools_small_plot = "pan,box_zoom,wheel_zoom,resize,reset"
+        tools_small_plot = "pan,box_zoom,wheel_zoom,reset"
         p2 = self._make_small_plot(tools=tools_small_plot, point_size=map_point_size, colors=colors,
                                   source_map=source_map, source=source)
 
@@ -1082,8 +1082,6 @@ def load_templates(template_to_load):
                     <ul>
                         <li> You can <i>zoom-in</i> on a selected area activating the <i>box zoom</i> function (2nd button from the top).
                         The full plot is still shown in the map on the right-side of this webpage, and a shaded area indicates where the selected area is in the plot. </li>
-                        <li> You can modify the <i>aspect-ratio</i> activating the <i>resize</i> function (3rd button from the top),
-                        and dragging the bottom-right corner of the plot.</li>
                     </ul>
 
                     </td>
@@ -1135,8 +1133,6 @@ def load_templates(template_to_load):
                     <ul>
                         <li> You can <i>zoom-in</i> on a selected area activating the <i>box zoom</i> function (2nd button from the top).
                         The full plot is still shown in the map on the right-side of this webpage, and a shaded area indicates where the selected area is in the plot. </li>
-                        <li> You can modify the <i>aspect-ratio</i> activating the <i>resize</i> function (3rd button from the top),
-                        and dragging the bottom-right corner of the plot.</li>
                     </ul>
 
                     </td>
