@@ -52,7 +52,7 @@ class Viewer(object):
 
         if name is None:
             now = datetime.datetime.now()
-            name = hashlib.sha224(str(now)).hexdigest()[:16]
+            name = hashlib.sha224(str(now).encode('utf-8')).hexdigest()[:16]
 
         self.title = title
         self.width = width
