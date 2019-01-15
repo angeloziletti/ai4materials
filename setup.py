@@ -54,7 +54,8 @@ def main():
 
             # Specify the Python versions you support here. In particular, ensure
             # that you indicate whether you support Python 2, Python 3 or both.
-            'Programming Language :: Python :: 2.7',# 'Programming Language :: Python :: 3.4',
+            # 'Programming Language :: Python :: 2.7',
+            'Programming Language :: Python :: 3.5',
             # 'Programming Language :: Python :: 3.6',
         ],
 
@@ -78,11 +79,18 @@ def main():
         # requirements files see:
         # https://packaging.python.org/en/latest/requirements.html
         install_requires=['ase==3.15.0',  # neighbors list does not work for ase 3.16
-            'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas', 'bokeh==0.11.0',
+            'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas',
+                          'bokeh',
             'enum34', 'pymatgen', 'keras==1.2.0', 'pillow>=2.7.0', 'mendeleev', 'keras-tqdm', 
-	        'weave', 'multiprocessing', 'seaborn', 'paramiko', 'scipy', 'nose>=1.0', 'sqlalchemy', 'theano==0.9.0',
-            'numpy', 'h5py', 'cython>=0.19', 'pyshtools', 'mayavi', 'asap3'],
-        #, 'hdbscan', 'mayavi'],
+                          'seaborn', 'paramiko', 'scipy', 'nose>=1.0', 'sqlalchemy', 'theano==0.9.0',
+            'numpy', 'h5py', 'cython>=0.19', 'pyshtools'],
+
+        # 'bokeh==0.11.0',
+
+        # 'multiprocessing',
+
+        # , 'asap3'],
+                          #'mayavi', 'weave'],
 
         #setup_requires=['nomadcore', 'atomic_data'],
         # List additional groups of dependencies here (e.g. development
