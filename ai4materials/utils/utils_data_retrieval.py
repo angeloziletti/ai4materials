@@ -565,7 +565,7 @@ def read_archive_desc(filename, summary_filename="summary.json"):
     for member in archive.getmembers()[:]:
         member.name = os.path.basename(member.name)
         if os.path.basename(member.name) == summary_filename:
-            files_by_category = json.load(archive.extractfile(member))['data'][0]
+            files_by_category = json.load(archive.extractfile(member).decode('utf-8'))['data'][0]
 
     return files_by_category
 

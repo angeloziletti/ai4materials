@@ -332,7 +332,7 @@ def get_data_filename(resource, package='ai4materials'):
 def get_metadata_info():
     """Get the descriptor metadata info"""
     resource_path = '/'.join(('descriptors', 'descriptors.nomadmetainfo.json'))
-    desc_metainfo = json.loads(pkg_resources.resource_string('ai4materials', resource_path))
+    desc_metainfo = json.loads(pkg_resources.resource_string('ai4materials', resource_path).decode('utf-8'))
 
     return desc_metainfo
 

@@ -51,7 +51,6 @@ import math
 from scipy import constants
 import scipy
 import pandas as pd
-from itertools import izip
 from itertools import permutations
 from decimal import Decimal
 import copy
@@ -1221,7 +1220,7 @@ def random_displace_atoms(atoms, noise_distribution, displacement=None, displace
 
 def grouped(iterable, n):
     """s -> (s0,s1,s2,...sn-1), (sn,sn+1,sn+2,...s2n-1), (s2n,s2n+1,s2n+2,...s3n-1), ..."""
-    return izip(*[iter(iterable)] * n)
+    return zip(*[iter(iterable)] * n)
 
 
 def get_min_distance(atoms, nb_splits=100):
