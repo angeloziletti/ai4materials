@@ -34,7 +34,6 @@ from ase.build import bulk
 from ase.calculators.eam import EAM
 from ase.md.langevin import Langevin
 from ase.spacegroup import crystal
-from asap3 import EMT
 import ase.calculators.emt
 import ase
 import os
@@ -678,6 +677,7 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples
             # https://wiki.fysik.dtu.dk/asap/EMT
             # set up a crystal
             if backend == 'asap':
+                from asap3 import EMT
                 # ASAP3 calculator
                 atoms.set_calculator(EMT())
             elif backend == 'ase':
@@ -692,6 +692,7 @@ def get_md_structures(min_target_t=0., max_target_t=400., steps_t=11, nb_samples
             # atoms = crystal('Fe', [(0, 0, 0)], spacegroup=229, cellpar=[a, a, a, 90, 90, 90]) * supercell_size
 
             if backend == 'asap':
+                from asap3 import EMT
                 # not supported - EMT potentials are only for FCC elements
                 logger.debug("ASAP backend is available for 'Cu' only. Switching to ASE backend.")
 
