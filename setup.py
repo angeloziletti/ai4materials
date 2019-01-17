@@ -85,7 +85,7 @@ def main():
                           'bokeh',
             'enum34', 'pymatgen', 'keras==1.2.0', 'pillow>=2.7.0', 'mendeleev', 'keras-tqdm', 
                           'seaborn', 'paramiko', 'scipy', 'nose>=1.0', 'sqlalchemy', 'theano==0.9.0',
-            'numpy', 'h5py', 'cython>=0.19', 'pyshtools'],
+            'numpy', 'h5py', 'cython>=0.19', 'pyshtools', 'Jinja2'],
 
         # 'bokeh==0.11.0',
 

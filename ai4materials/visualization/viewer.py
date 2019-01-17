@@ -653,11 +653,12 @@ class Viewer(object):
         p1 = figure(title=plot_title, plot_width=600, plot_height=600, tools=tools, background_fill_color='#f2f2f2',
                     outline_line_width=0.01, toolbar_location="left")
 
-        p1.title_text_font = self.title_text['font']
-        p1.title_text_font_size = self.title_text['font_size']
-        p1.title_text_color = self.title_text['color']
-        p1.title_text_font_style = self.title_text['font_style']
-        p1.title_text_baseline = self.title_text['baseline']
+        # commented because not compatible with Bokeh 1.0
+        # p1.title_text_font = self.title_text['font']
+        # p1.title_text_font_size = self.title_text['font_size']
+        # p1.title_text_color = self.title_text['color']
+        # p1.title_text_font_style = self.title_text['font_style']
+        # p1.title_text_baseline = self.title_text['baseline']
 
         if not show_axis:
             p1.axis.visible = None
@@ -688,11 +689,12 @@ class Viewer(object):
         p2 = figure(title='Map', plot_width=350, plot_height=300, tools=tools, background_fill_color="#ffffff",
                     outline_line_width=0.01, toolbar_location="right")
 
-        p2.title_text_font = self.title_text_map['font']
-        p2.title_text_font_size = self.title_text_map['font_size']
-        p2.title_text_color = self.title_text_map['color']
-        p2.title_text_font_style = self.title_text_map['font_style']
-        p2.title_text_baseline = self.title_text_map['baseline']
+        # commented because not compatible with Bokeh 1.0
+        # p2.title_text_font = self.title_text_map['font']
+        # p2.title_text_font_size = self.title_text_map['font_size']
+        # p2.title_text_color = self.title_text_map['color']
+        # p2.title_text_font_style = self.title_text_map['font_style']
+        # p2.title_text_baseline = self.title_text_map['baseline']
 
         p2.axis.visible = None
         p2.xgrid.grid_line_color = None
