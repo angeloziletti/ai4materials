@@ -193,7 +193,7 @@ class Diffraction2D(Descriptor):
         atomic_numbers = [atomic_number + 2 for atomic_number in atomic_numbers]
 
         # convert Angstrom to m (CONDOR uses meters)
-        atomic_positions = map(lambda pos: [pos.x * 1E-10, pos.y * 1E-10, pos.z * 1E-10], atoms)
+        atomic_positions = list(map(lambda pos: [pos.x * 1E-10, pos.y * 1E-10, pos.z * 1E-10], atoms))
 
         intensity_rgb = []
         rs_rgb = []
