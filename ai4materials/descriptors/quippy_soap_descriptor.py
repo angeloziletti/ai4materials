@@ -1,8 +1,8 @@
 import os,os.path
 
-from nomadml.descriptors.base_descriptor import Descriptor
-from nomadml.descriptors.base_descriptor import is_descriptor_consistent
-from nomadml.utils.utils_crystals import scale_structure
+from ai4materials.descriptors.base_descriptor import Descriptor
+from ai4materials.descriptors.base_descriptor import is_descriptor_consistent
+from ai4materials.utils.utils_crystals import scale_structure
 
 from quippy import descriptors
 from quippy import Atoms as quippy_Atoms
@@ -11,8 +11,9 @@ from ase.io import write as ase_write
 
 import numpy as np
 
-
 import matplotlib.pyplot as plt
+
+from collections import Counter
 
 import logging
 logger = logging.getLogger('ai4materials')
@@ -23,7 +24,9 @@ class quippy_SOAP_descriptor(Descriptor):
     
     """
     
-    def __init__(self,configs=None,p_b_c=False,cutoff=3.0,l_max=6,n_max=9,atom_sigma=0.1,central_weight=0.0,average=True,average_over_permuations=False,number_averages=200,atoms_scaling='quantile_nn',atoms_scaling_cutoffs=[10.]):
+    def __init__(self,configs=None,p_b_c=False,cutoff=3.0,l_max=6,n_max=9,atom_sigma=0.1,central_weight=0.0,
+                 average=True,average_over_permuations=False,number_averages=200,atoms_scaling='quantile_nn',atoms_scaling_cutoffs=[10.], extrinsic_scale_factor=1.0,
+                 n_Z=1, Z=26, n_species=1, species_Z=26, scale_element_sensitive=False, return_binary_descriptor=False, average_binary_descriptor=False, min_atoms=1, shape_soap = 316):
         super(quippy_SOAP_descriptor, self).__init__(configs=configs)
         
         self.p_b_c=p_b_c
@@ -39,58 +42,205 @@ class quippy_SOAP_descriptor(Descriptor):
         
         self.atoms_scaling=atoms_scaling
         self.atoms_scaling_cutoffs=atoms_scaling_cutoffs
+        self.extrinsic_scale_factor = extrinsic_scale_factor
         
-        descriptor_options='soap '+'cutoff='+str(cutoff)+' l_max='+str(l_max)+' n_max='+str(n_max)+' atom_sigma='+str(atom_sigma)+' n_Z='+str(1)+' Z={'+str(26)+'} central_weight='+str(central_weight)+' average='+str(average)              
+        # From quippy documentation: https://libatoms.github.io/QUIP/Tutorials/quippy-descriptor-tutorial.html#A-many-body-descriptor:-SOAP
+        # Atomic numbers to be considered for central atom, e.g. Z={1 6}
+        self.Z = Z
+        # How many different types of central atoms to consider
+        self.n_Z = n_Z
+        # Number of species for the descriptor
+        self.n_species = n_species
+        # Atomic number of species, e.g. species_Z={1 6}
+        self.species_Z = species_Z
+        self.scale_element_sensitive = scale_element_sensitive
+        
+        # If return_binary_descriptor=True, then return descriptor (11,12,21,22),
+        # with ij being the (averaged) SOAP descriptor where sit on atoms of 
+        # species i and only consider atoms with species j as neighbors.
+        self.return_binary_descriptor = return_binary_descriptor
+        # if average_binary_descriptor=True, average over soap vectors from different species/ the corresponding chem. envs.
+        # Default = False, i.e., [(1,1)-SOAP vector, (1,2) SOAP_vector), ... ] is returned
+        self.average_binary_descriptor = average_binary_descriptor
+        
+        # minimum number of atoms (important for polycrystal application, otherwise will get lots of errors)
+        self.min_atoms = min_atoms
+        self.shape_soap = shape_soap # important if nber aotms < min_atoms because then need shape!
+        
+        descriptor_options = 'soap '+'cutoff='+str(self.cutoff)+' l_max='+str(self.l_max)+' n_max='+str(self.n_max)+' atom_sigma='+str(self.atom_sigma)+\
+                             ' n_Z='+str(self.n_Z)+' Z={'+str(self.Z)+'} n_species='+str(self.n_species)+' species_Z={'+str(self.species_Z)+'} central_weight='+str(self.central_weight)+' average='+str(self.average)              
         self.descriptor_options=descriptor_options
+
         
         
     def calculate(self,structure,**kwargs):
         
-        atoms = scale_structure(structure, scaling_type=self.atoms_scaling,
-                                atoms_scaling_cutoffs=self.atoms_scaling_cutoffs)
-
-                       
-        #Define descritpor
-        desc=descriptors.Descriptor(self.descriptor_options)
+        # HACK to get right PBC for 2D materials and Nanotubes
+        # use pbc as specified in the structure ITSELF
+        self.p_b_c = structure.get_pbc()
         
-        #Define structure as quippy Atoms object
-        filename=str(atoms.info['label'])+'.xyz'
-        ase_write(filename,atoms,format='xyz')
-        struct=quippy_Atoms(filename)
-        struct.set_pbc(self.p_b_c)
-        
-        #Remove redundant files that have been created
-        if os.path.exists(filename):
-            os.remove(filename)
-        if os.path.exists(filename+'.idx'):
-            os.remove(filename+'.idx')
-        
-        #Compute SOAP descriptor
-        struct.set_cutoff(desc.cutoff())
-        struct.calc_connect()
-        SOAP_descriptor=desc.calc(struct)['descriptor']
-        
-        if self.average_over_permuations:
-            #average over different orders
-            SOAP_proto_averaged=np.zeros(SOAP_descriptor.size)
-            SOAP_proto_copy=SOAP_descriptor
-            for i in range(self.number_averages):
-                np.random.shuffle(SOAP_proto_copy)
-                SOAP_proto_averaged=np.add(SOAP_proto_averaged,SOAP_proto_copy.flatten())
-            SOAP_proto_averaged=np.array([x/float(self.number_averages) for x in SOAP_proto_averaged])
-            SOAP_descriptor=SOAP_proto_averaged              
+        structure.set_pbc(self.p_b_c)
+        print(self.p_b_c)
+        logger.info("Structure: "+str(structure))
+        # Important for  avoiding crash of polycrystal code
+        # Uncommented part: look at TOTAL number of atoms. Now do it element-specific (i.e. each species needs to be there min_atoms # times, otherwise this species will not be considered and treated as vacancy)
+        """
+        if len(structure)<self.min_atoms:
             
+            soap_desc = np.full(self.shape_soap, np.nan)
+            descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=soap_desc)
+            structure.info['descriptor'] = descriptor_data
+            return structure 
+        """
+        # get all atomic numbers and the unique values
+        atomic_numbers = structure.get_atomic_numbers()
+        atomic_numbers_unique = list(set(atomic_numbers))
         
-        if self.average:
-            SOAP_descriptor=SOAP_descriptor.flatten() # if get averaged LAE, then default output shape is (1,316), hence flatten()
+        occurences_species = Counter(atomic_numbers)
+        species_to_delete = []
+        for species in atomic_numbers_unique:
+            if occurences_species[species]<self.min_atoms:
+                species_to_delete.append(species)
+        del structure[[atom.index for atom in structure if atom.number in species_to_delete]]
+        
+        if len(structure)==0: # case that had to delete all species, return nan
+            soap_desc = np.full(self.shape_soap, np.nan)
+            descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=soap_desc)
+            structure.info['descriptor'] = descriptor_data
+            return structure        
         
         
-        descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=SOAP_descriptor)
-
-        structure.info['descriptor'] = descriptor_data
-        
-        
-        return structure
+            
+        if self.return_binary_descriptor:
+            """
+            if self.scale_element_sensitive:
+                pass
+            else:
+                raise ValueError('Need to scale element-sensitive for binary descriptor!')
+                return []
+            """
+            atomic_numbers = list(set(structure.get_atomic_numbers()))
+            all_descriptors = []
+            for Z in atomic_numbers:
+                for species_Z in atomic_numbers:
+                    n_Z = 1
+                    n_species = 1
+            
+                    atoms = scale_structure(structure, scaling_type=self.atoms_scaling,
+                                            atoms_scaling_cutoffs=self.atoms_scaling_cutoffs, extrinsic_scale_factor=self.extrinsic_scale_factor,
+                                            element_sensitive=self.scale_element_sensitive, central_atom_species=Z, neighbor_atoms_species=species_Z)
+                                            
+                    #Define descritpor - all options stay untouched, i.e., as provided by the intial call, but the species parameter are changed
+                    descriptor_options = 'soap '+'cutoff='+str(self.cutoff)+' l_max='+str(self.l_max)+' n_max='+str(self.n_max)+' atom_sigma='+str(self.atom_sigma)+\
+                                         ' n_Z='+str(n_Z)+' Z={'+str(Z)+'} n_species='+str(n_species)+' species_Z={'+str(species_Z)+'} central_weight='+str(self.central_weight)+' average='+str(self.average)  
+                    desc=descriptors.Descriptor(descriptor_options)
+                    
+                    #Define structure as quippy Atoms object
+                    #filename=str(atoms.info['label'])+'.xyz'
+                    #ase_write(filename,atoms,format='xyz')
+                    #struct=quippy_Atoms(filename)
+                    struct=quippy_Atoms(atoms)     # Seems to work fine like this. (rather than creating xyz file first)
+                    struct.set_pbc(self.p_b_c)
+                    
+                    #Remove redundant files that have been created
+                    #if os.path.exists(filename):
+                    #    os.remove(filename)
+                    #if os.path.exists(filename+'.idx'):
+                    #    os.remove(filename+'.idx')
+                    
+                    #Compute SOAP descriptor
+                    struct.set_cutoff(desc.cutoff())
+                    struct.calc_connect()
+                    SOAP_descriptor=desc.calc(struct)['descriptor']
+                    #print 'SOAP '+str(SOAP_descriptor.flatten().shape)                 
+                                        
+                    
+                    if any(np.isnan(SOAP_descriptor.flatten())):
+                        #plt.plot(SOAP_descriptor.flatten())
+                        #print np.nan_to_num(SOAP_descriptor, copy=True)
+                        #plt.plot(np.nan_to_num(SOAP_descriptor, copy=True).flatten())
+                        raise ValueError('Nan value encountered in SOAP descriptor.')
+                    
+                    
+                    if self.average_over_permuations:
+                        #average over different orders
+                        SOAP_proto_averaged=np.zeros(SOAP_descriptor.size)
+                        SOAP_proto_copy=SOAP_descriptor 
+                        # To do: SOAP_proto_copy is not a real copy...
+                        # The right way: http://henry.precheur.org/python/copy_list.html
+                        # or just a = ..., b = np.array(a)
+                        for i in range(self.number_averages):
+                            np.random.shuffle(SOAP_proto_copy)
+                            SOAP_proto_averaged=np.add(SOAP_proto_averaged,SOAP_proto_copy.flatten())
+                        SOAP_proto_averaged=np.array([x/float(self.number_averages) for x in SOAP_proto_averaged])
+                        SOAP_descriptor=SOAP_proto_averaged              
+                        
+                    
+                    #if self.average:
+                    #    SOAP_descriptor=SOAP_descriptor.flatten() # if get averaged LAE, then default output shape is (1,316), hence flatten()
+                    all_descriptors.append(SOAP_descriptor.flatten())
+            
+            if self.average_binary_descriptor:
+                all_descriptors = np.mean(np.array(all_descriptors), axis=0)
+                descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=all_descriptors)
+            else:
+                descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=np.array(all_descriptors))
+            structure.info['descriptor'] = descriptor_data
+            return structure            
+            
+            
+        else:
+            
+            atoms = scale_structure(structure, scaling_type=self.atoms_scaling,
+                                    atoms_scaling_cutoffs=self.atoms_scaling_cutoffs, extrinsic_scale_factor=self.extrinsic_scale_factor,
+                                    element_sensitive=self.scale_element_sensitive, central_atom_species=self.Z, neighbor_atoms_species=self.species_Z)
+    
+                           
+            #Define descritpor
+            desc=descriptors.Descriptor(self.descriptor_options)
+            
+            #Define structure as quippy Atoms object
+            #filename=str(atoms.info['label'])+'.xyz'
+            #ase_write(filename,atoms,format='xyz')
+            #struct=quippy_Atoms(filename)
+            struct=quippy_Atoms(atoms)     # Seems to work fine like this. (rather than creating xyz file first)
+            struct.set_pbc(self.p_b_c)
+            
+            #Remove redundant files that have been created
+            #if os.path.exists(filename):
+            #    os.remove(filename)
+            #if os.path.exists(filename+'.idx'):
+            #    os.remove(filename+'.idx')
+            
+            #Compute SOAP descriptor
+            struct.set_cutoff(desc.cutoff())
+            struct.calc_connect()
+            SOAP_descriptor=desc.calc(struct)['descriptor']
+            
+            if self.average_over_permuations:
+                #average over different orders
+                SOAP_proto_averaged=np.zeros(SOAP_descriptor.size)
+                SOAP_proto_copy=SOAP_descriptor 
+                # To do: SOAP_proto_copy is not a real copy...
+                # The right way: http://henry.precheur.org/python/copy_list.html
+                # or just a = ..., b = np.array(a)
+                for i in range(self.number_averages):
+                    np.random.shuffle(SOAP_proto_copy)
+                    SOAP_proto_averaged=np.add(SOAP_proto_averaged,SOAP_proto_copy.flatten())
+                SOAP_proto_averaged=np.array([x/float(self.number_averages) for x in SOAP_proto_averaged])
+                SOAP_descriptor=SOAP_proto_averaged              
+                
+            
+            if self.average:
+                SOAP_descriptor=SOAP_descriptor.flatten() # if get averaged LAE, then default output shape is (1,316), hence flatten()
+            
+            
+            descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=SOAP_descriptor)
+    
+            structure.info['descriptor'] = descriptor_data
+            
+            
+            return structure
                              
     def write(self,structure,tar,write_soap_npy=True,write_soap_png=True,op_id=0,write_geo=True,format_geometry='aims'):
         """Write the descriptor to file.
@@ -152,10 +302,14 @@ class quippy_SOAP_descriptor(Descriptor):
                                                                                        'file_ending'])))
             only_file=structure.info['label'] + self.desc_metadata.ix['quippy_SOAP_image']['file_ending']
             
+            plt.ioff()
             plt.title(structure.info['label']+' SOAP descriptor ')
             plt.xlabel('SOAP component')
             plt.ylabel('SOAP value')
             plt.plot(soap_descriptor)
+            # adjust y axis limit
+            #ax = plt.gca()
+            #ax.set_ylim([-0.5,0.7])
             plt.savefig(image_soap_filename_png)
             plt.close()
             structure.info['quippy_SOAP_descriptor_filename_png'] = image_soap_filename_png
