@@ -1383,8 +1383,8 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
     atoms_tmp.set_positions(atoms_tmp.get_positions() * (1. / scale_factor))
 
     # also scale cell -> gives different results when haveing pbc=False (pbc=True not checked yet)
-    scaled_cell = atoms_tmp.get_cell() * (1. / scale_factor)
-    atoms_tmp.set_cell(scaled_cell)
+    #scaled_cell = atoms_tmp.get_cell() * (1. / scale_factor)
+    #atoms_tmp.set_cell(scaled_cell)
 
     return atoms_tmp
 
