@@ -7,13 +7,11 @@
 Welcome to ai4materials's README
 ========================================
 
-ai4materials allows to perform complex analysis of materials science data, using machine learning and compressed sensing techniques. It also
+ai4materials allows to perform complex analysis of materials science data, using machine learning techniques. It also
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
 thus easing the traceability, reproducibility, and prototyping of new models.
 
-On the left panel, you can find a few examples that showcase what ai4materials can do.
+Documentation of a previous release can be found here: https://ai4materials.readthedocs.io/en/latest/
 
-Extensive documentation can be found here: https://ai4materials.readthedocs.io/en/latest/
-
-Code author: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de)
+Code authors: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de), Andreas Leitherer (leitherer@fhi-berlin.mpg.de, andreas.leitherer@gmail.com)
 
