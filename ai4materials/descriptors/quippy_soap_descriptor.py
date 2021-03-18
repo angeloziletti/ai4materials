@@ -54,7 +54,7 @@ class quippy_SOAP_descriptor(Descriptor):
     def __init__(self,configs=None,p_b_c=False,cutoff=4.0,l_max=6,n_max=9,atom_sigma=0.1,central_weight=0.0,
                  average=True,average_over_permuations=False,number_averages=200,atoms_scaling='quantile_nn',atoms_scaling_cutoffs=[10.], extrinsic_scale_factor=1.0,
                  n_Z=1, Z=26, n_species=1, species_Z=26, scale_element_sensitive=True, return_binary_descriptor=True, average_binary_descriptor=True, min_atoms=1, shape_soap = 316,
-                 constrain_nn_distances=False, version='py2'):
+                 constrain_nn_distances=False, version='py3'):
         super(quippy_SOAP_descriptor, self).__init__(configs=configs)
         
         self.p_b_c=p_b_c

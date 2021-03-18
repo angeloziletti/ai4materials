@@ -49,7 +49,7 @@ from itertools import permutations
 from decimal import Decimal
 import copy
 # from ai4materials.utils.utils_binaries import get_chemical_formula_binaries
-import ai4materials.utils.unit_conversion as uc
+# import ai4materials.utils.unit_conversion as uc
 from ai4materials.utils.utils_config import get_data_filename
 import scipy.misc
 import logging
