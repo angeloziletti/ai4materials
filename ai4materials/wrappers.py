@@ -35,10 +35,10 @@ from ai4materials.utils.utils_mp import collect_desc_folders
 from ai4materials.utils.utils_data_retrieval import clean_folder
 from ai4materials.utils.utils_data_retrieval import write_desc_info_file
 from ai4materials.utils.utils_config import overwrite_configs
-from ai4materials.utils.utils_config import read_nomad_metainfo
+# from ai4materials.utils.utils_config import read_nomad_metainfo
 from ai4materials.utils.utils_crystals import modify_crystal
-from ai4materials.models.l1_l0 import combine_features, l1_l0_minimization
-from ai4materials.models.sis import SIS
+#from ai4materials.models.l1_l0 import combine_features, l1_l0_minimization
+#from ai4materials.models.sis import SIS
 from ai4materials.utils.utils_data_retrieval import extract_files
 from ai4materials.utils.utils_config import get_metadata_info
 from ai4materials.utils.utils_data_retrieval import write_ase_db_file
@@ -145,7 +145,7 @@ def calc_descriptor_in_memory(descriptor, configs, desc_file, ase_atoms_list, tm
     label_present = [True if 'label' in ase_atoms.info.keys() else False for ase_atoms in ase_atoms_list_with_op]
     if not np.all(label_present):
         logger.info("Some structures in the list do not have labels. Adding or substituting labels.")
-        logger.info("Default labels given by the order in the list (1st structure: label=struct-0)")
+        logger.info("Default labels given by the order in the list (1st structure: label=struct-1)")
         logger.info("To avoid this add a label to each ASE structure using ase_atoms.info['label']='your_label'")
 
         # substitute and add default labels
@@ -330,7 +330,7 @@ def calc_model(method, tmp_folder, results_folder, combine_features_with_ops=Tru
         max_dim = 3
 
     if method == 'l1_l0' or method == 'SIS':
-
+        raise NotImplementedError("Not supported currently.")
         # # if there are nan, drop entire row
         # if df.isnull().values.any():
         #     #df.dropna(axis=0, how='any', inplace=True)
@@ -583,7 +583,7 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
     label_present = [True if 'label' in ase_atoms.info.keys() else False for ase_atoms in ase_atoms_list_with_op]
     if not np.all(label_present):
         logger.info("Some structures in the list do not have labels. Adding or substituting labels.")
-        logger.info("Default labels given by the order in the list (1st structure: label=struct-0)")
+        logger.info("Default labels given by the order in the list (1st structure: label=struct-1)")
         logger.info("To avoid this add a label to each ASE structure using ase_atoms.info['label']='your_label'")
 
         # substitute and add default labels
@@ -610,3 +610,4 @@ def calc_descriptor(descriptor, configs, desc_file, ase_atoms_list, tmp_folder=N
     logger.info('Descriptor file: {}'.format(desc_file_master))
 
     return desc_file_master
+

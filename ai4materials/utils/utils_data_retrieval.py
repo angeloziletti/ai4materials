@@ -565,7 +565,7 @@ def read_archive_desc(filename, summary_filename="summary.json"):
     for member in archive.getmembers()[:]:
         member.name = os.path.basename(member.name)
         if os.path.basename(member.name) == summary_filename:
-            files_by_category = json.load(archive.extractfile(member).decode('utf-8'))['data'][0]
+            files_by_category = json.load(archive.extractfile(member))['data'][0]
 
     return files_by_category
 
@@ -729,7 +729,7 @@ def write_ase_db(ase_atoms_list, main_folder, db_name='my_ase_db', db_type='db',
     for idx, atoms in enumerate(ase_atoms_list):
         if idx % (int(len(ase_atoms_list) / 10) + 1) == 0:
             logger.info("Writing: file {0}/{1} "
-                        "to ASE database".format(idx + 1, len(ase_atoms_list)))
+                        "to ASE database in ".format(idx + 1, len(ase_atoms_list)))
         # write structure to ASE database
         # other info https://wiki.fysik.dtu.dk/ase/ase/db/db.html?highlight=db#ase-db
         db.write(atoms, data=atoms.info)
@@ -864,7 +864,7 @@ def write_desc_info_file(descriptor, desc_info_file, tar, ase_atoms):
 
 
 def write_target_values(structure, configs, op_nb, tar=None, filename_suffix='_target.json',
-                        calc_spgroup=True, symprec=[1e-03, 1e-06]):
+                        calc_spgroup=False, symprec=[1e-03, 1e-06]):
     """Write target values. One file for each frame.
     The target works only if one frame is considered. Please check.
 
@@ -1008,3 +1008,4 @@ def get_json_list(data_folder=None, show_preview=False):
         raise Exception("Please specify a valid path to the folder where the data are stored.")
 
     return json_list
+

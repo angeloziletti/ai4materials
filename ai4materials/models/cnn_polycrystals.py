@@ -40,6 +40,7 @@ import numpy as np
 import os
 import pandas as pd
 from sklearn.metrics import accuracy_score
+from collections import defaultdict
 
 logger = logging.getLogger('ai4materials')
 
@@ -196,8 +197,9 @@ def train_neural_network(x_train, y_train, x_val, y_val, configs, partial_model_
     del model
 
 
-def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_file=None, model=None, batch_size=32,
-            conf_matrix_file=None, verbose=1, with_uncertainty=True, mc_samples=50):
+def predict(x, y, configs, numerical_labels, text_labels, nb_classes=3, results_file=None, model=None, batch_size=32,
+            conf_matrix_file=None, verbose=1, with_uncertainty=True, mc_samples=50, 
+            consider_memory=True, max_length=1e6):
     uncertainty = None
 
     if results_file is None:
@@ -231,8 +233,33 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=5, results_
     logger.info('Predicting...')
 
     if with_uncertainty:
-        logger.info("Using multiple passes to have principles probability and uncertainty estimates")
-        prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)
+        if consider_memory:
+            logger.info("While considering memory limits: Using multiple passes to have principles probability and uncertainty estimates")
+            uncertainty = defaultdict(list)
+            prob_predictions = np.array([])
+            current_size = mc_samples*x.shape[0] # x.shape[0]=batch_size
+            if current_size>=max_length:
+                split_size = 1
+                # increase split size until  we are safe to not run into memory problems
+                while (current_size/split_size)>=max_length:
+                    split_size+=1
+                x_splitted = np.array_split(x, split_size)
+                logger.info("Had to split input of shape {} into {} subarrays".format(x.shape, split_size))
+                for data, split in zip(x_splitted, np.arange(len(x_splitted))+1):
+                    logger.info("Split # {} / {}".format(split,split_size))
+                    prediction_, uncertainty_ = predict_with_uncertainty(data, model=model, n_iter=mc_samples)
+                    if split==1:
+                        prob_predictions = prediction_
+                    else:
+                        prob_predictions = np.concatenate((prob_predictions, prediction_), axis=0)
+                    for key_ in uncertainty_:
+                        uncertainty[key_].extend(uncertainty_[key_])
+            else:
+                logger.info("Using multiple passes to have principles probability and uncertainty estimates")
+                prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)                
+        else:
+            logger.info("Using multiple passes to have principles probability and uncertainty estimates")
+            prob_predictions, uncertainty = predict_with_uncertainty(x, model, n_iter=mc_samples)
     else:
         logger.info("Using only a single pass. No uncertainty estimation.")
         prob_predictions = model.predict(x, batch_size=batch_size, verbose=verbose)
@@ -319,8 +346,14 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
 
         labels.append(label)
         results.append(result)
-
+        
     results = np.asarray(results)
+    # less memory intensive:
+    #if len(results)>25000*1000:
+    #    dtype_ = np.float16
+    #else:
+    #    dtype_ = None
+    #results = np.asarray(results, dtype=dtype_)
     prediction = results.mean(axis=0)
 
     if model_type == 'regression':
@@ -329,9 +362,12 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
 
     elif model_type == 'classification':
         # variation ratio
+        #print(labels)
         mode, mode_count = stats.mode(np.asarray(labels))
+        #print(mode)
+        #print(mode_count)
         variation_ratio = np.transpose(1. - mode_count.mean(axis=0) / float(n_iter))
-
+        #print(variation_ratio)
         # predictive entropy
         # clip values to 1e-12 to avoid divergency in the log
         prediction = np.clip(prediction, a_min=1e-12, a_max=None, out=prediction)
