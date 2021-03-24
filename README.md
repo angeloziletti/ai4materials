@@ -7,8 +7,6 @@
 Welcome to ai4materials's README
 ========================================
 
-![](./assets/ai_for_materials_logo.png)
-
 ai4materials allows to perform complex analysis of materials science data, using machine learning techniques. It also
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
 thus easing the traceability, reproducibility, and prototyping of new models.
