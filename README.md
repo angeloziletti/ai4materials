@@ -12,8 +12,14 @@ This branch provides code for reproducing the results of
     A. Leitherer, A. Ziletti, and L.M. Ghiringhelli,
     Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning, arXiv:2103.09777 (2021)
 
-within the NOMAD tutorial available at  analytics-toolkit.nomad-coe.eu/tutorial-ARISE. 
-This repository uses functionalities of ai4materials (https://github.com/angeloziletti/ai4materials) that is currently under development.
+
+You can proceed with the installation steps as described below or directly proceed to a tutorial available at
+
+    http://analytics-toolkit.nomad-coe.eu/tutorial-ARISE
+    
+within the NOMAD analytics toolkit (https://nomad-lab.eu/AItutorials) where you do not have to install any software.
+
+The code of this branch uses functionalities of ai4materials (https://github.com/angeloziletti/ai4materials) that is currently under development.
 
 ai4materials allows to perform complex analysis of materials science data, using machine learning techniques. It also
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
@@ -51,3 +57,5 @@ For global or local analysis of single- or polycrystalline systems, one just nee
 
     predictions, uncertainty = ARISE.analyze(geometry_files, mode='local',
                                               stride=[[4.0, 4.0, 4.0], ...], box_size=[12.0, ...])
+                                              
+Please refer to  http://analytics-toolkit.nomad-coe.eu/tutorial-ARISE and the associated publication for more details.
