@@ -7,7 +7,7 @@ ARISE: Crystal-structure recognition via Bayesian deep learning
 ![](./assets/ARISE_logo.jpeg)
 
 
-This package provides code for reproducing the results of 
+This branch provides code for reproducing the results of 
 
     A. Leitherer, A. Ziletti, and L.M. Ghiringhelli,
     Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning, arXiv:2103.09777 (2021)
@@ -26,22 +26,28 @@ Code author: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com; ziletti@fhi-berlin
 ------------------
 Installation
 ------------------
-You can install this repository via 
 
-pip install 'git+https://github.com/AndreasLeitherer/ARISE.git'
+We recommend to create a virtual python 3.7 environment (for instance, with conda), and then execute
 
-For the SOAP descriptor, we employ the quippy package  (https://github.com/libAtoms/QUIP)
+git clone https://github.com/angeloziletti/ai4materials.git 
+cd ai4materials
+git checkout ARISE
+pip install -e .
+
+To reproduce the results in arXiv:2103.09777, you need to install the quippy package  (https://github.com/libAtoms/QUIP) 
+to be able to compute the SOAP descriptor.
+
 ---------------
-Usage
+ARISE - Usage
 ---------------
 
 For global or local analysis of single- or polycrystalline systems, one just needs to define the corresponding geometry file and load a pretrained model for prediction:
 
     from ai4materials.models import ARISE
 
-    geometry_files = [ ... ]
+    geometry_files = [ file_1, file_2, ... ]
 
     predictions, uncertainty = ARISE.analyze(geometry_files, mode='global') 
 
     predictions, uncertainty = ARISE.analyze(geometry_files, mode='local',
-                                              stride=1.0, box_size=12.0)
+                                              stride=[[4.0, 4.0, 4.0], ...], box_size=[12.0, ...])
