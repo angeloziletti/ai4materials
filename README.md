@@ -35,10 +35,10 @@ Installation
 
 We recommend to create a virtual python 3.7 environment (for instance, with conda), and then execute
 
-git clone https://github.com/angeloziletti/ai4materials.git 
-cd ai4materials
-git checkout ARISE
-pip install -e .
+    git clone https://github.com/angeloziletti/ai4materials.git 
+    cd ai4materials
+    git checkout ARISE
+    pip install -e .
 
 To reproduce the results in arXiv:2103.09777, you need to install the quippy package  (https://github.com/libAtoms/QUIP) 
 to be able to compute the SOAP descriptor.
