@@ -4,7 +4,7 @@
 ARISE: Crystal-structure recognition via Bayesian deep learning
 ========================================================
 
-![](./assets/ARISE_logo.jpeg)
+![](./assets/ARISE_logo.svg)
 
 
 This branch provides code for reproducing the results of 
