@@ -299,9 +299,9 @@ def predict(x, y, configs, numerical_labels, text_labels, nb_classes=3, results_
     text_labels = text_labels.tolist()
     unique_class_labels = sorted(list(set(text_labels)))
 
-    plot_confusion_matrix(conf_matrix, conf_matrix_file=conf_matrix_file, classes=unique_class_labels, normalize=False,
-                          title='Confusion matrix')
-    logger.info("Confusion matrix written to {}.".format(conf_matrix_file))
+    #plot_confusion_matrix(conf_matrix, conf_matrix_file=conf_matrix_file, classes=unique_class_labels, normalize=False,
+    #                      title='Confusion matrix')
+    #logger.info("Confusion matrix written to {}.".format(conf_matrix_file))
 
     # transform it in a list of n strings to be used by the viewer
     string_probs = [str(['p' + str(i) + ':{0:.4f} '.format(item[i]) for i in range(nb_classes)]) for item in

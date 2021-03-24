@@ -142,7 +142,7 @@ def global_(geometry_files, main_folder=None, n_iter=1000, configs=None,
     
 def local(geometry_files, stride, box_size, configs, n_iter=1000, main_folder=None,
           descriptor=None, model=None, format_='aims',
-          desc_filename=None, **kwargs):
+          desc_filename=None, nb_jobs=-1, **kwargs):
     
     # read config file
     """
@@ -154,13 +154,14 @@ def local(geometry_files, stride, box_size, configs, n_iter=1000, main_folder=No
     
     predictions, uncertainty = calc_local(geometry_files, box_size, stride, configs,
                                           descriptor=descriptor, model_file=model,
-                                          desc_filename=desc_filename, **kwargs)
+                                          desc_filename=desc_filename, nb_jobs=nb_jobs, **kwargs)
     
     return predictions, uncertainty
     
 def analyze(geometry_filenames, mode='global', training_info=None, stride=None,
             box_size=None, configs=None, descriptor=None, model=None,
-            format_=None, descriptors=None, save_descriptors=False, save_path_descriptors=None, **kwargs):
+            format_=None, descriptors=None, save_descriptors=False, 
+            save_path_descriptors=None, nb_jobs=-1, **kwargs):
     """
     Apply ARISE to given list of geometry files.
     
@@ -252,7 +253,7 @@ def analyze(geometry_filenames, mode='global', training_info=None, stride=None,
     elif mode == 'local':
         predictions, uncertainty = local(geometry_filenames, stride, box_size, configs,
                                          descriptor=descriptor, model=model, format_=format_,
-                                         desc_filename=descriptors, **kwargs)
+                                         desc_filename=descriptors, nb_jobs=nb_jobs, **kwargs)
     else:
         raise ValueError("Argument 'mode' must either be 'local' or 'global'.")
     return predictions, uncertainty

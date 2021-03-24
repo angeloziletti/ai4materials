@@ -283,7 +283,7 @@ def calc_local(geometry_files, box_size, stride, configs,
                min_atoms=3, 
                adjust_box_size_by_number_of_atoms=False, min_n_atoms=100, criterion='median',
                min_atoms_spm=50, model_file=None, path_to_summary_train=None, descriptor=None,
-               mc_samples=1000, plot_results=False, desc_filename=None):
+               mc_samples=1000, plot_results=False, desc_filename=None, nb_jobs=-1):
     """
     geometry_files: list
         list of geometry files
@@ -337,6 +337,9 @@ def calc_local(geometry_files, box_size, stride, configs,
 
     plot_results: boolean, optional (default=False)
         Decide wheter to automatically generate svg files for visual analysis.
+        
+    nb_jobs: int (default=-1)
+        Number of CPUs used for parallel calculation.
 
     """
     if not desc_filename == None:
@@ -508,7 +511,7 @@ def calc_local(geometry_files, box_size, stride, configs,
             polycrystal_file=structure_file, descriptor=descriptor, desc_metadata='SOAP_descriptor',
             configs=configs_new, operations_on_structure=None, stride_size=stride_size, box_size=box_size,
             init_sliding_volume=None, desc_file=desc_filename_to_load, desc_only=False, show_plot_lengths=False,
-            desc_file_suffix_name='', nb_jobs=16, padding_ratio=padding_ratio, min_nb_atoms=min_atoms_spm)#min_atoms)
+            desc_file_suffix_name='', nb_jobs=nb_jobs, padding_ratio=padding_ratio, min_nb_atoms=min_atoms_spm)#min_atoms)
         end = time.time()
         ex_time = str(end-start)
         print('Execution time descriptor calculation: '+ex_time)

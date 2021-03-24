@@ -5,7 +5,7 @@ from ai4materials.descriptors.base_descriptor import is_descriptor_consistent
 from ai4materials.utils.utils_crystals import scale_structure
 
 from quippy import descriptors
-from quippy import Atoms as quippy_Atoms
+
 
 from ase.io import write as ase_write
 
@@ -197,6 +197,7 @@ class quippy_SOAP_descriptor(Descriptor):
                         #filename=str(atoms.info['label'])+'.xyz'
                         #ase_write(filename,atoms,format='xyz')
                         #struct=quippy_Atoms(filename)
+                        from quippy import Atoms as quippy_Atoms
                         struct=quippy_Atoms(atoms)     # Seems to work fine like this. (rather than creating xyz file first)
                         struct.set_pbc(self.p_b_c)
                         

@@ -57,7 +57,7 @@ def main():
             # 'Programming Language :: Python :: 2.7',
             # 'Programming Language :: Python :: 3.5',
             # 'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.7'
+            # 'Programming Language :: Python :: 3.7'
         ],
 
         # What does your project relate to?
@@ -79,9 +79,9 @@ def main():
         # your project is installed. For an analysis of "install_requires" vs pip's
         # requirements files see:
         # https://packaging.python.org/en/latest/requirements.html
-        install_requires=['ase==3.19.0', 'tensorflow==1.13.1', 'keras==2.2.4', 'scikit-learn', 'pint', 'future',
-                          'pandas', 'enum34', 'pymatgen', 'keras-tqdm', 'seaborn', 'paramiko',
-                          'scipy', 'nose>=1.0', 'numpy', 'h5py', 'cython>=0.19', 'pyshtools', 'Jinja2'],
+        install_requires=['ase==3.19.0', 'tensorflow==1.13.1', 'keras==2.2.4', 'scikit-learn>=0.17.1', 'pint', 'future',
+                          'pandas', 'enum34', 'pymatgen==2020.3.13', 'keras-tqdm', 'seaborn', 'paramiko',
+                          'scipy', 'nose>=1.0', 'numpy', 'h5py', 'cython>=0.19',  'Jinja2'],
         #         
         #'ase==3.15.0',  # neighbors list does not work for ase 3.16
         #    'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas',
@@ -115,7 +115,8 @@ def main():
         # have to be included in MANIFEST.in as well.
         package_data={
             'ai4materials': ['descriptors/descriptors.nomadmetainfo.json', 
-                        'data/nn_models/*.h5', 'data/nn_models/*.json',
+                        'data/nn_models/*.h5', 'data/nn_models/*.json', 'utils/units.txt', 'utils/constants.txt',
+                        'data/PROTOTYPES/*/*/*.in', 'data/training_data/*.pkl', 'data/training_data/*.json'
                         ]},
 
         # Although 'package_data' is the preferred approach, in some case you may

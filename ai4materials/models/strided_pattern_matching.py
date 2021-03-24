@@ -76,9 +76,20 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
                                           padding_ratio=None, min_nb_atoms=20):
     if desc_file is None:
         logger.info("Calculating system's representation.")
-        desc_file = calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, configs,
-                                          desc_file_suffix_name, operations_on_structure, nb_jobs, show_plot_lengths,
-                                          padding_ratio=padding_ratio, init_sliding_volume=init_sliding_volume)
+        if nb_jobs == 1:
+            
+            ase_atoms_list = get_structures_by_boxes(polycrystal_file, stride_size=stride_size, box_size=box_size,
+                                                     show_plot_lengths=show_plot_lengths, padding_ratio=padding_ratio,
+                                                     init_sliding_volume=init_sliding_volume)
+            from ai4materials.wrappers import _calc_descriptor
+            desc_file =  _calc_descriptor(ase_atoms_list=ase_atoms_list, descriptor=descriptor, configs=configs,
+                                          logger=logger, desc_folder=configs['io']['desc_folder'],
+                                          tmp_folder=configs['io']['tmp_folder'])
+        else:
+            
+            desc_file = calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, configs,
+                                              desc_file_suffix_name, operations_on_structure, nb_jobs, show_plot_lengths,
+                                              padding_ratio=padding_ratio, init_sliding_volume=init_sliding_volume)
     else:
         logger.info("Using the precomputed user-specified descriptor file.")
 
@@ -366,7 +377,7 @@ def calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, c
     ase_atoms_list = get_structures_by_boxes(polycrystal_file, stride_size=stride_size, box_size=box_size,
                                              show_plot_lengths=show_plot_lengths, padding_ratio=padding_ratio,
                                              init_sliding_volume=init_sliding_volume)
-    """
+    
     desc_file = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
                                 desc_file='{0}_stride_{1}_{2}_{3}_box_size_{4}_{5}.tar.gz'.format(
                                     os.path.basename(polycrystal_file), stride_size[0], stride_size[1], stride_size[2],
@@ -379,7 +390,7 @@ def calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, c
                                                             box_size, desc_file_suffix_name),
                                      format_geometry='aims',
                                      operations_on_structure=operations_on_structure, nb_jobs=nb_jobs, tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'])
-
+    """
     return desc_file
 
 

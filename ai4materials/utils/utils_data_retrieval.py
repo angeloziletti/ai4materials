@@ -776,7 +776,7 @@ def write_ase_db_file(structure, configs, tar=None, filename_suffix='_ase_atoms.
 
     structure.write(ase_db_filename, format='json')
 
-    with open(ase_info_filename, "w") as f_out:
+    with open(ase_info_filename, "wb") as f_out:
         f_out.write(pickle.dumps(structure.info))
 
     structure.info['ase_db_filename'] = ase_db_filename
