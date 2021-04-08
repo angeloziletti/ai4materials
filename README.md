@@ -39,12 +39,21 @@ The code of this branch uses functionalities of ai4materials that is currently u
 ### Installation
 ------------------
 
-We recommend to create a virtual python 3.7 environment (for instance, with conda), and then execute
+We recommend to create a virtual python 3.7 environment (for instance, with conda: https://docs.anaconda.com/anaconda/install/linux/), and then execute
 
     pip install 'git+https://github.com/angeloziletti/ai4materials.git'
 
 To reproduce the results in arXiv:2103.09777, you need to install the quippy package  (https://github.com/libAtoms/QUIP) 
-to be able to compute the SOAP descriptor.
+to be able to compute the SOAP descriptor. Executing the following commands should has been tested for a python 3.7 environment created using conda (note that when executing make config, choose always the standard options, i.e., simply hit enter, execept when asked for compiling with GAP support, enter 'y'. Please check also for additional dependencies you may need to install, see also https://libatoms.github.io/GAP/installation.html):
+
+    git clone --recursive https://github.com/libAtoms/QUIP.git
+    cd QUIP/
+    export QUIP_ARCH=linux_x86_64_gfortran
+    make config
+    make
+    git submodule update --init --recursive
+    pip install src/f90wrap
+    make install-quippy
 
 ---------------
 ### ARISE - Usage
