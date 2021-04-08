@@ -52,7 +52,7 @@ class Viewer(object):
 
         if name is None:
             now = datetime.datetime.now()
-            name = hashlib.sha224(str(now)).hexdigest()[:16]
+            name = hashlib.sha224(str(now).encode('utf-8')).hexdigest()[:16]
 
         self.title = title
         self.width = width
@@ -265,13 +265,13 @@ class Viewer(object):
 
         hover = HoverTool(tooltips=tooltips)
 
-        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave,resize"
+        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave"
         p1 = self._make_main_plot(tools=tools_main_plot, plot_title=plot_title, colors=colors,
                                  show_axis=show_axis,
                                  source=source, point_size=point_size, x_axis_label=x_axis_label,
                                  y_axis_label=y_axis_label)
 
-        tools_small_plot = "pan,box_zoom,wheel_zoom,resize,reset"
+        tools_small_plot = "pan,box_zoom,wheel_zoom,reset"
         p2 = self._make_small_plot(tools=tools_small_plot, point_size=map_point_size, colors=colors,
                                   source_map=source_map, source=source)
 
@@ -541,12 +541,12 @@ class Viewer(object):
             data=dict(x=x, y=y, colors=colors, x_zoom=x_zoom, y_zoom=y_zoom, width_zoom=width_zoom,
                       height_zoom=height_zoom))
 
-        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave,resize"
+        tools_main_plot = hover, "wheel_zoom,box_zoom,pan,reset,tap,previewsave"
         p1 = self._make_main_plot(tools=tools_main_plot, plot_title=plot_title, colors=colors, show_axis=show_axis,
                                  source=source, point_size=point_size, x_axis_label=x_axis_label,
                                  y_axis_label=y_axis_label)
 
-        tools_small_plot = "pan,box_zoom,wheel_zoom,resize,reset"
+        tools_small_plot = "pan,box_zoom,wheel_zoom,reset"
         p2 = self._make_small_plot(tools=tools_small_plot, point_size=map_point_size, colors=colors,
                                   source_map=source_map, source=source)
 
@@ -653,11 +653,12 @@ class Viewer(object):
         p1 = figure(title=plot_title, plot_width=600, plot_height=600, tools=tools, background_fill_color='#f2f2f2',
                     outline_line_width=0.01, toolbar_location="left")
 
-        p1.title_text_font = self.title_text['font']
-        p1.title_text_font_size = self.title_text['font_size']
-        p1.title_text_color = self.title_text['color']
-        p1.title_text_font_style = self.title_text['font_style']
-        p1.title_text_baseline = self.title_text['baseline']
+        # commented because not compatible with Bokeh 1.0
+        # p1.title_text_font = self.title_text['font']
+        # p1.title_text_font_size = self.title_text['font_size']
+        # p1.title_text_color = self.title_text['color']
+        # p1.title_text_font_style = self.title_text['font_style']
+        # p1.title_text_baseline = self.title_text['baseline']
 
         if not show_axis:
             p1.axis.visible = None
@@ -688,11 +689,12 @@ class Viewer(object):
         p2 = figure(title='Map', plot_width=350, plot_height=300, tools=tools, background_fill_color="#ffffff",
                     outline_line_width=0.01, toolbar_location="right")
 
-        p2.title_text_font = self.title_text_map['font']
-        p2.title_text_font_size = self.title_text_map['font_size']
-        p2.title_text_color = self.title_text_map['color']
-        p2.title_text_font_style = self.title_text_map['font_style']
-        p2.title_text_baseline = self.title_text_map['baseline']
+        # commented because not compatible with Bokeh 1.0
+        # p2.title_text_font = self.title_text_map['font']
+        # p2.title_text_font_size = self.title_text_map['font_size']
+        # p2.title_text_color = self.title_text_map['color']
+        # p2.title_text_font_style = self.title_text_map['font_style']
+        # p2.title_text_baseline = self.title_text_map['baseline']
 
         p2.axis.visible = None
         p2.xgrid.grid_line_color = None
@@ -1082,8 +1084,6 @@ def load_templates(template_to_load):
                     <ul>
                         <li> You can <i>zoom-in</i> on a selected area activating the <i>box zoom</i> function (2nd button from the top).
                         The full plot is still shown in the map on the right-side of this webpage, and a shaded area indicates where the selected area is in the plot. </li>
-                        <li> You can modify the <i>aspect-ratio</i> activating the <i>resize</i> function (3rd button from the top),
-                        and dragging the bottom-right corner of the plot.</li>
                     </ul>
 
                     </td>
@@ -1135,8 +1135,6 @@ def load_templates(template_to_load):
                     <ul>
                         <li> You can <i>zoom-in</i> on a selected area activating the <i>box zoom</i> function (2nd button from the top).
                         The full plot is still shown in the map on the right-side of this webpage, and a shaded area indicates where the selected area is in the plot. </li>
-                        <li> You can modify the <i>aspect-ratio</i> activating the <i>resize</i> function (3rd button from the top),
-                        and dragging the bottom-right corner of the plot.</li>
                     </ul>
 
                     </td>

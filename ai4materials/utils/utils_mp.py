@@ -239,3 +239,4 @@ def parallel_process(array, function_to_calculate, nb_jobs=1, use_kwargs=False, 
     return front + out
 
 
+

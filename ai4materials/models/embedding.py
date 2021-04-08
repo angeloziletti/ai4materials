@@ -34,7 +34,7 @@ logger = logging.getLogger('ai4materials')
 
 
 def design_matrix_to_embedding(design_matrix, embed_method=None, embed_class=None,
-                               embed_params=None, standardize='mean-variance'):
+                               embed_params=None, standardize='mean-variance', n_components=2):
     """From a high-dimensional design matrix, reduce the dimensionality via embedding methods.
 
     The user can decide to use a pre-defined selection of embedding methods (via ``embed_method``), or to pass an object
@@ -74,8 +74,8 @@ def design_matrix_to_embedding(design_matrix, embed_method=None, embed_class=Non
     """
 
     t0 = time()
-    params = {'n_components': 2}
-    params_tsne = {'method': 'exact', 'init': 'random', 'random_state': 42, 'verbose': 0}
+    params = {'n_components': n_components}
+    params_tsne = {'method': 'exact', 'init': 'random', 'random_state': 42, 'verbose': 0, 'n_iter': 1000}
     params_tsne_pca = {'method': 'exact', 'init': 'pca', 'random_state': 42, 'verbose': 0}
     params_tsne_approx = {'method': 'barnes_hut', 'init': 'pac', 'random_state': 42, 'verbose': 0}
 

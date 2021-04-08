@@ -23,7 +23,7 @@ __date__ = "20/08/18"
 
 import json
 import logging
-from ai4materials.external.local_meta_info import loadJsonFile, InfoKindEl
+# from nomadcore.local_meta_info import loadJsonFile, InfoKindEl
 import os
 import paramiko
 from stat import S_ISDIR
@@ -336,9 +336,9 @@ def get_metadata_info():
 
     return desc_metainfo
 
-
+"""
 def read_nomad_metainfo(origin='ai4materials'):
-    """Read the atomic nomad meta info file"""
+    #Read the atomic nomad meta info file
     if origin == 'ai4materials':
         metadata_path = get_data_filename(resource='descriptors/atomic_data.nomadmetainfo.json', package='ai4materials')
     else:
@@ -348,3 +348,4 @@ def read_nomad_metainfo(origin='ai4materials'):
                                         extraArgsHandling=InfoKindEl.ADD_EXTRA_ARGS, uri=None)
 
     return metadata_info
+"""

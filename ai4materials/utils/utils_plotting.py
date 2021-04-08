@@ -219,15 +219,16 @@ def make_plot_cross_entropy_loss(step, train_data, val_data, title=None):
     return plt
 
 
-def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_order_param_steps=None,
-                                min_order_param=0.0, max_order_param=None, prob_idxs=None):
+def aggregate_struct_trans_data(filename, nb_rows_to_cut=0, nb_samples=None, nb_order_param_steps=None,
+                                min_order_param=0.0, max_order_param=None, prob_idxs=None, with_uncertainty=True,
+                                uncertainty_types=('variation_ratio', 'predictive_entropy', 'mutual_information')):
     """ Aggregate structural transition data in order to plot it later.
 
     Starting from the results_file of the run_cnn_model function,
     aggregate the data by a given order parameter and the probabilities of
     each class.
     This is used to prepare the data for the structural transition plots,
-    as shown in Fig. 4, Ziletti et al.
+    as shown in Fig. 4, Ziletti et al., Nature Communications 9, 2775 (2018).
 
     Parameters:
 
@@ -258,9 +259,9 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_or
     panda dataframe
         A panda dataframe with the following columns:
 
-        #. a_to_b_index_ : value of the order parameter
+        - a_to_b_index_ : value of the order parameter
 
-        #. 2i columns (where the i's are the elements of the list prob_idxs)
+        - 2i columns (where the i's are the elements of the list prob_idxs)
         as below:
 
             prob_predictions_i_mean : mean of the distribution of classification
@@ -270,9 +271,7 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_or
             of classification probability i for the given a_to_b_index_
             value of the order parameter.
 
-    Examples:
-
-    For an example, see make_crossover_plot.
+        - [optional]: columns containing uncertainty quantification
 
      .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
@@ -284,7 +283,7 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_or
     # all classes are present in the dataset
     df = df[nb_rows_to_cut:]
 
-    # nb samples for each bcc/sc order parameter steps
+    # nb samples for each order parameter steps
     steps, step = np.linspace(min_order_param, max_order_param, nb_order_param_steps, retstep=True)
     a_to_b_index = np.repeat(steps, nb_samples)
     df['a_to_b_index'] = a_to_b_index
@@ -297,21 +296,40 @@ def aggregate_struct_trans_data(filename, nb_rows_to_cut, nb_samples=None, nb_or
         prob_predictions.append(prob_prediction)
         prob_pred_agg.update({prob_prediction: ['mean', 'std']})
 
-    df_results = df.groupby(['a_to_b_index'], as_index=False).agg(prob_pred_agg)
+    df_results_prob = df.groupby(['a_to_b_index'], as_index=False).agg(prob_pred_agg)
 
     # flatten hierarchical index
     # NB: you cannot just rename the columns
-    # the values are order by increasing mean, so the column name --> value
+    # the values are ordered by increasing mean, so the column name --> value
     # will not be conserved
-    df_results.columns = ['_'.join(col).strip() for col in df_results.columns.values]
+    df_results_prob.columns = ['_'.join(col).strip() for col in df_results_prob.columns.values]
+    df_results_prob.reindex(columns=sorted(df_results_prob.columns))
 
-    logger.debug(df_results.head())
-    df_results.reindex(columns=sorted(df_results.columns))
+    if with_uncertainty:
+        uncertainty_preds = []
+        uncertainty_pred_agg = {}
+
+        for uncertainty_type in uncertainty_types:
+            uncertainty_pred = 'uncertainty_' + str(uncertainty_type)
+            uncertainty_preds.append(uncertainty_pred)
+            uncertainty_pred_agg.update({uncertainty_pred: ['mean', 'std']})
+
+        df_results_uncertainty = df.groupby(['a_to_b_index'], as_index=False).agg(uncertainty_pred_agg)
+        df_results_uncertainty.columns = ['_'.join(col).strip() for col in df_results_uncertainty.columns.values]
+        df_results_uncertainty.reindex(columns=sorted(df_results_uncertainty.columns))
+        # df_results_uncertainty.drop('a_to_b_index_', axis=1, inplace=True)
+
+    if with_uncertainty:
+        # merge the probability prediction results with the uncertainty results
+        df_results = pd.merge(df_results_prob, df_results_uncertainty, on='a_to_b_index_')
+    else:
+        df_results = df_results_prob
 
     return df_results
 
 
-def make_crossover_plot(df_results, filename, filename_suffix, title, labels, prob_idxs, nb_order_param_steps,
+def make_crossover_plot(df_results, filename, filename_suffix, title, labels, nb_order_param_steps,
+                        plot_type='probability', prob_idxs=None, uncertainty_type='mutual_information',
                         linewidth=1.0, markersize=1.0, max_nb_ticks=None, palette=None, show_plot=False,
                         style='publication', x_label="Order parameter"):
     """ Starting from an aggregated data panda dataframe, plot classification
@@ -322,7 +340,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     Parameters:
 
     df_results: panda dataframe,
-        Panda dataframe returned by the aggregate_struct_trans_data function.
+        Panda dataframe returned by the `aggregate_struct_trans_data` function.
 
     filename: string
         Full path to the results_file created by the run_cnn_model function.
@@ -335,6 +353,12 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     title: string
         Title of the plot
+
+    plot_type: str (options: 'probability', 'uncertainty')
+        Plot either probabilities of classification or uncertainty.
+
+    uncertainty_type: str (options: 'mutual_information', 'predictive_entropy')
+        Type of uncertainty estimation to be plotted. Used only if `plot_type`='uncertainty'.
 
     prob_idxs: list of int
         List of integers which correspond to the classes for which the
@@ -351,7 +375,7 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         Different values might work, but could give rise to unexpected
         behaviour.
 
-    show_plot: bool, optional, default : False
+    show_plot: bool, optional, default: False
         If True, it opens the generated plot.
 
     style: string, optional, {'publication'}
@@ -362,61 +386,6 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     x_label: string, optional, default: "Order parameter"
         Label for the x-axis (the order parameter axis)
-
-
-    Examples:
-
-    To have this example working, you need to set up all the
-    paths, have calculated a descriptor file, have trained a neural
-    network model, and saved the results in the checkpoint_dir folder.
-
-    Minimal example::
-
-        from nomad_sim.wrappers import calc_descriptor
-        from nomad_sim.model_cnn import run_cnn_model
-        from nomad_sim.utils_plotting import aggregate_struct_trans_data
-        from nomad_sim.utils_plotting import make_crossover_plot
-
-
-        run_cnn_model(method='xray_cnn',
-            desc_type='xray',
-            train=False,
-            split_train_val=True,
-            read_from_file=False,
-            path_to_x_train=path_to_x_train,
-            path_to_y_train=path_to_y_train,
-            path_to_x_val=path_to_x_val,
-            path_to_y_val=path_to_y_val,
-            path_to_x_test=path_to_x_test,
-            path_to_y_test=path_to_y_test,
-            target_name='spacegroup_symbol', target_categorical=True,
-            desc_file_list_train=desc_file_list_train,
-            desc_file_list_test=desc_file_bcc_to_amorphous,
-            input_dims=input_dims,
-            desc_folder=example_data_bcc_to_amorphous_folder,
-            tmp_folder=tmp_folder,
-            lookup_file=lookup_file,
-            control_file=control_file,
-            results_file=results_file_bcc_to_amorphous,
-            checkpoint_filename=checkpoint_filename,
-            checkpoint_dir=checkpoint_dir,
-            nb_epoch=1,
-            batch_size=32,
-            data_augmentation=False)
-
-        df_results = aggregate_struct_trans_data(results_file_bcc_to_amorphous,
-            nb_samples=421,
-            nb_order_param_steps=9, max_order_param=0.4,
-            prob_idxs=[0, 1, 2, 3])
-
-        make_crossover_plot(df_results, results_file_bcc_to_amorphous,
-            prob_idxs=[0, 1, 2, 3],
-            labels = ["$p_{diamond}$", "$p_{fcc}$", "$p_{bcc}$", "$p_{sc}$"],
-            nb_order_param_steps=9,
-            filename_suffix=".png",
-            title="From body-centered-cubic (bcc) to amorphous",
-            x_label="Lindemann parameter", show_plot=True)
-
 
     .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
 
@@ -429,27 +398,45 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
 
     # colors from https://matplotlib.org/examples/color/named_colors.html
     if palette is None:
-        palette = ['green', 'blue', 'indigo', 'red', 'olive', 'orange', 'black']
+        palette = ['yellow', 'red', 'blue', 'green', 'purple', 'orange', 'black']
 
     a_to_b_param = df_results.a_to_b_index_.values
 
-    prob_predictions_mean = []
-    prob_predictions_std = []
     colors_plot = []
     labels_sel = []
-    for prob_idx in prob_idxs:
-        prob_predictions_mean.append('prob_predictions_' + str(prob_idx) + '_mean')
-        prob_predictions_std.append('prob_predictions_' + str(prob_idx) + '_std')
-        colors_plot.append(palette[prob_idx])
-        labels_sel.append(labels[prob_idx])
 
-    # a is 1st prob_idx, b is 2nd (order matters for the plot)
-    prob_mean = []
-    prob_std = []
+    y_label_name_mean = []
+    y_label_name_std = []
 
-    for prob_idx in range(len(prob_idxs)):
-        prob_mean.append(df_results[prob_predictions_mean[prob_idx]].values)
-        prob_std.append(df_results[prob_predictions_std[prob_idx]].values)
+    if plot_type == 'probability':
+        for prob_idx in prob_idxs:
+            y_label_name_mean.append('prob_predictions_' + str(prob_idx) + '_mean')
+            y_label_name_std.append('prob_predictions_' + str(prob_idx) + '_std')
+
+            colors_plot.append(palette[prob_idx])
+            labels_sel.append(labels[prob_idx])
+    elif plot_type == 'uncertainty':
+        y_label_name_mean.append('uncertainty_' + str(uncertainty_type) + '_mean')
+        y_label_name_std.append('uncertainty_' + str(uncertainty_type) + '_std')
+
+        colors_plot.append(palette[0])
+        labels_sel.append(labels[0])
+    else:
+        raise Exception("Please specify a valid plot_type. Possible values are: 'probability', 'uncertainty'.")
+
+    y_value_mean = []
+    y_value_std = []
+
+    if plot_type == 'probability':
+        # a is 1st prob_idx, b is 2nd (order matters for the plot)
+        for prob_idx in range(len(prob_idxs)):
+            y_value_mean.append(df_results[y_label_name_mean[prob_idx]].values)
+            y_value_std.append(df_results[y_label_name_std[prob_idx]].values)
+    elif plot_type == 'uncertainty':
+        y_value_mean.append(df_results[y_label_name_mean].values)
+        y_value_std.append(df_results[y_label_name_std].values)
+    else:
+        pass
 
     # set max nb ticks
     if max_nb_ticks is not None:
@@ -460,24 +447,33 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
     steps, step = np.linspace(np.amin(a_to_b_param), np.amax(a_to_b_param), max_nb_ticks, retstep=True)
 
     # the sigma/STD_SCALING upper and lower analytic population bounds
-    STD_SCALING = 1.0
+    std_scaling = 1.0
     lower_bound = []
     upper_bound = []
 
-    for prob_idx in range(len(prob_idxs)):
-        lower_bound.append(prob_mean[prob_idx] - prob_std[prob_idx] / STD_SCALING)
-        upper_bound.append(prob_mean[prob_idx] + prob_std[prob_idx] / STD_SCALING)
+    if plot_type == 'probability':
+        for prob_idx in range(len(prob_idxs)):
+            lower_bound.append(y_value_mean[prob_idx] - y_value_std[prob_idx] / std_scaling)
+            upper_bound.append(y_value_mean[prob_idx] + y_value_std[prob_idx] / std_scaling)
+    elif plot_type == 'uncertainty':
+        lower_bound.append(y_value_mean[0] - y_value_std[0] / std_scaling)
+        upper_bound.append(y_value_mean[0] + y_value_std[0] / std_scaling)
+    else:
+        pass
 
     fig, ax = plt.subplots(1)
 
     plt.suptitle(title, fontname='Ubuntu', fontsize=15, fontstyle='italic', fontweight='bold')
-    plt.tight_layout(pad=4.0, w_pad=2.0, h_pad=1.0)
+    plt.tight_layout(pad=5.0, w_pad=2.0, h_pad=1.0)
 
     # restore defaults to 1.5.1 for reproducibility
     # https: // matplotlib.org / users / dflt_style_changes.html  # grid-lines
     plt.grid(True, color='gray', linestyle='--', linewidth=0.5)
-    ax.set_xlim([-np.amax(a_to_b_param) * 0.05 + np.amin(a_to_b_param), np.amax(a_to_b_param) * 1.05])
-    ax.set_ylim([-0.1, 1.1])
+    # ax.set_xlim([-np.amax(a_to_b_param) * 0.05 + np.amin(a_to_b_param), np.amax(a_to_b_param) * 1.05])
+    ax.set_xlim([np.amin(a_to_b_param), np.amax(a_to_b_param)])
+
+    if plot_type == 'probability':
+        ax.set_ylim([-0.1, 1.1])
     start, end = ax.get_xlim()
 
     ax.xaxis.set_ticks(steps)
@@ -488,19 +484,38 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         # tick.label.set_fontsize('x-small')
         tick.label.set_rotation('vertical')
 
-    for prob_idx in range(len(prob_idxs)):
-        ax.plot(a_to_b_param, prob_mean[prob_idx], marker='o', linestyle='-', color=colors_plot[prob_idx],
-                label=labels_sel[prob_idx], linewidth=linewidth, markeredgecolor=colors_plot[prob_idx],
+    if plot_type == 'probability':
+        for prob_idx in range(len(prob_idxs)):
+            ax.plot(a_to_b_param, y_value_mean[prob_idx], marker='o', linestyle='-', color=colors_plot[prob_idx],
+                    label=labels_sel[prob_idx], linewidth=linewidth, markeredgecolor=colors_plot[prob_idx],
+                    markersize=markersize)
+            ax.fill_between(a_to_b_param, lower_bound[prob_idx], upper_bound[prob_idx], facecolor=colors_plot[prob_idx],
+                            alpha=0.2, edgecolor=colors_plot[prob_idx], linewidth=0.0)
+    elif plot_type == 'uncertainty':
+        ax.plot(a_to_b_param, y_value_mean[0], marker='o', linestyle='-', color=colors_plot[0],
+                label=labels_sel[0], linewidth=linewidth, markeredgecolor=colors_plot[0],
                 markersize=markersize)
-        ax.fill_between(a_to_b_param, lower_bound[prob_idx], upper_bound[prob_idx], facecolor=colors_plot[prob_idx],
-                        alpha=0.2, edgecolor=colors_plot[prob_idx], linewidth=0.0)
+        ax.fill_between(a_to_b_param, np.array(lower_bound).reshape(-1), np.array(upper_bound).reshape(-1)
+                        , facecolor=colors_plot[0],
+                        alpha=0.2, edgecolor=colors_plot[0], linewidth=0.0)
+    else:
+        pass
 
     ax.set_xlabel(x_label, fontsize=15)
-    ax.set_ylabel("Classification probability", fontsize=15)
+
+    if plot_type == 'probability':
+        ax.set_ylabel("Classification probability", fontsize=15)
+    elif plot_type == 'uncertainty':
+        if uncertainty_type == 'mutual_information':
+            ax.set_ylabel("Mutual information", fontsize=15)
+        elif uncertainty_type == 'predictive_entropy':
+            ax.set_ylabel("Predictive entropy", fontsize=15)
+        else:
+            ax.set_ylabel("Label", fontsize=15)
 
     ax.tick_params(labelsize=15)
 
-    legend = ax.legend(loc='center left', fontsize=10, bbox_to_anchor=(0.8, 0.5), borderaxespad=1.0, frameon=1)
+    legend = ax.legend(loc='center left', fontsize=10, bbox_to_anchor=(0.1, 0.5), borderaxespad=1.0, frameon=1)
 
     if style == 'publication':
         for text in legend.get_texts():
@@ -516,9 +531,9 @@ def make_crossover_plot(df_results, filename, filename_suffix, title, labels, pr
         frame.set_edgecolor((32 / 255, 32 / 255, 32 / 255))
 
     if filename_suffix == ".png":
-        plt.savefig(filename.rsplit('.', 1)[0] + filename_suffix, format="png")
+        plt.savefig(filename.rsplit('.', 1)[0] + '_' + plot_type + filename_suffix, format="png")
     elif filename_suffix == ".svg":
-        plt.savefig(filename.rsplit('.', 1)[0] + filename_suffix, format="svg")
+        plt.savefig(filename.rsplit('.', 1)[0] + '_' + plot_type + filename_suffix, format="svg")
     else:
         raise Exception("Filename suffix {0} is not a valid file format.".format(filename_suffix))
 
