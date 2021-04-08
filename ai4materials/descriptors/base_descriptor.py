@@ -95,3 +95,4 @@ def is_descriptor_consistent(structure, descriptor):
                                                                                  structure.info['descriptor'][
                                                                                      'descriptor_name']))
     return True
+

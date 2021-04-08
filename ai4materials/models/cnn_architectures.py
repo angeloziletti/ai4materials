@@ -189,3 +189,4 @@ def model_architecture_3d(dim1, dim2, dim3, img_channels, nb_classes):
     model.add(Activation('softmax'))
 
     return model
+

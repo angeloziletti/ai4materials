@@ -28,16 +28,45 @@ import matplotlib.cm
 import os
 import numpy as np
 from ai4materials.utils.utils_crystals import get_boxes_from_xyz
-from ai4materials.wrappers import calc_descriptor
+from ai4materials.wrappers import calc_descriptor, calc_descriptor_in_memory
 from ai4materials.wrappers import load_descriptor
 from ai4materials.dataprocessing.preprocessing import prepare_dataset
 from ai4materials.dataprocessing.preprocessing import load_dataset_from_file
 from ai4materials.models.cnn_polycrystals import predict
+from ai4materials.utils.utils_config import get_data_filename
+import json
 from keras.models import load_model
 import pandas as pd
 import six.moves.cPickle as pickle
 
 logger = logging.getLogger('ai4materials')
+
+
+
+
+def get_training_data_paths():
+    trainig_data_path = get_data_filename('data/training_data')
+    path_to_x = os.path.join(trainig_data_path, 'soap_pristine_data_x.pkl')
+    path_to_y = os.path.join(trainig_data_path, 'soap_pristine_data_y.pkl')
+    path_to_summary = os.path.join(trainig_data_path, 'soap_pristine_data_summary.json')
+    
+    return path_to_x, path_to_y, path_to_summary
+    
+def shift_training_data_to_different_path(new_path):
+    path_to_x, path_to_y, path_to_summary = get_training_data_paths()
+    x = pickle.load(open(path_to_x, "rb"))
+    y = pickle.load(open(path_to_y, "rb"))
+    with open(path_to_summary) as json_file:
+        summary = json.load(json_file)
+    
+    x_name = os.path.basename(path_to_x)
+    y_name = os.path.basename(path_to_y)
+    summary_name = os.path.basename(path_to_summary)
+    
+    pickle.dump(x, open(os.path.join(new_path, x_name), "wb"))
+    pickle.dump(y, open(os.path.join(new_path, y_name), "wb"))
+    with open(os.path.join(new_path, summary_name), 'w') as outfile:
+        json.dump(summary, outfile)
 
 
 def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_metadata, configs,
@@ -47,9 +76,20 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
                                           padding_ratio=None, min_nb_atoms=20):
     if desc_file is None:
         logger.info("Calculating system's representation.")
-        desc_file = calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, configs,
-                                          desc_file_suffix_name, operations_on_structure, nb_jobs, show_plot_lengths,
-                                          padding_ratio=padding_ratio, init_sliding_volume=init_sliding_volume)
+        if nb_jobs == 1:
+            
+            ase_atoms_list = get_structures_by_boxes(polycrystal_file, stride_size=stride_size, box_size=box_size,
+                                                     show_plot_lengths=show_plot_lengths, padding_ratio=padding_ratio,
+                                                     init_sliding_volume=init_sliding_volume)
+            from ai4materials.wrappers import _calc_descriptor
+            desc_file =  _calc_descriptor(ase_atoms_list=ase_atoms_list, descriptor=descriptor, configs=configs,
+                                          logger=logger, desc_folder=configs['io']['desc_folder'],
+                                          tmp_folder=configs['io']['tmp_folder'])
+        else:
+            
+            desc_file = calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, configs,
+                                              desc_file_suffix_name, operations_on_structure, nb_jobs, show_plot_lengths,
+                                              padding_ratio=padding_ratio, init_sliding_volume=init_sliding_volume)
     else:
         logger.info("Using the precomputed user-specified descriptor file.")
 
@@ -64,7 +104,7 @@ def make_strided_pattern_matching_dataset(polycrystal_file, descriptor, desc_met
 
         # if total number of atoms less than cutoff, set descriptor to NaN
         for structure in structure_list:
-            if structure.get_number_of_atoms() <= min_nb_atoms:
+            if structure.get_number_of_atoms() <= min_nb_atoms: # TODO: < or <=??
                 structure.info['descriptor'][desc_metadata][:] = np.nan
 
         path_to_x_test, path_to_y_test, path_to_summary_test = prepare_dataset(structure_list=structure_list,
@@ -108,15 +148,20 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
                            mc_samples=100, interpolation='none', results_file=None, calc_uncertainty=True,
                            conf_matrix_file=None, train_set_name='hcp-bcc-sc-diam-fcc-pristine',
                            cmap_uncertainty='hot',
-                           interpolation_uncertainty='none'):
+                           interpolation_uncertainty='none', plot_results=False, path_to_summary_train=None):
 
+    if path_to_summary_train == None:
+        path_to_x, path_to_y, path_to_summary = get_training_data_paths()
+        with open(path_to_summary, 'rb') as f:
+            dataset_info_train = json.load(f)
+    """
     path_to_x_train = os.path.join(configs['io']['dataset_folder'], train_set_name + '_x.pkl')
     path_to_y_train = os.path.join(configs['io']['dataset_folder'], train_set_name + '_y.pkl')
     path_to_summary_train = os.path.join(configs['io']['dataset_folder'], train_set_name + '_summary.json')
 
     x_train, y_train, dataset_info_train = load_dataset_from_file(path_to_x=path_to_x_train, path_to_y=path_to_y_train,
                                                                   path_to_summary=path_to_summary_train)
-
+    """
     x_test, y_test, dataset_info_test = load_dataset_from_file(path_to_x=path_to_x_test, path_to_y=path_to_y_test,
                                                                path_to_summary=path_to_summary_test)
 
@@ -130,12 +175,16 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
 
     text_labels = np.asarray(dataset_info_test["data"][0]["text_labels"])
     numerical_labels = np.asarray(dataset_info_test["data"][0]["numerical_labels"])
+    
+    # get classe and numerical to text conversion for plotting below
+    classes_text_labels = dataset_info_train["data"][0]['classes']
+    numerical_to_text_label = dict(zip(range(len(classes_text_labels)), classes_text_labels))   
 
     filename_no_ext = os.path.abspath(os.path.normpath(os.path.join(checkpoint_dir, checkpoint_filename)))
 
     model = load_model(filename_no_ext)
 
-    results = predict(x_test, y_test, model=model, configs=configs, nb_classes=5, batch_size=params_cnn["batch_size"],
+    results = predict(x_test, y_test, model=model, configs=configs, nb_classes=dataset_info_train["data"][0]["nb_classes"], batch_size=params_cnn["batch_size"],
                       mc_samples=mc_samples, conf_matrix_file=conf_matrix_file, numerical_labels=numerical_labels,
                       text_labels=text_labels, results_file=results_file)
 
@@ -161,23 +210,32 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
     predictive_mean_sorted = df_predictive_mean_sorted.drop(
         columns=['strided_pattern_positions_z', 'strided_pattern_positions_y', 'strided_pattern_positions_x']).values
 
+    predictive_mean_all_classes = []
     for idx_class in range(predictive_mean_sorted.shape[1]):
 
         if z_max == 1:
             prob_prediction_class = predictive_mean_sorted[:, idx_class].reshape(y_max, x_max)
         else:
             prob_prediction_class = predictive_mean_sorted[:, idx_class].reshape(z_max, y_max, x_max)
-
-        plot_prediction_heatmaps(prob_prediction_class, title='Probability', class_name=str(idx_class), prefix='prob',
+        predictive_mean_all_classes.append(prob_prediction_class)
+        title = 'Proto '+numerical_to_text_label[idx_class]+' Probability'
+        if not plot_results:
+            continue
+        plot_prediction_heatmaps(prob_prediction_class, title=title, class_name=str(idx_class), prefix='prob',
                                  main_folder=configs['io']['main_folder'], cmap='viridis', color_nan='lightgrey',
-                                 interpolation=interpolation)
+                                 interpolation=interpolation, vmin=0.0, vmax=1.0) # added vmin, vmax here
+
+    np.save(os.path.join(configs['io']['results_folder'],
+                         configs['io']['polycrystal_file'] + '_probabilities.npy'),
+                         np.array(predictive_mean_all_classes))
 
     if calc_uncertainty:
         df_uncertainty = pd.DataFrame()
         for key in uncertainty.keys():
             df_uncertainty[key] = uncertainty[key]
 
-        df = pd.concat([df_positions, df_uncertainty], axis=1, join_axes=[df_positions.index])
+        df = pd.concat([df_positions, df_uncertainty], axis=1, join_axes=[df_positions.index]) # TODO: join_axes deprecated..since version 0.25.0 - ai4mat at the moment has 0.22.0 BUT NOT ALWAYS
+        # if would do reinstallaiton, may fail... is not fixed in the setup folder!!
         df_uncertainty_sorted = df.sort_values(
             ['strided_pattern_positions_z', 'strided_pattern_positions_y', 'strided_pattern_positions_x'],
             ascending=True)
@@ -192,6 +250,11 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
             else:
                 uncertainty_prediction = uncertainty_sorted[key].values.reshape(z_max, y_max, x_max)
 
+            np.save(os.path.join(configs['io']['results_folder'],
+                    configs['io']['polycrystal_file'] + '_' + key + '.npy'),
+                    uncertainty_prediction)
+            if not plot_results:
+                continue
             # for idx_uncertainty in range(predictive_mean_sorted.shape[1]):
             plot_prediction_heatmaps(uncertainty_prediction, title='Uncertainty ({})'.format(str(key)),
                                      main_folder=configs['io']['main_folder'], cmap=cmap_uncertainty,
@@ -214,7 +277,7 @@ def get_structures_by_boxes(xyz_filename, stride_size, box_size, show_plot_lengt
         assert sliding_volume[1] == sliding_volume[2]
         box_size = sliding_volume[0]
 
-    xyz_boxes = get_boxes_from_xyz(xyz_filename, sliding_volume, stride_size, padding_ratio=padding_ratio)
+    xyz_boxes, number_of_atoms_xyz = get_boxes_from_xyz(xyz_filename, sliding_volume, stride_size, padding_ratio=padding_ratio, give_atom_density=True, plot_atom_density=False)
     tot_nb_boxes = len(xyz_boxes) * len(xyz_boxes[0]) * len(xyz_boxes[0][0])
 
     logger.info("Box size: {}".format(box_size))
@@ -314,12 +377,20 @@ def calc_polycrystal_desc(polycrystal_file, stride_size, box_size, descriptor, c
     ase_atoms_list = get_structures_by_boxes(polycrystal_file, stride_size=stride_size, box_size=box_size,
                                              show_plot_lengths=show_plot_lengths, padding_ratio=padding_ratio,
                                              init_sliding_volume=init_sliding_volume)
-
+    
     desc_file = calc_descriptor(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
                                 desc_file='{0}_stride_{1}_{2}_{3}_box_size_{4}_{5}.tar.gz'.format(
                                     os.path.basename(polycrystal_file), stride_size[0], stride_size[1], stride_size[2],
                                     box_size, desc_file_suffix_name), format_geometry='aims',
                                 operations_on_structure=operations_on_structure, nb_jobs=nb_jobs)
+    """                            
+    desc_file = calc_descriptor_in_memory(descriptor=descriptor, configs=configs, ase_atoms_list=ase_atoms_list,
+                                               desc_file='{0}_stride_{1}_{2}_{3}_box_size_{4}_{5}.tar.gz'.format(
+                                                           os.path.basename(polycrystal_file), stride_size[0], stride_size[1], stride_size[2],
+                                                            box_size, desc_file_suffix_name),
+                                     format_geometry='aims',
+                                     operations_on_structure=operations_on_structure, nb_jobs=nb_jobs, tmp_folder=configs['io']['tmp_folder'], desc_folder=configs['io']['desc_folder'])
+    """
     return desc_file
 
 
@@ -376,12 +447,12 @@ def plot_prediction_heatmaps(prob_prediction_class, title, main_folder, class_na
         # logger.info("Creating three-dimensional plot.")  # x = np.arange(prob_prediction_class.shape[0])[:, None, None]  # y = np.arange(prob_prediction_class.shape[1])[None, :, None]  # z = np.arange(prob_prediction_class.shape[2])[None, None, :]  # x, y, z = np.broadcast_arrays(x, y, z)  #  # from mpl_toolkits.mplot3d import Axes3D  # # ax = fig.add_subplot(111, projection='3d')  #  # colmap = cm.ScalarMappable(cmap=plt.cm.Blues)  # colmap.set_array(prob_prediction_class.ravel())  #  # fig = plt.figure(figsize=(8, 6))  # ax = fig.gca(projection='3d')  # ax.scatter(x, y, z, marker='s', s=140, c=prob_prediction_class.ravel(), cmap=plt.cm.Blues, vmin=0, vmax=1,  #            alpha=0.7)  # alpha is transparancey value, 0 (transparent) and 1 (opaque)  # cb = fig.colorbar(colmap)  #  # ax.set_xlabel('x $[\mathrm{\AA}]$')  # ax.set_ylabel('y $[\mathrm{\AA}]$')  # ax.set_zlabel('z $[\mathrm{\AA}]$')  # plt.title(filename)  # plt.show()  # plt.close()  # pl.dump(fig,file(filename+'.pickle','w'))
 
     if class_name != '':
-        filename = os.path.join(main_folder, '{0}_class{1}.pdf'.format(str(prefix), str(class_name)))
-        plt.savefig(filename, format='pdf',
+        filename = os.path.join(main_folder, '{0}_class{1}.svg'.format(str(prefix), str(class_name)))
+        plt.savefig(filename, format='svg', # before: format='pdf', also below; and {0}_class{1}.pdf!
                     dpi=1000)
     else:
-        filename = os.path.join(main_folder, '{0}_{1}.pdf'.format(str(prefix), str(suffix)))
-        plt.savefig(filename, format='pdf', dpi=1000)
+        filename = os.path.join(main_folder, '{0}_{1}.svg'.format(str(prefix), str(suffix)))
+        plt.savefig(filename, format='svg', dpi=1000) 
 
     logger.info("File saved to {}.".format(filename))
     plt.close()

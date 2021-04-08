@@ -10,9 +10,6 @@ It is copied here to remove the dependency from nomad-lab-base.
 For more info on python-common visit:
 https://gitlab.mpcdf.mpg.de/nomad-lab/python-common
 
-The author of this code is: Dr. Fawzi Roberto Mohamed
-E-mail: mohamed@fhi-berlin.mpg.de
-
 """
 from __future__ import print_function
 from builtins import str

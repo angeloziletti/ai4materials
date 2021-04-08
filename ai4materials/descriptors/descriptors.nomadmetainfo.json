@@ -1,7 +1,7 @@
 { 
   "type": "descriptor_metadata_1.0",
   "description": "Metadata information for descriptors.",
-  "descriptors": ["AtomicFeatures", "Diffraction1D", "Diffraction2D", "DISH","quippy_SOAP_descriptor","FT_SOAP_harmonics", "PRDF"],
+  "descriptors": ["AtomicFeatures", "Diffraction1D", "Diffraction2D", "DISH","quippy_SOAP_descriptor","dscribe_SOAP_descriptor","FT_SOAP_harmonics", "PRDF"],
   "FT_SOAP_harmonics": [
   {
       "name": "FT_SOAP_harmonics",
@@ -20,8 +20,13 @@
       "description": "Full FFT of SOAP descriptor",
       "filename": "FT_SOAP_full_filename_npy",
       "file_ending": "_FT_SOAP_full.npy"
-  }
-  ],
+  },
+  {
+      "name": "FT_SOAP_harmonics_coordinates",
+      "description": "x, y, z coordinates of the structure",
+      "filename": "FT_SOAP_harmonics_coord_filename_in",
+      "file_ending": "_FT_SOAP_harmonics_coord.in"
+  }],
   "PRDF": [
   {
       "name": "prdf",
@@ -54,8 +59,32 @@
       "description": "Image of SOAP descriptor from quippy",
       "filename": "quippy_SOAP_descriptor_filename_png",
       "file_ending": "_quippy_SOAP_descriptor.png"
-  }
-  ],
+  },
+  {
+      "name": "quippy_SOAP_coordinates",
+      "description": "x, y, z coordinates of the structure",
+      "filename": "quippy_SOAP_coord_filename_in",
+      "file_ending": "_quippy_SOAP_coord.in"
+  }],
+  "dscribe_SOAP_descriptor": [
+  {
+      "name": "dscribe_SOAP",
+      "description": "SOAP descriptor from dscribe",
+      "filename": "dscribe_SOAP_descriptor_filename_npy",
+      "file_ending": "_dscribe_SOAP_descriptor.npy"
+  },
+  {
+      "name": "dscribe_SOAP_image",
+      "description": "Image of SOAP descriptor from dscribe",
+      "filename": "dscribe_SOAP_descriptor_filename_png",
+      "file_ending": "_dscribe_SOAP_descriptor.png"
+  },
+  {
+      "name": "dscribe_SOAP_coordinates",
+      "description": "x, y, z coordinates of the structure",
+      "filename": "dscribe_SOAP_coord_filename_in",
+      "file_ending": "_dscribe_SOAP_coord.in"
+  }],
   "DISH": [
   {
       "name": "diffraction_3d_sh_spectrum",

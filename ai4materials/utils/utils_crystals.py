@@ -23,8 +23,9 @@ __email__ = "ziletti@fhi-berlin.mpg.de"
 __date__ = "23/09/18"
 
 from ase.neighborlist import NeighborList
-from ase.build import find_optimal_cell_shape_pure_python
-from ase.build import get_deviation_from_optimal_cell_shape
+# optimal cell shape -> TODO
+# from ase.build import find_optimal_cell_shape_pure_python
+# from ase.build import get_deviation_from_optimal_cell_shape
 from ase.build import make_supercell
 from ase.spacegroup import get_spacegroup as ase_get_spacegroup
 import ase
@@ -42,21 +43,23 @@ import math
 from scipy import constants
 import scipy
 import pandas as pd
-from itertools import izip
+# from itertools import izip
+from itertools import zip_longest as zip
 from itertools import permutations
 from decimal import Decimal
 import copy
-from ai4materials.utils.utils_binaries import get_chemical_formula_binaries
-import ai4materials.utils.unit_conversion as uc
+# from ai4materials.utils.utils_binaries import get_chemical_formula_binaries
+# import ai4materials.utils.unit_conversion as uc
 from ai4materials.utils.utils_config import get_data_filename
 import scipy.misc
 import logging
 import spglib
 import random
 from pint import UnitRegistry
+import time
 
 logger = logging.getLogger('ai4materials')
-
+logger.setLevel(logging.DEBUG)
 
 def get_spacegroup_analyzer(atoms, symprec=None, angle_tolerance=-1.):
     """Given an ASE structure and a symprec, return the SpacegroupAnalyzer.\n
@@ -775,6 +778,7 @@ def create_supercell(atoms, create_replicas_by='nb_atoms', min_nb_atoms=None, ta
     atoms = standardize_cell(atoms, cell_type)
 
     if optimal_supercell:
+        raise NotImplementedError("In the current version of ai4materials, this option is not yet implemented.")
         logger.info("Using optimal supercell algorithm for replica determination. ")
         # optimal supercell following https://wiki.fysik.dtu.dk/ase/tutorials/defects/defects.html
         # there is a scipy-based implementation (find_optimal_cell_shape) but it does not work
@@ -1001,7 +1005,12 @@ def substitute_atoms(atoms, target_sub_ratio=0.0, max_n_sub_species=94, max_rel_
     return atoms
 
 
-def random_displace_atoms(atoms, noise_distribution, displacement=None, displacement_scaled=None, **kwargs):
+def random_displace_atoms(atoms, noise_distribution, displacement=None, displacement_scaled=None,
+                          atoms_scaling_cutoffs=[20.,30.,40.,50.], element_sensitive=False,
+                          central_atom_species=26, neighbor_atoms_species=26,
+                          constrain_nn_distances=False,
+                          min_scale_factor=0.1, max_scale_factor=35.,
+                          **kwargs):
     """Make a supercell and then randomly displace atoms in the constructed supercell.
 
     Atoms are substituted with other - randomly chosen - chemical species. The positions of the atoms in the
@@ -1062,15 +1071,50 @@ def random_displace_atoms(atoms, noise_distribution, displacement=None, displace
             logger.debug("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
         elif noise_distribution == 'uniform':
             noise = np.random.uniform(low=-displacement, high=displacement, size=(len(atoms), 3))
-        elif noise_distribution == 'gaussian_scaled':
-            scale_factor = get_nn_distance(atoms)
-            displacement = displacement_scaled * scale_factor
-            noise = np.random.normal(loc=0.0, scale=displacement, size=(len(atoms), 3))
-        elif noise_distribution == 'uniform_scaled':
-            scale_factor = get_nn_distance(atoms)
-            displacement = displacement_scaled * scale_factor
-            noise = np.random.uniform(low=-displacement, high=displacement, size=(len(atoms), 3))
-            logger.debug("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
+        elif noise_distribution == 'gaussian_scaled' or noise_distribution == 'uniform_scaled':
+            scaling_type = 'quantile_nn'
+            scale_factor = None
+            for idx_cutoff, cutoff in enumerate(atoms_scaling_cutoffs):
+                scale_factor = get_nn_distance(atoms=atoms, 
+                                               distribution=scaling_type,
+                                               cutoff=cutoff,
+                                               element_sensitive=element_sensitive,
+                                               central_atom_species=central_atom_species,
+                                               neighbor_atoms_species=neighbor_atoms_species,
+                                               constrain_nn_distances=constrain_nn_distances)
+                if scale_factor is not None:
+                    if min_scale_factor < scale_factor < max_scale_factor:
+                        logger.debug("Cut off of {0} was successful".format(cutoff))
+                        logger.info("Scale factor: {}".format(scale_factor))
+                        logger.debug(
+                            "Scale factor with extrinsic scaling: {} Angstrom".format(
+                                scale_factor * displacement_scaled))
+                        break
+                    else:
+                        logger.info("Unable to obtain a physically meaningful scaling factor.")
+                        logger.info("Scale factor: {} Angstrom".format(scale_factor))
+                        logger.debug(
+                            "Scale factor with extrinsic scaling: {} Angstrom".format(
+                                scale_factor * displacement_scaled))
+                        logger.info("Increasing cutoff from {} to {} Angstrom".format(
+                            atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))
+                else:
+                    logger.info("Unable to obtain a scaling factor.")
+                    logger.info("Increasing cutoff from {} to {} Angstrom".format(
+                        atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))           
+            
+            
+            
+            
+            if noise_distribution == 'gaussian_scaled':
+                scale_factor = get_nn_distance(atoms)
+                displacement = displacement_scaled * scale_factor
+                noise = np.random.normal(loc=0.0, scale=displacement, size=(len(atoms), 3))
+            elif noise_distribution == 'uniform_scaled':
+                scale_factor = get_nn_distance(atoms)
+                displacement = displacement_scaled * scale_factor
+                noise = np.random.uniform(low=-displacement, high=displacement, size=(len(atoms), 3))
+                logger.debug("Noise realization: min: {}; max: {}".format(noise.min(), noise.max()))
         else:
             raise NotImplementedError("The noise distribution chosen is not implemented.")
 
@@ -1157,11 +1201,12 @@ def get_min_distance(atoms, nb_splits=100):
 
 # Had to change cutoff to 55 for cu_3_au
 # constrain_nn_distances=True, min_nb_nn=5 was default
-def get_nn_distance(atoms, distribution='quantile_nn', cutoff=30.0,
-                    min_nb_nn=5, pbc=True, plot_histogram=False, bins=100, 
-                    constrain_nn_distances=True, nn_distances_cutoff=0.9, 
+def get_nn_distance(atoms, distribution='quantile_nn', cutoff=20.0,
+                    min_nb_nn=1,#5,
+                    pbc=True, plot_histogram=False, bins=100, 
+                    constrain_nn_distances=False, nn_distances_cutoff=0.9, 
                     element_sensitive=False, central_atom_species=26, neighbor_atoms_species=26,
-                    return_more_nn_distances=False):
+                    return_more_nn_distances=False, return_histogram=False):
     """Calculate an "averaged" (actual average or quantile-based) nearest neighbors distance.
     This is a measure of the characteristic structural lengthscale of the system.
 
@@ -1196,7 +1241,7 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=30.0,
     bins: int, optional, (default = 100)
         Number of bins used in the histograms of the nearest neighbor distance function.
 
-    constrain_nn_distances: bool, optional, (default = True)
+    constrain_nn_distances: bool, optional, (default = False)
         If `True`, nearest neighbor distances below the cutoff specified by the additional argument
         nn_distances_cutoff will be ignored.
         
@@ -1223,8 +1268,8 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=30.0,
     #    then get_neighbors(b) will not return a as a neighbor - unless
     #    bothways=True was used."
     nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
-    nl.build(atoms)
-
+    # nl.build(atoms) previously used.
+    nl.update(atoms)
     nn_dist = []
 
     for idx in range(nb_atoms):
@@ -1237,7 +1282,7 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=30.0,
         
         logger.debug("List of neighbors of atom number {0}".format(idx))
         indices, offsets = nl.get_neighbors(idx)
-        if len(indices) > min_nb_nn:
+        if len(indices) >= min_nb_nn: # before was >!!
             coord_central_atom = atoms.positions[idx]
             # get positions of nearest neighbors within the cut-off
             dist_list = []
@@ -1300,12 +1345,193 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=30.0,
         length_scale_3 = (bin_edges[np.argsort(hist_scaled)[-3:][0]] + bin_edges[np.argsort(hist_scaled)[-3:][0] + 1]) / 2.0
         length_scale_2 = (bin_edges[np.argsort(hist_scaled)[-3:][1]] + bin_edges[np.argsort(hist_scaled)[-3:][1] + 1]) / 2.0
         return length_scale, length_scale_2, length_scale_3
+    elif return_histogram:
+        return length_scale, hist_scaled, nn_dist
+    else:
+        return length_scale
+        
+        
+        
+        
+        
+# Had to change cutoff to 55 for cu_3_au
+# constrain_nn_distances=True, min_nb_nn=5 was default
+def get_nn_distance_(atoms, distribution='quantile_nn', cutoff=20.0,
+                    min_nb_nn=5, pbc=True, plot_histogram=False, bins=100, 
+                    constrain_nn_distances=False, nn_distances_cutoff=0.9, 
+                    element_sensitive=False, central_atom_species=26, neighbor_atoms_species=26,
+                    return_more_nn_distances=False):
+    """Calculate an "averaged" (actual average or quantile-based) nearest neighbors distance.
+    This is a measure of the characteristic structural lengthscale of the system.
+
+    Parameters:
+
+    atoms: `ase.Atoms`
+        Atomic structure.
+
+    distribution: { 'avg_nn', 'quantile_nn'}
+        Type of statistical function to be used in the lengthscale determination. \n
+        - 'avg_nn' simply averages the nearest neighbor distances.
+        - 'quantile_nn' used a quantile-based approach to be more robust w.r.t. outliers.
+        These two choices are essentially equivalent for pristine structures, while the 'quantile_nn'
+        is more robust when defects are included.
+
+    cutoff: float, optional, (default = 4.0)
+        Cutoff (in Angstrom) for the radius within which atoms are considered neighbor.
+        This neighbors will then be used to identify the nearest atom.
+
+    min_nb_nn: int, optional, (default = 5)
+        Minimum number of neighbors for a given atom to be considered.
+        If an atom has less than `min_nb_nn` it will not be used in the determination of the system lengthscale.
+
+    pbc: bool, optional, (default = True)
+        `True` if periodic boundary conditions are used.
+
+    plot_histogram: bool, optional, (default = True)
+        If `True`, plot the histogram on the neighbor distances. It can be useful for debugging, especially
+        for heavily defective structures, when the distribution changes substantially (w.r.t. the
+        pristine crystal structure) due to disorder.
+
+    bins: int, optional, (default = 100)
+        Number of bins used in the histograms of the nearest neighbor distance function.
+
+    constrain_nn_distances: bool, optional, (default = False)
+        If `True`, nearest neighbor distances below the cutoff specified by the additional argument
+        nn_distances_cutoff will be ignored.
+        
+    nn_distances_cutoff: float, optional, (default = 0.9)
+        Cutoff for nearest neighbor distances.
+
+    Returns:
+
+    float or None
+        Characteristic lengthscale of the system based on the nearest neighbors' distance.
+        Returns `None` if no characteristic lengthscale could be found.
+
+    .. seealso:: :py:mod:`ai4materials.utils.utils_crystals.get_min_distance`.
+
+    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+
+    """
+    print('Entered more efficient function')
+    if not pbc:
+        atoms.set_pbc((False, False, False))
+
+    nb_atoms = atoms.get_number_of_atoms()
+    cutoffs = np.ones(nb_atoms) * cutoff
+    # Notice that if get_neighbors(a) gives atom b as a neighbor,
+    #    then get_neighbors(b) will not return a as a neighbor - unless
+    #    bothways=True was used."
+    nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
+    nl.build(atoms)
+
+    nn_dist = []
+    # no speedup
+    #nn_dist_append = nn_dist.append
+    # 
+    if element_sensitive:
+        
+        atomic_numbers = atoms.get_atomic_numbers()
+        indices = np.arange(nb_atoms)
+        indices_central_atom_species = indices[atomic_numbers == central_atom_species]
+        #indices_neighbor_atom_species = indices[atomic_numbers == neighbor_atoms_species]
+    else:
+        indices_central_atom_species = range(nb_atoms)
+    
+    #for idx in range(nb_atoms):
+    print(indices_central_atom_species)
+    #print(indices_neighbor_atom_species)
+    for idx in indices_central_atom_species:
+        # element sensitive part - only select atoms of specified chemical species as central atoms
+        if element_sensitive:
+            if atoms.get_atomic_numbers()[idx]==central_atom_species:
+                pass
+            else:
+                continue        
+        
+        logger.debug("List of neighbors of atom number {0}".format(idx))
+        indices, offsets = nl.get_neighbors(idx)
+        #if element_sensitive:
+        #    indices = indices[indices==indices_neighbor_atom_species]
+        #else:
+        #    pass
+        if len(indices) > min_nb_nn:
+            coord_central_atom = atoms.positions[idx]
+            # get positions of nearest neighbors within the cut-off
+            dist_list = []
+            # avoiding dots also no speedup
+            #dist_list_append = dist_list.append
+            # This did not give speedup:
+            #dist_list = [np.linalg.norm(atoms.positions[i] + np.dot(offset, atoms.get_cell()) - coord_central_atom) for i, offset in zip(indices, offsets) if atoms.get_atomic_numbers()[i]==neighbor_atoms_species]
+            
+            for i, offset in zip(indices, offsets):
+                # element sensitive part - only select neighbors of specified chemical species
+                """
+                if element_sensitive:
+                    if atoms.get_atomic_numbers()[i]==neighbor_atoms_species:
+                        pass
+                    else:
+                        continue
+                """
+                # center each neighbors wrt the central atoms
+                coord_neighbor = atoms.positions[i] + np.dot(offset, atoms.get_cell())
+                # calculate distance between the central atoms and the neighbors
+                dist = np.linalg.norm(coord_neighbor - coord_central_atom)
+                dist_list.append(dist)
+            
+            # dist_list is the list of distances from the central_atoms
+            if len(sorted(dist_list)) > 0:
+                # get nearest neighbor distance
+                nn_dist.append(sorted(dist_list)[0])
+            else:
+                logger.warning("List of neighbors is empty for some atom. Cutoff must be increased.")
+                return None
+        else:
+            logger.debug("Atom {} has less than {} neighbours. Skipping.".format(idx, min_nb_nn))
+
+
+    if constrain_nn_distances:
+         original_length = len(nn_dist)
+         # Select all nearest neighbor distances larger than nn_distances_cutoff
+         threshold_indices = np.array(nn_dist) > nn_distances_cutoff 
+         nn_dist = np.extract(threshold_indices , nn_dist)
+         if len(nn_dist)<original_length:
+             logger.debug("Number of nn distances has been reduced from {} to {}.".format(original_length,len(nn_dist)))
+
+    if distribution == 'avg_nn':
+        length_scale = np.mean(nn_dist)
+    elif distribution == 'quantile_nn':
+        # get the center of the maximally populated bin
+        hist, bin_edges = np.histogram(nn_dist, bins=bins, density=False)
+
+        # scale by r**2 because this is how the rdf is defined
+        # the are of the spherical shells grows like r**2
+        hist_scaled = []
+        for idx_shell, hist_i in enumerate(hist):
+            hist_scaled.append(float(hist_i)/(bin_edges[idx_shell]**2))
+
+        length_scale = (bin_edges[np.argmax(hist_scaled)] + bin_edges[np.argmax(hist_scaled) + 1]) / 2.0
+
+        if plot_histogram:
+            # this histogram is not scaled by r**2, it is only the count
+            plt.hist(nn_dist, bins=bins)  # arguments are passed to np.histogram
+            plt.title("Histogram")
+            plt.show()
+    else:
+        raise ValueError("Not recognized option for atoms_scaling. "
+                         "Possible values are: 'min_nn', 'avg_nn', or 'quantile_nn'.")
+                         
+    if return_more_nn_distances and distribution=='quantile_nn':
+        length_scale_3 = (bin_edges[np.argsort(hist_scaled)[-3:][0]] + bin_edges[np.argsort(hist_scaled)[-3:][0] + 1]) / 2.0
+        length_scale_2 = (bin_edges[np.argsort(hist_scaled)[-3:][1]] + bin_edges[np.argsort(hist_scaled)[-3:][1] + 1]) / 2.0
+        return length_scale, length_scale_2, length_scale_3
     else:
         return length_scale
 
 # standard max_scale factor was 10, adjusted to 20... and 35 for cu3au
-def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor=0.1, max_scale_factor=35.,
-                    extrinsic_scale_factor=1.0, element_sensitive=False, central_atom_species=26, neighbor_atoms_species=26):
+def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor=0.1, max_scale_factor=150.,
+                    extrinsic_scale_factor=1.0, element_sensitive=False, central_atom_species=26, neighbor_atoms_species=26,
+                    constrain_nn_distances=False, return_scale_factor=False):
     """Scale an atomic structure by a given scalar determined based on nearest neighbors distance.
 
     Parameters:
@@ -1351,7 +1577,8 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
         for idx_cutoff, cutoff in enumerate(atoms_scaling_cutoffs):
             scale_factor = get_nn_distance(atoms=atoms, distribution=scaling_type, cutoff=cutoff, 
                                            element_sensitive=element_sensitive, central_atom_species=central_atom_species,
-                                           neighbor_atoms_species=neighbor_atoms_species)
+                                           neighbor_atoms_species=neighbor_atoms_species, constrain_nn_distances=constrain_nn_distances)
+            #print(scale_factor)
             if scale_factor is not None:
                 if min_scale_factor < scale_factor < max_scale_factor:
                     logger.debug("Cut off of {0} was successful".format(cutoff))
@@ -1383,10 +1610,13 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
     atoms_tmp.set_positions(atoms_tmp.get_positions() * (1. / scale_factor))
 
     # also scale cell -> gives different results when haveing pbc=False (pbc=True not checked yet)
-    #scaled_cell = atoms_tmp.get_cell() * (1. / scale_factor)
-    #atoms_tmp.set_cell(scaled_cell)
+    scaled_cell = atoms_tmp.get_cell() * (1. / scale_factor)
+    atoms_tmp.set_cell(scaled_cell)
 
-    return atoms_tmp
+    if return_scale_factor:
+        return atoms_tmp, scale_factor
+    else:
+        return atoms_tmp
 
 
 def get_spacegroup_old(structure, materials_class=None):
@@ -1741,7 +1971,7 @@ def interpolate_parameters(initial_params, final_params, nb_steps=10, include_fi
 
 def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, element_agnostic=False,
                        give_atom_density=False, plot_atom_density=False, atom_density_filename=None,
-                       padding_ratio=None):
+                       padding_ratio=None, faster_implementation=True):
     """Determine boxes for strided pattern analysis.
     
     Parameters:
@@ -1782,10 +2012,13 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
         padding = np.array((0.0, 0.0, 0.0))
 
     # Get x,y,z coordinate vectors and coordinate range
+    #start = time.time()
     f = open(filename, 'r')
     x = []
     y = []
     z = []
+    coordinate_vectors = []
+    element_symbols = []
     coordinate_vector_and_element_list = []  # 2D list with each element = [coordinate vector(1D list),'element name']
     lines = f.readlines()[2:]  # skip first two lines since they do not contain coordinates,
     # only number of total atoms and a comment line
@@ -1799,7 +2032,28 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
         # Define list of coordinate vectors used for determining those atoms
         # within a certain sliding box
         coordinate_vector = [float(line.split()[1]), float(line.split()[2]), float(line.split()[3])]
+        coordinate_vectors.append(np.array(coordinate_vector))
+        element_symbols.append(line.split()[0])
         coordinate_vector_and_element_list.append([coordinate_vector, line.split()[0]])
+    coordinate_vectors = np.array(coordinate_vectors)
+    element_symbols = np.array(element_symbols, dtype=object)
+    # TODO: test if other loading schemes are faster ... for large files, this seems to be the case for ase, for numpy need to check.   
+    """
+    end = time.time()
+    print(end-start)
+    start = time.time()
+    polycrystal_structure = ase.io.read(filename,':','xyz')[0]
+    coordinate_vectors = polycrystal_structure.positions
+    chemical_symbols = polycrystal_structure.get_chemical_symbols()
+    coordinate_vector_and_element_list = list(zip(coordinate_vectors, chemical_symbols))
+    end = time.time()
+    print(end-start)
+    
+    start = time.time()
+    x,y,z,kernel,numberatoms= np.loadtxt(filename, unpack=True) 
+    end = time.time()
+    print(end-start)
+    """
 
     x_max = max(x) + padding[0]
     x_min = min(x) - padding[0]
@@ -1922,16 +2176,28 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
                 # Determine atoms within sliding box
                 positionvectors_within_sliding_volume = []
                 element_names_within_sliding_volume = ''
-
-                for vector, element_name in coordinate_vector_and_element_list:
-                    condition = vector[0] <= start[0] and vector[1] <= start[1] and vector[2] <= start[2] \
-                                and vector[0] >= (start[0]-x_sliding_volume_edge_length) \
-                                and vector[1] >= (start[1]-y_sliding_volume_edge_length) \
-                                and vector[2] >= (start[2]-z_sliding_volume_edge_length)
+                
+                if faster_implementation:
+                    condition = (coordinate_vectors[:,0] <= start[0]) & (coordinate_vectors[:,1] <= start[1]) \
+                                & (coordinate_vectors[:,2] <= start[2]) \
+                                & (coordinate_vectors[:,0] >= (start[0]-x_sliding_volume_edge_length)) \
+                                & (coordinate_vectors[:,1] >= (start[1]-y_sliding_volume_edge_length)) \
+                                & (coordinate_vectors[:,2] >= (start[2]-z_sliding_volume_edge_length))
+                    positionvectors_within_sliding_volume = coordinate_vectors[condition]
+                    element_names_within_sliding_volume = element_symbols[condition]
+                    element_names_within_sliding_volume = ''.join(list(element_names_within_sliding_volume))
                     
-                    if condition:
-                        positionvectors_within_sliding_volume.append(vector)
-                        element_names_within_sliding_volume += element_name
+                else:
+
+                    for vector, element_name in coordinate_vector_and_element_list:
+                        condition = vector[0] <= start[0] and vector[1] <= start[1] and vector[2] <= start[2] \
+                                    and vector[0] >= (start[0]-x_sliding_volume_edge_length) \
+                                    and vector[1] >= (start[1]-y_sliding_volume_edge_length) \
+                                    and vector[2] >= (start[2]-z_sliding_volume_edge_length)
+                        
+                        if condition:
+                            positionvectors_within_sliding_volume.append(vector)
+                            element_names_within_sliding_volume += element_name
                 
                 if len(positionvectors_within_sliding_volume) == 0:
                     number_of_atoms_x.append(0)
@@ -1983,9 +2249,9 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
                 plt.colorbar()
                 plt.show()
                 if atom_density_filename==None:
-                    plt.savefig(filename[:-4] + '_Atom_density_for_z=' + str(z) + '.png')
+                    plt.savefig(filename[:-4] + '_Atom_density_for_z=' + str(z) + '.svg')
                 else:
-                    plt.savefig(atom_density_filename+ '_Atom_density_for_z=' + str(z) + '.png')
+                    plt.savefig(atom_density_filename+ '_Atom_density_for_z=' + str(z) + '.svg')
                 plt.close()
                 
                 z += stride_size[2]
