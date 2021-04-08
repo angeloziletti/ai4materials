@@ -24,13 +24,13 @@ def main():
         # the version across setup.py and the project code, see
         # https://packaging.python.org/en/latest/single_source_version.html
         # version=get_property('__version__'),
-        version="0.2",
+        version="0.1",
         description='Data-analytics modeling of materials science data', long_description=long_description,
 
         zip_safe=True,
 
         # The project's main homepage.
-        url='https://https://github.com/AndreasLeitherer/ai4materials',
+        url='https://https://github.com/angeloziletti/ai4materials',
 
         # Author details
         author='Ziletti, Angelo and Leitherer, Andreas', author_email='angelo.ziletti@gmail.com, andreas.leitherer@gmail.com',
@@ -66,6 +66,7 @@ def main():
         # You can just specify the packages manually here if your project is
         # simple. Or you can use find_packages().
         packages=['ai4materials', 'ai4materials.dataprocessing', 'ai4materials.descriptors',
+                  'ai4materials.interpretation', 'ai4materials.visualization',
                    'ai4materials.models', 'ai4materials.utils', 'ai4materials.external'],
         #packages=find_packages(include=['ai4materials']),
 
@@ -108,7 +109,8 @@ def main():
         },
         # https://mike.zwobble.org/2013/05/adding-git-or-hg-or-svn-dependencies-in-setup-py/
         # add atomic_data and nomadcore
-        dependency_links=['https://github.com/libAtoms/QUIP'],
+        dependency_links=['https://github.com/libAtoms/QUIP',
+                          'https://github.com/FXIhub/condor.git'],
 
         # If there are data files included in your packages that need to be
         # installed, specify them here.  If using Python 2.6 or less, then these
