@@ -11,17 +11,17 @@ ai4materials allows to perform complex analysis of materials science data, using
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
 thus easing the traceability, reproducibility, and prototyping of new models.
 
-Documentation of a previous release can be found here: https://ai4materials.readthedocs.io/en/latest/
+An online documentation of a previous release can be found here: https://ai4materials.readthedocs.io/en/latest/
 
 Code authors: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de), Andreas Leitherer (leitherer@fhi-berlin.mpg.de, andreas.leitherer@gmail.com)
 
-ARISE: Crystal-structure recognition via Bayesian deep learning
+## ARISE: Crystal-structure recognition via Bayesian deep learning
 ========================================================
 
 ![](./assets/ARISE_logo.svg)
 
 
-This repository provides code for reproducing the results of 
+ai4materials provides code for reproducing the results of 
 
     A. Leitherer, A. Ziletti, and L.M. Ghiringhelli,
     Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning, arXiv:2103.09777 (2021)
@@ -36,21 +36,18 @@ within the NOMAD analytics toolkit (https://nomad-lab.eu/AItutorials) where you 
 The code of this branch uses functionalities of ai4materials that is currently under development.
 
 ------------------
-Installation
+### Installation
 ------------------
 
 We recommend to create a virtual python 3.7 environment (for instance, with conda), and then execute
 
-    git clone https://github.com/angeloziletti/ai4materials.git 
-    cd ai4materials
-    git checkout ARISE
-    pip install -e .
+    pip install 'git+https://github.com/angeloziletti/ai4materials.git'
 
 To reproduce the results in arXiv:2103.09777, you need to install the quippy package  (https://github.com/libAtoms/QUIP) 
 to be able to compute the SOAP descriptor.
 
 ---------------
-ARISE - Usage
+### ARISE - Usage
 ---------------
 
 For global or local analysis of single- or polycrystalline systems, one just needs to define the corresponding geometry file and load a pretrained model for prediction:
