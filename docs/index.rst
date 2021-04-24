@@ -11,7 +11,7 @@ It also provide functions to pre-process (on parallel processors), save and subs
 thus easing the traceability, reproducibility, and prototyping of new models.
 
 **The current documentation is not actively mantained and thus might not be up-to-date.**   
-**For the most recent documentation, please visit ai4materials github repository https://github.com/angeloziletti/ai4materials>.**
+**For the most recent documentation, please visit ai4materials github repository https://github.com/angeloziletti/ai4materials.**
 
 
 ai4materials allows perform crystal-structure classification and analysis, as introduced in:
