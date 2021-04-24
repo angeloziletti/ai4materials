@@ -7,25 +7,26 @@
 Welcome to ai4materials's README
 ========================================
 
-ai4materials allows to perform complex analysis of materials science data, using machine learning techniques. It also
+ai4materials allows to perform complex analysis of materials science data using machine learning. It also
 provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
 thus easing the traceability, reproducibility, and prototyping of new models.
 
-An online documentation of a previous release can be found here: https://ai4materials.readthedocs.io/en/latest/
+An online documentation can be found here: https://ai4materials.readthedocs.io/en/latest/
 
-Code authors: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com; ziletti@fhi-berlin.mpg.de), Andreas Leitherer (leitherer@fhi-berlin.mpg.de, andreas.leitherer@gmail.com)
+Code authors: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com), Andreas Leitherer (leitherer@fhi-berlin.mpg.de, andreas.leitherer@gmail.com)
+
 
 ## ARISE: Crystal-structure recognition via Bayesian deep learning
 ========================================================
 
 ![](./assets/ARISE_logo.svg)
 
-
 ai4materials provides code for reproducing the results of 
 
     A. Leitherer, A. Ziletti, and L.M. Ghiringhelli,
     Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning, arXiv:2103.09777 (2021)
 
+Please cite this work if you use ai4materials in your research.
 
 You can proceed with the installation steps as described below or directly proceed to a tutorial available at
 
@@ -33,7 +34,7 @@ You can proceed with the installation steps as described below or directly proce
     
 within the NOMAD analytics toolkit (https://nomad-lab.eu/AItutorials) where you do not have to install any software.
 
-The code of this branch uses functionalities of ai4materials that is currently under development.
+The code is currently under active development.
 
 ------------------
 ### Installation
@@ -43,8 +44,12 @@ We recommend to create a virtual python 3.7 environment (for instance, with cond
 
     pip install 'git+https://github.com/angeloziletti/ai4materials.git'
 
-To reproduce the results in arXiv:2103.09777, you need to install the quippy package  (https://github.com/libAtoms/QUIP) 
-to be able to compute the SOAP descriptor. Executing the following commands should has been tested for a python 3.7 environment created using conda (note that when executing make config, choose always the standard options, i.e., simply hit enter, execept when asked for compiling with GAP support, enter 'y'. Please check also for additional dependencies you may need to install, see also https://libatoms.github.io/GAP/installation.html):
+To utilize the deep learning techniques introduced in A. Leitherer, A. Ziletti, and L.M. Ghiringhelli, 2021 (https://arxiv.org/abs/2103.09777), you need to install the quippy package (https://github.com/libAtoms/QUIP). This is necessary to compute the SOAP descriptor. 
+
+
+The following commands to install QUIP have been tested for a python 3.7 environment created using conda 
+
+Note that when executing make config, choose always the standard options, i.e., simply hit enter, execept when asked for compiling with GAP support, enter 'y'. Please check also for additional dependencies you may need to install, see also https://libatoms.github.io/GAP/installation.html):
 
     git clone --recursive https://github.com/libAtoms/QUIP.git
     cd QUIP/
