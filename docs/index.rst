@@ -6,16 +6,19 @@
 Welcome to ai4materials's documentation!
 =========================================
 
-ai4materials allows to perform complex analysis of materials science data, using machine learning and compressed sensing techniques. It also
-provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
+ai4materials allows to perform complex analysis of materials science data using machine learning. 
+It also provide functions to pre-process (on parallel processors), save and subsequently load materials science datasets,
 thus easing the traceability, reproducibility, and prototyping of new models.
 
 On the left panel, you can find a few examples that showcase what ai4materials can do.
 
-Finally, with ai4materials you can reproduce results from the following publications:
+ai4materials allows perform crystal-structure classification and analysis, as introduced in:
 
-.. [1] A. Ziletti, A. Leitherer, M. Scheffler, and L. M. Ghiringhelli,
-   "Crystal-structure classification via Bayesian deep learning: towards superhuman performance", in preparation (2018)
+.. [1] A. Leitherer, A. Ziletti, and L. M. Ghiringhelli,
+   "Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning", 
+   [`Link to article <https://arxiv.org/abs/2103.09777`_]
+
+Moreover, ai4materials can also reproduce results from the following publications:
 
 .. [2] A. Ziletti, D. Kumar, M. Scheffler, and L. M. Ghiringhelli, "Insightful classification of crystal structures
    using deep learning," Nature Communications, vol. 9, pp. 2775, 2018.
