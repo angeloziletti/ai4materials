@@ -16,7 +16,8 @@ ai4materials allows perform crystal-structure classification and analysis, as in
 
 .. [1] A. Leitherer, A. Ziletti, and L. M. Ghiringhelli,
    "Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning", 
-   [`Link to article <https://arxiv.org/abs/2103.09777`_]
+   https://arxiv.org/abs/2103.09777
+
 
 Moreover, ai4materials can also reproduce results from the following publications:
 
