@@ -1,0 +1,3 @@
+This folder contains the mutual information for Fig. 4c, ordered according to the strided pattern matching positions as provided by the indicated pickle files.
+For all structures (geometry files are deposited in the folder for Fig. 4), a stride of 1A is chosen in all directions alongside a box of 12 A, and a padding of [1.0, 1.0, 1.0]. 
+These parameters allow to obtain the geometries corresponding to the prediction in the "results.csv" file using the "get_boxes_from_xyz" function in ai4materials/utils/utils_crystals.py

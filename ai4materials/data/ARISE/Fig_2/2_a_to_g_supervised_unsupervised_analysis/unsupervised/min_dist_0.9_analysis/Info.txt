@@ -1,0 +1,3 @@
+The numpy file denoted as "dense_1_neighbors_500_crystal_map_cluster_labels_min_csize_500.npy" contains the data to reproduce the crystal map shown in Fig. 2d, colored by the cluster labels (it is a re-ordered version of (..._cluster_labels.npy where this file is ordered according to the real space structure).
+The two other numpy files contain the cluster labels (..._cluster_labels.npy) and 2D embeddings (..._embedding.npy).
+The pickle file contains the clusterer object produced via HDBSCAN.

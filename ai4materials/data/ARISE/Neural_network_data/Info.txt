@@ -1,0 +1,1 @@
+This folder contains all training structures (folder PROTOTYPES) alongside calculated training and test data, alongside an h5 file for the neural-network model and two json files that specify the relation between output neuron index and prototype label.

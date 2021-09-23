@@ -1,0 +1,1 @@
+This folder contains the three neural-network activations numpy files, ordered according to the strided-patter-matching position pickle file and the soap pickle file.
