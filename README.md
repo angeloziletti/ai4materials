@@ -35,12 +35,6 @@ You can proceed with the installation steps as described below or directly proce
 within the NOMAD analytics toolkit (https://nomad-lab.eu/AItutorials) where you do not have to install any software.
 
 ------------------
-### Data availability
-------------------
-
-Please refer to the folder ./ai4materials/data/ARISE for all relevant data. 
-
-------------------
 ### Installation
 ------------------
 
