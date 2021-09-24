@@ -14,6 +14,7 @@ import pickle
 import logging
 logger = logging.getLogger('ai4materials')
 
+from copy import deepcopy
 
 import keras
 
@@ -100,12 +101,16 @@ def preparations(main_folder, p_b_c=False, l_max=6,
 
 
 def global_(geometry_files, main_folder=None, n_iter=1000, configs=None,
-            model=None, format_='aims',
+            model=None, format_='aims', descriptor=None,
             descriptors=None, save_descriptors=False,
             save_path_descriptors=None, **kwargs): #, logger=None):
     # TODO: change functionality such that at least model prediction is done in parallel (maybe descriptor calculation in parallel as optional since it will create new folders)
-    descriptor, model = preparations(main_folder, configs=configs, model=model, **kwargs) #, logger)
-    
+    if not descriptor == None:
+        specified_descriptor = deepcopy(descriptor)
+        descriptor, model = preparations(main_folder, configs=configs, model=model, **kwargs) #, logger)
+        descriptor = specified_descriptor
+    else:
+        descriptor, model = preparations(main_folder, configs=configs, model=model, **kwargs)
     input_shape_from_model = model.layers[0].get_input_at(0).get_shape().as_list()[1:]
     target_shape = tuple([-1] + input_shape_from_model)
 

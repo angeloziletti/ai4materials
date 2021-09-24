@@ -6,6 +6,20 @@ import matplotlib.pyplot as plt
 
 from numpy import linalg as LA
 from math import sqrt
+import itertools
+
+def tanimoto(spectrum_A, spectrum_B, power_value):
+    spectrum_A = np.array(spectrum_A).flatten()
+    spectrum_B = np.array(spectrum_B).flatten()
+
+    norm_A = LA.norm(spectrum_A)
+    norm_B = LA.norm(spectrum_B)
+
+    dot_AB = np.dot(spectrum_A, spectrum_B)
+
+    tanimoto_coefficient = dot_AB / ( norm_A * norm_A + norm_B * norm_B - dot_AB )
+
+    return tanimoto_coefficient
 
 def euclidean_distance(spectrum_A,spectrum_B,power_value):
     spectrum_A=np.array(spectrum_A).flatten()
@@ -47,7 +61,7 @@ def cosine_sim_given_spectra(spectrum_A,spectrum_B,power_value=1.):
     kernel=dot_product/(norm_A*norm_B)
     return kernel
 
-def plot_2D_matrix_with_axis_labels(matrix, x_axis_labels, y_axis_labels, title, savefig_name, save_fig_type,vmax,vmin,cmap=matplotlib.cm.get_cmap('Purples'), show_sim_values=True, fontsize=5):
+def plot_2D_matrix_with_axis_labels(matrix, x_axis_labels, y_axis_labels, title, savefig_name, save_fig_type,vmax,vmin,cmap=matplotlib.cm.get_cmap('Purples'), show_sim_values=True, fontsize=5, fig_size=(10,10)):
     
     matrix=np.array(matrix)
     
@@ -60,7 +74,7 @@ def plot_2D_matrix_with_axis_labels(matrix, x_axis_labels, y_axis_labels, title,
     y_pos=np.arange(len(y_axis_labels))
     
     #plt.tight_layout()
-    #fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=fig_size)
     
     plt.imshow(matrix,vmax=vmax,vmin=vmin,cmap=cmap)
     plt.colorbar()
@@ -134,6 +148,9 @@ def similarity_metric(spectrum_A,spectrum_B,metric,power_value,p=3):
         normalized_corr=corr_A_B/(corr_A_A*corr_B_B)
         
         return np.power(normalized_corr,power_value)
+
+    elif metric == 'tanimoto':
+        return tanimoto(spectrum_A, spectrum_B, power_value)
         
     else:
         
@@ -154,7 +171,7 @@ def compute_and_plot_cross_similarity(descriptors_A,descriptors_B,sim_metric,pow
                                       title,savefig_name,save_fig_type='.png', 
                                       vmax=None, vmin=None,
                                       cmap=matplotlib.cm.get_cmap('Purples'), show_sim_values=True,
-                                      fontsize=5):
+                                      fontsize=5, fig_size=(10,10)):
     
     sim_matrix=[]
 
@@ -171,7 +188,7 @@ def compute_and_plot_cross_similarity(descriptors_A,descriptors_B,sim_metric,pow
         sim_matrix.append(sim_matrix_row)
     
     
-    plot_2D_matrix_with_axis_labels(sim_matrix, x_axis_labels, y_axis_labels, title, savefig_name, save_fig_type, vmax, vmin, cmap, show_sim_values, fontsize)
+    plot_2D_matrix_with_axis_labels(sim_matrix, x_axis_labels, y_axis_labels, title, savefig_name, save_fig_type, vmax, vmin, cmap, show_sim_values, fontsize, fig_size)
         
         
     return sim_matrix

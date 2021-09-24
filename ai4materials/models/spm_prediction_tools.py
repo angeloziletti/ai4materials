@@ -458,8 +458,8 @@ def calc_local(geometry_files, box_size, stride, configs,
                                                                 stride_size= [4.0, 4.0, 4.0],#[box_size/4., box_size/4., box_size/4.],
                                                                 give_atom_density=True,
                                                                 plot_atom_density=False, padding_ratio=[0.0,0.0,0.0])#, atom_density_filename=os.getcwd())
-
-                current_mean_natoms = np.median(np.array(number_of_atoms_xyz).flatten())
+                number_of_atoms_xyz = np.array(number_of_atoms_xyz).flatten()
+                current_mean_natoms = np.median(number_of_atoms_xyz[number_of_atoms_xyz>0])
                 current_spread = np.std(np.array(number_of_atoms_xyz).flatten())
                 print("Mean Natoms = {}, spread = {} ".format(current_mean_natoms, current_spread))
                 

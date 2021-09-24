@@ -173,9 +173,9 @@ class quippy_SOAP_descriptor(Descriptor):
             for Z in atomic_numbers:
                 for species_Z in atomic_numbers:
                     #
-                    #if Z==species_Z and len(structure[structure.get_atomic_numbers()==species_Z])<=1:
-                    #    all_descriptors.append(np.full(316, 0.0))
-                    #    continue
+                    if Z==species_Z and len(structure[structure.get_atomic_numbers()==species_Z])<=1:
+                        all_descriptors.append(np.full(316, 0.0))
+                        continue
                     #
                     n_Z = 1
                     n_species = 1

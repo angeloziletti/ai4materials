@@ -1529,7 +1529,7 @@ def get_nn_distance_(atoms, distribution='quantile_nn', cutoff=20.0,
         return length_scale
 
 # standard max_scale factor was 10, adjusted to 20... and 35 for cu3au
-def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor=0.1, max_scale_factor=150.,
+def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor=0.1, max_scale_factor=1500.,
                     extrinsic_scale_factor=1.0, element_sensitive=False, central_atom_species=26, neighbor_atoms_species=26,
                     constrain_nn_distances=False, return_scale_factor=False):
     """Scale an atomic structure by a given scalar determined based on nearest neighbors distance.
