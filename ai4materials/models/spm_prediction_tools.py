@@ -347,7 +347,7 @@ def calc_local(geometry_files, box_size, stride, configs,
             raise ValueError("If specify desc files, specifiy them as list containing at least len(geometry_files) entries.")
     
     if model_file == None:
-        model_file = get_data_filename('data/nn_models/AI_SYM_Leitherer_et_al_2021.h5')
+        model_file = get_data_filename('data/nn_models/ARISE_Leitherer_et_al_2021.h5')
         
     if len(geometry_files) == 0:
         raise ValueError("No geometry files specified - or only passed as string and not as list.")

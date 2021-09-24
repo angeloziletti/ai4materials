@@ -22,7 +22,7 @@ def analyze_predictions(geometry_files, predictions, uncertainties,
                         numerical_to_text_label=None, top_n=3,
                         uncertainty_quantifiers=['mutual_information'], return_predicted_prototypes=False):
     if numerical_to_text_label == None:
-        class_info_path = get_data_filename('data/nn_models/AI_SYM_class_info.json')
+        class_info_path = get_data_filename('data/nn_models/ARISE_class_info.json')
         with open(class_info_path) as file_name:
             data = json.load(file_name)
         class_labels = data["data"][0]['classes']
@@ -94,7 +94,7 @@ def preparations(main_folder, p_b_c=False, l_max=6,
                                         
     # load model
     if model == None:
-        model_file = get_data_filename('data/nn_models/AI_SYM_Leitherer_et_al_2021.h5')
+        model_file = get_data_filename('data/nn_models/ARISE_Leitherer_et_al_2021.h5')
         model = load_model(model_file)
     
     return descriptor, model
