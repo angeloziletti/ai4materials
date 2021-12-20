@@ -21,12 +21,22 @@ Code authors: Angelo Ziletti, Ph.D. (angelo.ziletti@gmail.com), Andreas Leithere
 
 ![](./assets/ARISE_logo.svg)
 
-ai4materials provides code for reproducing the results of 
+ai4materials provides code for: 
 
-    A. Leitherer, A. Ziletti, and L.M. Ghiringhelli,
-    Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning, arXiv:2103.09777 (2021)
+    @article{Leitherer2021,
+      doi = {10.1038/s41467-021-26511-5},
+      url = {https://doi.org/10.1038/s41467-021-26511-5},
+      year = {2021},
+      month = oct,
+      publisher = {Springer Science and Business Media {LLC}},
+      volume = {12},
+      number = {1},
+      author = {Andreas Leitherer and Angelo Ziletti and Luca M. Ghiringhelli},
+      title = {Robust recognition and exploratory analysis of crystal structures via Bayesian deep learning},
+      journal = {Nature Communications}
+    }
 
-Please cite this work if you use ai4materials in your research.
+Please cite this work if you use ai4materials in your work or research.
 
 You can proceed with the installation steps as described below or directly proceed to a tutorial available at
 
