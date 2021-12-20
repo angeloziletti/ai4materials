@@ -1,0 +1,3 @@
+Two pickle files containing the strided pattern positions are contained, one for the total, unfiltered data, and another one containing only those that are assigned the L!0 prototype (via ARISE). 
+
+Moreover, cluster labels and embeddings can be extracted via the pickle files which contain the cluster and projection objects.

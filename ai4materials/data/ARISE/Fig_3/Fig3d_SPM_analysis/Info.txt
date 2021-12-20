@@ -1,0 +1,2 @@
+SPM parameters: box size = 100 pixels, stride size = [4.0, 4.0, 20.0] (third dimension irrelevant for flat structures, just needs to be larger than zero), padding ratio [1.0, 1.0, 1.0]
+These parameters allow to obtain the geometries corresponding to the prediction in the "results.csv" file using the "get_boxes_from_xyz" function in ai4materials/utils/utils_crystals.py

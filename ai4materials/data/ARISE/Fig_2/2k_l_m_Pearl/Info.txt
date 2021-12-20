@@ -1,0 +1,5 @@
+SPM parameters: box size = 10, stride size = [2.0, 2.0, 2.0], padding ratio [1.0, 1.0, 1.0].
+These parameters allow to obtain the geometries corresponding to SPM position in the file ending witth "strided_pattern_pos.pkl" using the "get_boxes_from_xyz" function in ai4materials/utils/utils_crystals.py
+The associated SOAP descriptors are contained in the pkl file ending with _x.pkl. Both pickle files have the same order, while the two 2D numpy arrays are ordered differently (according to the SPM positions such that the first element of these 2D arrays corresponds to z=0, the second to z=1, etc.)
+
+The numpy arrays contain the data that was used to create the 3D classification probability maps shown in Fig. 2l. 
