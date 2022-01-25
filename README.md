@@ -44,6 +44,8 @@ You can proceed with the installation steps as described below or directly proce
     
 within the NOMAD analytics toolkit (https://nomad-lab.eu/AItutorials) where you do not have to install any software.
 
+The code is currently under active development.
+
 ------------------
 ### Installation
 ------------------
