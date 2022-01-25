@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 
 from collections import Counter
 
+from copy import deepcopy
+
 import logging
 logger = logging.getLogger('ai4materials')
 
@@ -54,7 +56,7 @@ class quippy_SOAP_descriptor(Descriptor):
     def __init__(self,configs=None,p_b_c=False,cutoff=4.0,l_max=6,n_max=9,atom_sigma=0.1,central_weight=0.0,
                  average=True,average_over_permuations=False,number_averages=200,atoms_scaling='quantile_nn',atoms_scaling_cutoffs=[10.], extrinsic_scale_factor=1.0,
                  n_Z=1, Z=26, n_species=1, species_Z=26, scale_element_sensitive=True, return_binary_descriptor=True, average_binary_descriptor=True, min_atoms=1, shape_soap = 316,
-                 constrain_nn_distances=False, version='py3'):
+                 constrain_nn_distances=False, version='py3', scale_factor=None):
         super(quippy_SOAP_descriptor, self).__init__(configs=configs)
         
         self.p_b_c=p_b_c
@@ -102,6 +104,7 @@ class quippy_SOAP_descriptor(Descriptor):
                              ' n_Z='+str(self.n_Z)+' Z={'+str(self.Z)+'} n_species='+str(self.n_species)+' species_Z={'+str(self.species_Z)+'} central_weight='+str(self.central_weight)+' average='+str(self.average)              
         self.descriptor_options=descriptor_options
         self.version = version
+        self.scale_factor = scale_factor
         
         
     def calculate(self,structure,**kwargs):
@@ -180,10 +183,21 @@ class quippy_SOAP_descriptor(Descriptor):
                     n_Z = 1
                     n_species = 1
                     #print(Z, species_Z)
-                    atoms = scale_structure(structure, scaling_type=self.atoms_scaling,
-                                            atoms_scaling_cutoffs=self.atoms_scaling_cutoffs, extrinsic_scale_factor=self.extrinsic_scale_factor,
-                                            element_sensitive=self.scale_element_sensitive, central_atom_species=Z, neighbor_atoms_species=species_Z,
-                                            constrain_nn_distances=self.constrain_nn_distances)
+                    if self.scale_factor == None:
+                        atoms = scale_structure(structure, scaling_type=self.atoms_scaling,
+                                                atoms_scaling_cutoffs=self.atoms_scaling_cutoffs, extrinsic_scale_factor=self.extrinsic_scale_factor,
+                                                element_sensitive=self.scale_element_sensitive, central_atom_species=Z, neighbor_atoms_species=species_Z,
+                                                constrain_nn_distances=self.constrain_nn_distances)
+                    else:
+                        # deep copy otherwise the original atoms structure will be scaled
+                        # and the spacegroup_number_actual will be wrong
+                        atoms = deepcopy(structure)
+                        scale_factor = self.scale_factor * self.extrinsic_scale_factor
+                        atoms.set_positions(atoms.get_positions() * (1. / scale_factor))
+                    
+                        # also scale cell -> gives different results when haveing pbc=False (pbc=True not checked yet)
+                        scaled_cell = atoms.get_cell() * (1. / scale_factor)
+                        atoms.set_cell(scaled_cell)
                                             
                     #Define descritpor - all options stay untouched, i.e., as provided by the intial call, but the species parameter are changed
                     descriptor_options = 'soap '+'cutoff='+str(self.cutoff)+' l_max='+str(self.l_max)+' n_max='+str(self.n_max)+' atom_sigma='+str(self.atom_sigma)+\
