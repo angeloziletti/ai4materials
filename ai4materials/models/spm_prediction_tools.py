@@ -498,7 +498,8 @@ def calc_local(geometry_files, box_size, stride, configs,
                                                 n_Z=1, Z=1, n_species=1, species_Z=1, scale_element_sensitive=True, return_binary_descriptor=True,
                                                 average_binary_descriptor=True, min_atoms=min_atoms, shape_soap=316,constrain_nn_distances=constrain_nn_distances)
                                             
-    
+        descriptor.configs = configs_new # important! otherwise descriptors will be calculated in desc file of first geometry file
+
         save_file = open(os.path.join(main_folder, os.path.basename(structure_file)[:-4]+'_log_file.txt'),'w') 
         # comment if you have already calculated the descriptor for the .xyz file
         desc_filename_to_load = None
