@@ -172,7 +172,8 @@ def analyze(geometry_filenames, mode='global', training_info=None, stride=None,
     
     This function is key to reproduce the single- and polycrystalline predictions in:
     
-    [1] A. Leitherer, A. Ziletti, and L.M. Ghiringhelli, arXiv ??? (2021).
+    [1] A. Leitherer, A. Ziletti, and L.M. Ghiringhelli, Nat. Commun. 12, 6234 (2021). 
+    DOI:  https://doi.org/10.1038/s41467-021-26511-5
     
     Parameters:
     
