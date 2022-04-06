@@ -2247,7 +2247,7 @@ def get_boxes_from_xyz(filename, sliding_volume, stride_size, adapt=True, elemen
                 plt.imshow(xy_density, interpolation='hanning', cmap='viridis',
                            extent=[0, (len(xy_density[0]))*stride_size[0], (len(xy_density))*stride_size[1], 0])
                 plt.colorbar()
-                plt.show()
+                #plt.show()
                 if atom_density_filename==None:
                     plt.savefig(filename[:-4] + '_Atom_density_for_z=' + str(z) + '.svg')
                 else:
