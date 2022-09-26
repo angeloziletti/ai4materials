@@ -44,7 +44,8 @@ from matplotlib.colors import LinearSegmentedColormap
 
 import tensorflow as tf
 
-tf.set_random_seed(0)
+# tf.set_random_seed(0) # for tf<1
+tf.random.set_seed(0)
 
 logger = logging.getLogger('ai4materials')
 

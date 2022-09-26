@@ -38,7 +38,8 @@ from sklearn import preprocessing
 import tensorflow as tf
 
 pyximport.install(reload_support=True)
-tf.set_random_seed(0)
+# tf.set_random_seed(0) # tf < 2
+tf.random.set_seed(0)
 logger = logging.getLogger('ai4materials')
 
 
