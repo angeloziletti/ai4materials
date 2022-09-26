@@ -67,7 +67,7 @@ Note that when executing make config, choose always the standard options, i.e., 
     make config
     make
     git submodule update --init --recursive
-    pip install src/f90wrap
+    pip install f90wrap
     make install-quippy
 
 ---------------
