@@ -109,7 +109,7 @@ class quippy_SOAP_descriptor(Descriptor):
         
     def calculate(self,structure,**kwargs):
         
-        # HACK to get right PBC for 2D materials and Nanotubes
+        # To get right PBC for 2D materials and Nanotubes
         # use pbc as specified in the structure ITSELF
         self.p_b_c = structure.get_pbc()
         
@@ -307,10 +307,10 @@ class quippy_SOAP_descriptor(Descriptor):
             
             soap_filename_npy = os.path.abspath(os.path.normpath(os.path.join(desc_folder,
                                                                                    structure.info['label'] +
-                                                                                   self.desc_metadata.ix[
+                                                                                   self.desc_metadata.loc[
                                                                                        'quippy_SOAP'][
                                                                                        'file_ending'])))
-            only_file=structure.info['label'] + self.desc_metadata.ix['quippy_SOAP']['file_ending']
+            only_file=structure.info['label'] + self.desc_metadata.loc['quippy_SOAP']['file_ending']
             
             np.save(soap_filename_npy, soap_descriptor)
             structure.info['quippy_SOAP_descriptor_filename_npy'] = soap_filename_npy
@@ -320,10 +320,10 @@ class quippy_SOAP_descriptor(Descriptor):
 
             image_soap_filename_png = os.path.abspath(os.path.normpath(os.path.join(desc_folder,
                                                                                    structure.info['label'] +
-                                                                                   self.desc_metadata.ix[
+                                                                                   self.desc_metadata.loc[
                                                                                        'quippy_SOAP_image'][
                                                                                        'file_ending'])))
-            only_file=structure.info['label'] + self.desc_metadata.ix['quippy_SOAP_image']['file_ending']
+            only_file=structure.info['label'] + self.desc_metadata.loc['quippy_SOAP_image']['file_ending']
             
             plt.ioff()
             plt.title(structure.info['label']+' SOAP descriptor ')
@@ -341,10 +341,10 @@ class quippy_SOAP_descriptor(Descriptor):
         if write_geo:
             
             coord_filename_in = os.path.abspath(os.path.normpath(os.path.join(desc_folder, structure.info['label'] +
-                                                                                  self.desc_metadata.ix['quippy_SOAP_coordinates'][
+                                                                                  self.desc_metadata.loc['quippy_SOAP_coordinates'][
                                                                                       'file_ending'])))
             
-            only_file=structure.info['label'] +self.desc_metadata.ix['quippy_SOAP_coordinates']['file_ending']
+            only_file=structure.info['label'] +self.desc_metadata.loc['quippy_SOAP_coordinates']['file_ending']
 
             structure.write(coord_filename_in, format=format_geometry)
             structure.info['quippy_SOAP_coord_filename_in'] = coord_filename_in

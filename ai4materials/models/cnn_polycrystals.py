@@ -341,7 +341,7 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
         if (idx_iter % (int(n_iter) / 10 + 1)) == 0:
             logger.info("Performing forward pass: {0}/{1}".format(idx_iter + 1, n_iter))
 
-        result = model.predict(data)
+        result = model.predict(data, verbose=0)
         label = result.argmax(axis=-1)
 
         labels.append(label)

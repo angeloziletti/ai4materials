@@ -203,7 +203,9 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
 
     # sort predictive mean
     df_predictive_mean = pd.DataFrame(data=predictive_mean)
-    df = pd.concat([df_positions, df_predictive_mean], axis=1, join_axes=[df_positions.index])
+    # df = pd.concat([df_positions, df_predictive_mean], axis=1, join_axes=[df_positions.index])
+    df = pd.concat([df_positions, df_predictive_mean], axis=1)
+    df = df.reindex(df_positions.index)
     df_predictive_mean_sorted = df.sort_values(
         ['strided_pattern_positions_z', 'strided_pattern_positions_y', 'strided_pattern_positions_x'], ascending=True)
 
@@ -234,7 +236,9 @@ def get_classification_map(configs, path_to_x_test, path_to_y_test, path_to_summ
         for key in uncertainty.keys():
             df_uncertainty[key] = uncertainty[key]
 
-        df = pd.concat([df_positions, df_uncertainty], axis=1, join_axes=[df_positions.index]) # TODO: join_axes deprecated..since version 0.25.0 - ai4mat at the moment has 0.22.0 BUT NOT ALWAYS
+        #df = pd.concat([df_positions, df_uncertainty], axis=1, join_axes=[df_positions.index]) # TODO: join_axes deprecated..since version 0.25.0 - ai4mat at the moment has 0.22.0 BUT NOT ALWAYS
+        df = pd.concat([df_positions, df_uncertainty], axis=1)
+        df = df.reindex(df_positions.index)
         # if would do reinstallaiton, may fail... is not fixed in the setup folder!!
         df_uncertainty_sorted = df.sort_values(
             ['strided_pattern_positions_z', 'strided_pattern_positions_y', 'strided_pattern_positions_x'],
