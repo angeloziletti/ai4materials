@@ -80,9 +80,10 @@ def main():
         # your project is installed. For an analysis of "install_requires" vs pip's
         # requirements files see:
         # https://packaging.python.org/en/latest/requirements.html
-        install_requires=['ase==3.19.0', 'tensorflow>1', 'keras', 'scikit-learn>=0.17.1', 'pint', 'future',
-                          'pandas<=0.25.0', 'enum34', 'pymatgen==2020.3.13', 'keras-tqdm', 'seaborn', 'paramiko',
-                          'scipy', 'nose>=1.0', 'numpy', 'h5py<=2.9.0', 'cython>=0.19',  'Jinja2'],
+        install_requires=['ase', 'tensorflow>1', 'keras', 'scikit-learn>=0.17.1', 'pint', 'future',
+                          'pandas', 'enum34', 'pymatgen==2020.3.13', 'keras-tqdm', 'seaborn', 'paramiko',
+                          'scipy', 'nose>=1.0', 'numpy', 'h5py<=2.9.0', 'cython>=0.19',  'Jinja2',
+                          'PyYAML'],
         #         
         #'ase==3.15.0',  # neighbors list does not work for ase 3.16
         #    'scikit-learn >=0.17.1', 'tensorflow==1.8.0', 'pint', 'future', 'pandas',
