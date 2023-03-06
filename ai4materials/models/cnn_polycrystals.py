@@ -329,12 +329,21 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
     - predictive_entropy: defined in Eq. 3.20
     - mutual_information: defined at pag. 53 (no Eq. number)
 
-    .. codeauthor:: Angelo Ziletti <angelo.ziletti@gmail.com>
+    .. codeauthors:: Angelo Ziletti <angelo.ziletti@gmail.com>, Andreas Leitherer <andreas.leitherer@gmail.com>
 
     """
 
     logger.info("Calculating classification uncertainty.")
-
+    
+    # Faster implementation:
+    repeated_data = np.concatenate([data for _ in range(n_iter)])
+    result = model.predict(repeated_data, verbose=0)
+    results = np.array(np.array_split(result, n_iter))
+    labels = results.argmax(axis=-1)
+    
+    # previous implementation: 
+    # run through each point iteratively:
+    """
     labels = []
     results = []
     for idx_iter in range(n_iter):
@@ -346,7 +355,7 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
 
         labels.append(label)
         results.append(result)
-        
+    """  
     results = np.asarray(results)
     # less memory intensive:
     #if len(results)>25000*1000:
