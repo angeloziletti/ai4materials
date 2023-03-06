@@ -120,7 +120,7 @@ def main():
             'ai4materials': ['descriptors/descriptors.nomadmetainfo.json', 
                         'data/nn_models/*.h5', 'data/nn_models/*.json', 'utils/units.txt', 'utils/constants.txt',
                         'data/PROTOTYPES/*/*/*.in', 'data/training_data/*.json',
-                        'data/ARISE/Fig2/Fig_2_four_grains_elemental_solid.xyz'
+                        'data/ARISE/Fig_2/Fig_2_four_grains_elemental_solid.xyz'
                         ]},
 
         # Although 'package_data' is the preferred approach, in some case you may
