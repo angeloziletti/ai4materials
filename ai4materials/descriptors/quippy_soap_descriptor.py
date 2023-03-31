@@ -206,7 +206,7 @@ class quippy_SOAP_descriptor(Descriptor):
                     desc=descriptors.Descriptor(descriptor_options)
                     
                     if self.version == 'py3':
-                        SOAP_descriptor = desc.calc(atoms)['data'].flatten()
+                        SOAP_descriptor = desc.calc(atoms)['data']
                     else:
                         #Define structure as quippy Atoms object
                         #filename=str(atoms.info['label'])+'.xyz'
@@ -249,9 +249,10 @@ class quippy_SOAP_descriptor(Descriptor):
                         SOAP_descriptor=SOAP_proto_averaged              
                         
                     
-                    #if self.average:
-                    #    SOAP_descriptor=SOAP_descriptor.flatten() # if get averaged LAE, then default output shape is (1,316), hence flatten()
-                    all_descriptors.append(SOAP_descriptor.flatten())
+                    if self.average:
+                        # if get averaged LAE, then default output shape is (1,316), hence flatten()
+                        SOAP_descriptor = SOAP_descriptor.flatten()
+                    all_descriptors.append(SOAP_descriptor)
             
             #if len(all_descriptors)==0: # if choose to skip environments with only one atom --> all_descriptors may be empty. That's why append nan array to avoid 
             # mistakes eg in make_strided_pattern_matching_dataset when structure.info['descriptor'][desc_metadata][:] = np.nan is used!
@@ -351,3 +352,4 @@ class quippy_SOAP_descriptor(Descriptor):
             structure.info['quippy_SOAP_coord_filename_in'] = coord_filename_in
             tar.add(structure.info['quippy_SOAP_coord_filename_in'],arcname=only_file)
         
+
