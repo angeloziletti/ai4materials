@@ -56,7 +56,7 @@ class quippy_SOAP_descriptor(Descriptor):
     def __init__(self,configs=None,p_b_c=False,cutoff=4.0,l_max=6,n_max=9,atom_sigma=0.1,central_weight=0.0,
                  average=True,average_over_permuations=False,number_averages=200,atoms_scaling='quantile_nn',atoms_scaling_cutoffs=[10.], extrinsic_scale_factor=1.0,
                  n_Z=1, Z=26, n_species=1, species_Z=26, scale_element_sensitive=True, return_binary_descriptor=True, average_binary_descriptor=True, min_atoms=1, shape_soap = 316,
-                 constrain_nn_distances=False, version='py3', scale_factor=None):
+                 constrain_nn_distances=False, version='py3', scale_factor=None, nu_S=None):
         super(quippy_SOAP_descriptor, self).__init__(configs=configs)
         
         self.p_b_c=p_b_c
@@ -105,6 +105,9 @@ class quippy_SOAP_descriptor(Descriptor):
         self.descriptor_options=descriptor_options
         self.version = version
         self.scale_factor = scale_factor
+        # nu_S: special parameter, for n_Z=1, if nu_S=0, then all neighboring specie
+        # will be considered as same-species atoms
+        self.nu_S = nu_S
         
         
     def calculate(self,structure,**kwargs):
@@ -265,9 +268,45 @@ class quippy_SOAP_descriptor(Descriptor):
                 descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=np.array(all_descriptors))
             structure.info['descriptor'] = descriptor_data
             return structure            
-
+        else:
+            # if return_binary_descriptor == False:
+            #Define descritpor - all options stay untouched, i.e., as provided by the intial call
+            descriptor_options = 'soap '+'cutoff='+str(self.cutoff)+' l_max='+str(self.l_max)+' n_max='+str(self.n_max)+' atom_sigma='+str(self.atom_sigma)+\
+                                 ' n_Z='+str(self.n_Z)+' Z={'+str(self.Z)+'} n_species='+str(self.n_species)+' species_Z={'+str(self.species_Z)+'} central_weight='+str(self.central_weight)+' average='+str(self.average)  
+            if self.n_Z == 1 and not self.nu_S == None:
+                descriptor_options += ' nu_S=' + str(self.nu_S)
+            desc = descriptors.Descriptor(descriptor_options)
+            
+            if self.scale_factor == None:
+                atoms = scale_structure(structure, scaling_type=self.atoms_scaling,
+                                        atoms_scaling_cutoffs=self.atoms_scaling_cutoffs, 
+                                        extrinsic_scale_factor=self.extrinsic_scale_factor,
+                                        element_sensitive=False, # Not meaningful to do element-sensitive here!
+                                        constrain_nn_distances=self.constrain_nn_distances)
+            else:
+                # deep copy otherwise the original atoms structure will be scaled
+                # and the spacegroup_number_actual will be wrong
+                atoms = deepcopy(structure)
+                scale_factor = self.scale_factor * self.extrinsic_scale_factor
+                atoms.set_positions(atoms.get_positions() * (1. / scale_factor))
+            
+                # also scale cell -> gives different results when haveing pbc=False (pbc=True not checked yet)
+                scaled_cell = atoms.get_cell() * (1. / scale_factor)
+                atoms.set_cell(scaled_cell)
+            
+            
+            
+            # Calculate SOAP (py3 version)
+            SOAP_descriptor = desc.calc(atoms)['data']
+            # if average, flatten
+            if self.average:
+                SOAP_descriptor = SOAP_descriptor.flatten()
+            # save to info dict of ASE structure
+            descriptor_data = dict(descriptor_name=self.name, descriptor_info=str(self), SOAP_descriptor=SOAP_descriptor)
+            structure.info['descriptor'] = descriptor_data
+            return structure
                              
-    def write(self,structure,tar,write_soap_npy=True,write_soap_png=True,op_id=0,write_geo=True,format_geometry='aims'):
+    def write(self,structure,tar,write_soap_npy=True,write_soap_png=False,op_id=0,write_geo=True,format_geometry='aims'):
         """Write the descriptor to file.
 
         Parameters:
@@ -352,4 +391,3 @@ class quippy_SOAP_descriptor(Descriptor):
             structure.info['quippy_SOAP_coord_filename_in'] = coord_filename_in
             tar.add(structure.info['quippy_SOAP_coord_filename_in'],arcname=only_file)
         
-
