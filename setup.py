@@ -81,7 +81,7 @@ def main():
         # requirements files see:
         # https://packaging.python.org/en/latest/requirements.html
         install_requires=['ase', 'quippy-ase', 'tensorflow>1', 'keras', 'scikit-learn>=0.17.1', 'pint', 'future',
-                          'pandas', 'enum34', 'pymatgen==2020.3.13', 'keras-tqdm', 'seaborn', 'paramiko',
+                          'pandas', 'enum34', 'pymatgen', 'keras-tqdm', 'seaborn', 'paramiko',
                           'scipy', 'nose>=1.0', 'numpy', 'h5py<=2.9.0', 'cython>=0.19',  'Jinja2',
                           'PyYAML'],
         #         
