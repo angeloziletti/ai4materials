@@ -82,7 +82,7 @@ def main():
         # https://packaging.python.org/en/latest/requirements.html
         install_requires=['ase', 'quippy-ase', 'tensorflow>1', 'keras', 'scikit-learn>=0.17.1', 'pint', 'future',
                           'pandas', 'enum34', 'pymatgen', 'keras-tqdm', 'seaborn', 'paramiko',
-                          'scipy', 'nose>=1.0', 'numpy', 'h5py<=2.9.0', 'cython>=0.19',  'Jinja2',
+                          'scipy', 'nose>=1.0', 'numpy', 'h5py', 'cython>=0.19',  'Jinja2',
                           'PyYAML'],
         #         
         #'ase==3.15.0',  # neighbors list does not work for ase 3.16
