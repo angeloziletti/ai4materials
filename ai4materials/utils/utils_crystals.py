@@ -1529,6 +1529,21 @@ def get_nn_distance_(atoms, distribution='quantile_nn', cutoff=20.0,
         return length_scale, length_scale_2, length_scale_3
     else:
         return length_scale
+    
+    
+def calculate_neighbor_list(atoms, cutoff):
+    
+    nb_atoms = atoms.get_number_of_atoms()
+    cutoffs = np.ones(nb_atoms) * cutoff
+    # Notice that if get_neighbors(a) gives atom b as a neighbor,
+    #    then get_neighbors(b) will not return a as a neighbor - unless
+    #    bothways=True was used."
+    nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
+    # nl.build(atoms) previously used.
+    nl.update(atoms)
+    
+    return nl
+    
 
 # standard max_scale factor was 10, adjusted to 20... and 35 for cu3au
 def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, 
