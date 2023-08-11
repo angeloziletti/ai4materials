@@ -1201,7 +1201,8 @@ def get_min_distance(atoms, nb_splits=100):
 
 # Had to change cutoff to 55 for cu_3_au
 # constrain_nn_distances=True, min_nb_nn=5 was default
-def get_nn_distance(atoms, distribution='quantile_nn', cutoff=20.0,
+def get_nn_distance(atoms, nl=None, 
+                    distribution='quantile_nn', cutoff=20.0,
                     min_nb_nn=1,#5,
                     pbc=True, plot_histogram=False, bins=100, 
                     constrain_nn_distances=False, nn_distances_cutoff=0.9, 
@@ -1264,12 +1265,13 @@ def get_nn_distance(atoms, distribution='quantile_nn', cutoff=20.0,
 
     nb_atoms = atoms.get_number_of_atoms()
     cutoffs = np.ones(nb_atoms) * cutoff
-    # Notice that if get_neighbors(a) gives atom b as a neighbor,
-    #    then get_neighbors(b) will not return a as a neighbor - unless
-    #    bothways=True was used."
-    nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
-    # nl.build(atoms) previously used.
-    nl.update(atoms)
+    if nl == None:
+        # Notice that if get_neighbors(a) gives atom b as a neighbor,
+        #    then get_neighbors(b) will not return a as a neighbor - unless
+        #    bothways=True was used."
+        nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
+        # nl.build(atoms) previously used.
+        nl.update(atoms)
     nn_dist = []
 
     for idx in range(nb_atoms):
@@ -1529,7 +1531,8 @@ def get_nn_distance_(atoms, distribution='quantile_nn', cutoff=20.0,
         return length_scale
 
 # standard max_scale factor was 10, adjusted to 20... and 35 for cu3au
-def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor=0.1, max_scale_factor=1500.,
+def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, 
+                    nl=None, min_scale_factor=0.1, max_scale_factor=1500.,
                     extrinsic_scale_factor=1.0, element_sensitive=False, central_atom_species=26, neighbor_atoms_species=26,
                     constrain_nn_distances=False, return_scale_factor=False):
     """Scale an atomic structure by a given scalar determined based on nearest neighbors distance.
@@ -1575,7 +1578,7 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
         scale_factor = get_min_distance(atoms)
     elif scaling_type == 'avg_nn' or scaling_type == 'quantile_nn':
         for idx_cutoff, cutoff in enumerate(atoms_scaling_cutoffs):
-            scale_factor = get_nn_distance(atoms=atoms, distribution=scaling_type, cutoff=cutoff, 
+            scale_factor = get_nn_distance(atoms=atoms, nl=nl, distribution=scaling_type, cutoff=cutoff, 
                                            element_sensitive=element_sensitive, central_atom_species=central_atom_species,
                                            neighbor_atoms_species=neighbor_atoms_species, constrain_nn_distances=constrain_nn_distances)
             #print(scale_factor)
@@ -1597,8 +1600,19 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs, min_scale_factor
                         atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))
             else:
                 logger.info("Unable to obtain a scaling factor.")
+                if idx_cutoff + 1 > (len(atoms_scaling_cutoffs) - 1):
+                    raise ValueError("Cutoff values are too small to find a scale factor.")
                 logger.info("Increasing cutoff from {} to {} Angstrom".format(
                     atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))
+                logger.info("Recalculate neighbor list.")
+                nb_atoms = atoms.get_number_of_atoms()
+                cutoffs = np.ones(nb_atoms) * atoms_scaling_cutoffs[idx_cutoff + 1]
+                # Notice that if get_neighbors(a) gives atom b as a neighbor,
+                #    then get_neighbors(b) will not return a as a neighbor - unless
+                #    bothways=True was used."
+                nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
+                # nl.build(atoms) previously used.
+                nl.update(atoms)
     else:
         raise ValueError("Not recognized option for scaling_type. "
                          "Possible values are: 'min_nn', 'avg_nn', or 'quantile_nn'.")
