@@ -1266,12 +1266,7 @@ def get_nn_distance(atoms, nl=None,
     nb_atoms = atoms.get_number_of_atoms()
     cutoffs = np.ones(nb_atoms) * cutoff
     if nl == None:
-        # Notice that if get_neighbors(a) gives atom b as a neighbor,
-        #    then get_neighbors(b) will not return a as a neighbor - unless
-        #    bothways=True was used."
-        nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
-        # nl.build(atoms) previously used.
-        nl.update(atoms)
+        nl = calculate_neighbor_list(atoms, cutoff)
     nn_dist = []
 
     for idx in range(nb_atoms):
@@ -1620,14 +1615,7 @@ def scale_structure(atoms, scaling_type, atoms_scaling_cutoffs,
                 logger.info("Increasing cutoff from {} to {} Angstrom".format(
                     atoms_scaling_cutoffs[idx_cutoff], atoms_scaling_cutoffs[idx_cutoff + 1]))
                 logger.info("Recalculate neighbor list.")
-                nb_atoms = atoms.get_number_of_atoms()
-                cutoffs = np.ones(nb_atoms) * atoms_scaling_cutoffs[idx_cutoff + 1]
-                # Notice that if get_neighbors(a) gives atom b as a neighbor,
-                #    then get_neighbors(b) will not return a as a neighbor - unless
-                #    bothways=True was used."
-                nl = NeighborList(cutoffs, skin=0.1, self_interaction=False, bothways=True)
-                # nl.build(atoms) previously used.
-                nl.update(atoms)
+                nl = calculate_neighbor_list(atoms,  atoms_scaling_cutoffs[idx_cutoff + 1])
     else:
         raise ValueError("Not recognized option for scaling_type. "
                          "Possible values are: 'min_nn', 'avg_nn', or 'quantile_nn'.")
