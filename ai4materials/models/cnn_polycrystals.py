@@ -372,7 +372,7 @@ def predict_with_uncertainty(data, model, model_type='classification', n_iter=10
     elif model_type == 'classification':
         # variation ratio
         #print(labels)
-        mode, mode_count = stats.mode(np.asarray(labels))
+        mode, mode_count = stats.mode(np.asarray(labels), keepdims=True)
         #print(mode)
         #print(mode_count)
         variation_ratio = np.transpose(1. - mode_count.mean(axis=0) / float(n_iter))
