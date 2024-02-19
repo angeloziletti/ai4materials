@@ -54,10 +54,11 @@ We recommend to create a virtual python 3.7 environment (for instance, with cond
 
     pip install 'git+https://github.com/angeloziletti/ai4materials.git'
 
-To utilize the deep learning techniques introduced in A. Leitherer, A. Ziletti, and L.M. Ghiringhelli, 2021 (https://arxiv.org/abs/2103.09777), you need to install the quippy package (https://github.com/libAtoms/QUIP). This is necessary to compute the SOAP descriptor. 
+To utilize the deep learning techniques introduced in A. Leitherer, A. Ziletti, and L.M. Ghiringhelli, 2021 (https://arxiv.org/abs/2103.09777), you need to install the quippy package (https://github.com/libAtoms/QUIP). This is necessary to compute the SOAP descriptor. This may be done via
 
+    pip install quippy-ase
 
-The following commands to install QUIP have been tested for a python 3.7 environment created using conda 
+Alternatively, the following commands to install QUIP have been tested for a python 3.7 environment created using conda 
 
 Note that when executing make config, choose always the standard options, i.e., simply hit enter, execept when asked for compiling with GAP support, enter 'y'. Please check also for additional dependencies you may need to install, see also https://libatoms.github.io/GAP/installation.html):
 
